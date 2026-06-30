@@ -5,12 +5,15 @@ import {
   AccountApp,
   AuthPayload,
   CaptchaFlowResult,
+  ChoiceItem,
   LegacyEnvelope,
   OAuthPayload,
+  UploadTokenPayload,
   UserProfile
 } from '../models/account.models';
 
 const API_HOST = 'https://api.qt.6-79.cn';
+const QINIU_HOST = 'https://up.qiniup.com';
 const TOKEN_KEYS = ['user-token-v2', 'user-token'] as const;
 
 @Injectable({ providedIn: 'root' })
@@ -29,6 +32,103 @@ export class ApiService {
     return this.request<AccountApp>('GET', `/app/${appId}`);
   }
 
+  async getAppSecret(appId: string) {
+    return this.request<string>('GET', `/app/${appId}/secret`);
+  }
+
+  async getAppScope() {
+    const scopes = await this.request<Array<{ name: string; desc: string; detail?: string; always?: boolean | null }>>(
+      'GET',
+      '/app/scope'
+    );
+    return scopes.map((scope) => ({
+      id: scope.name,
+      key: scope.desc,
+      detail: scope.detail,
+      always: scope.always,
+      selected: scope.always === true
+    })) satisfies ChoiceItem[];
+  }
+
+  async getAppPremise() {
+    const premises = await this.request<Array<{ name: string; desc: string; detail?: string; always?: boolean | null }>>(
+      'GET',
+      '/app/premise'
+    );
+    return premises.map((premise) => ({
+      id: premise.name,
+      key: premise.desc,
+      detail: premise.detail,
+      always: premise.always,
+      selected: premise.always === true
+    })) satisfies ChoiceItem[];
+  }
+
+  async updateAppInfo(
+    appId: string,
+    payload: {
+      name: string;
+      desc: string;
+      info: string;
+      redirect_uri: string;
+      test_redirect_uri: string;
+      scopes: string[];
+      premises: string[];
+    }
+  ) {
+    return this.request<AccountApp>('PUT', `/app/${appId}`, { body: payload });
+  }
+
+  async updateUserInfo(payload: {
+    nickname?: string;
+    description?: string;
+    qitian?: string;
+    birthday?: string;
+  }) {
+    return this.request<UserProfile>('PUT', '/user/', { body: payload });
+  }
+
+  async applyDev() {
+    return this.request<UserProfile>('POST', '/user/dev', { body: {} });
+  }
+
+  async getLogoUploadToken(filename: string, appId: string) {
+    return this.request<UploadTokenPayload>('GET', '/app/logo', {
+      params: {
+        filename,
+        app: appId
+      }
+    });
+  }
+
+  async getAvatarUploadToken(filename: string) {
+    return this.request<UploadTokenPayload>('GET', '/user/avatar', {
+      params: {
+        filename
+      }
+    });
+  }
+
+  async uploadFile(payload: { key: string; token: string; file: File }) {
+    const formData = new FormData();
+    formData.append('key', payload.key);
+    formData.append('token', payload.token);
+    formData.append('file', payload.file);
+
+    const response = await firstValueFrom(
+      this.http.post<LegacyEnvelope<unknown>>(QINIU_HOST, formData, {
+        headers: new HttpHeaders(),
+        withCredentials: false
+      })
+    );
+
+    if (!response || response.identifier !== 'OK') {
+      throw new Error(response?.user_message || response?.identifier || '上传失败');
+    }
+
+    return response.body;
+  }
+
   async beginCaptchaFlow(payload: Record<string, unknown>) {
     return this.request<CaptchaFlowResult | AuthPayload>('POST', '/base/recaptcha', { body: payload });
   }
@@ -38,7 +138,7 @@ export class ApiService {
   }
 
   private async request<T>(
-    method: 'GET' | 'POST',
+    method: 'GET' | 'POST' | 'PUT',
     path: string,
     options: {
       body?: unknown;
@@ -55,8 +155,16 @@ export class ApiService {
                 withCredentials: true
               })
             )
-          : await firstValueFrom(
+          : method === 'POST'
+            ? await firstValueFrom(
               this.http.post<LegacyEnvelope<T>>(`${API_HOST}${path}`, options.body, {
+                params: this.cleanParams(options.params),
+                headers: this.buildHeaders(),
+                withCredentials: true
+              })
+            )
+            : await firstValueFrom(
+              this.http.put<LegacyEnvelope<T>>(`${API_HOST}${path}`, options.body, {
                 params: this.cleanParams(options.params),
                 headers: this.buildHeaders(),
                 withCredentials: true

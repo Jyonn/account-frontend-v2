@@ -101,6 +101,9 @@
         <button type="button" class="primary" (click)="enter(selectedApp)" [disabled]="launchingAppId === selectedApp.app_id">
           {{ launchingAppId === selectedApp.app_id ? 'launching...' : 'enter app' }}
         </button>
+        @if (canManageSelectedApp) {
+          <button type="button" class="ghost" (click)="manage(selectedApp)">manage app</button>
+        }
         <button type="button" class="ghost" (click)="copyAppId(selectedApp.app_id)">copy app_id</button>
       </div>
 

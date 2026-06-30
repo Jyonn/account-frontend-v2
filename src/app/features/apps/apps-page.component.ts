@@ -66,6 +66,10 @@ export class AppsPageComponent implements OnInit {
     }
   }
 
+  protected async manage(app: AccountApp) {
+    await this.router.navigate(['/apps', app.app_id, 'manage']);
+  }
+
   protected async copyAppId(appId: string) {
     try {
       await navigator.clipboard.writeText(appId);
@@ -80,6 +84,10 @@ export class AppsPageComponent implements OnInit {
       return 'unknown';
     }
     return new Date(timestamp * 1000).toLocaleDateString('zh-CN');
+  }
+
+  protected get canManageSelectedApp() {
+    return !!this.selectedApp?.relation?.belong;
   }
 
   private async loadApps() {

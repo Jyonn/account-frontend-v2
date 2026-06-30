@@ -1,0 +1,128 @@
+<section class="manage-grid">
+  <div class="editor-pane">
+    <div class="pane-head">
+      <div>
+        <div class="eyebrow">app manage</div>
+        <h2>{{ app?.app_name || '管理应用' }}</h2>
+      </div>
+      <button type="button" class="primary" (click)="save()" [disabled]="saving || loading">
+        {{ saving ? 'saving...' : 'update' }}
+      </button>
+    </div>
+
+    @if (message) {
+      <div class="feedback info">{{ message }}</div>
+    }
+    @if (error) {
+      <div class="feedback error">{{ error }}</div>
+    }
+
+    @if (loading) {
+      <div class="empty-state">loading app...</div>
+    } @else if (app) {
+      <section class="hero">
+        <div class="logo" [style.background-image]="logoUrl ? 'url(' + logoUrl + ')' : ''">
+          @if (!logoUrl) {
+            <span>{{ app.app_name.slice(0, 1) }}</span>
+          }
+        </div>
+        <div class="hero-copy">
+          <div class="hero-name">{{ app.app_name }}</div>
+          <div class="hero-meta">app_id={{ app.app_id }}</div>
+          <label class="upload-line">
+            <input type="file" accept="image/*" (change)="uploadLogo($event)" />
+            <span>{{ uploadingLogo ? 'uploading...' : 'change logo' }}</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="form-grid">
+        <label class="field">
+          <span>应用名</span>
+          <input [(ngModel)]="draft.app_name" />
+        </label>
+        <label class="field">
+          <span>应用标语</span>
+          <input [(ngModel)]="draft.app_desc" />
+        </label>
+        <label class="field">
+          <span>回调 URI</span>
+          <input [(ngModel)]="draft.redirect_uri" />
+        </label>
+        <label class="field">
+          <span>测试 URI</span>
+          <input [(ngModel)]="draft.test_redirect_uri" />
+        </label>
+      </section>
+
+      <section class="choice-grid">
+        <div class="choice-pane">
+          <div class="eyebrow">scope</div>
+          <div class="choice-list">
+            @for (item of scopeOptions; track item.id) {
+              <button type="button" class="choice-item" [class.selected]="item.selected" (click)="toggleChoice(scopeOptions, item.id)">
+                <span>{{ item.key }}</span>
+                <small>{{ item.detail || item.id }}</small>
+              </button>
+            }
+          </div>
+        </div>
+        <div class="choice-pane">
+          <div class="eyebrow">premise</div>
+          <div class="choice-list">
+            @for (item of premiseOptions; track item.id) {
+              <button type="button" class="choice-item" [class.selected]="item.selected" (click)="toggleChoice(premiseOptions, item.id)">
+                <span>{{ item.key }}</span>
+                <small>{{ item.detail || item.id }}</small>
+              </button>
+            }
+          </div>
+        </div>
+      </section>
+
+      <label class="field">
+        <span>应用介绍（Markdown）</span>
+        <textarea rows="10" [(ngModel)]="draft.app_info"></textarea>
+      </label>
+    }
+  </div>
+
+  <div class="meta-pane">
+    <section class="stack">
+      <div class="eyebrow">oauth</div>
+      <div class="secret-row">
+        <span>ID</span>
+        <strong>{{ app?.app_id || 'unset' }}</strong>
+        @if (app?.app_id) {
+          <button type="button" class="ghost micro" (click)="copy(app.app_id, 'app_id')">copy</button>
+        }
+      </div>
+      <div class="secret-row">
+        <span>SECRET</span>
+        <strong>{{ appSecret || 'unset' }}</strong>
+        @if (appSecret) {
+          <button type="button" class="ghost micro" (click)="copy(appSecret, 'secret')">copy</button>
+        }
+      </div>
+      <div class="secret-row full-row">
+        <span>AUTH URL</span>
+        <strong>{{ oauthUrl || 'unset' }}</strong>
+        @if (oauthUrl) {
+          <button type="button" class="ghost micro" (click)="copy(oauthUrl, 'oauth url')">copy</button>
+        }
+      </div>
+    </section>
+
+    <section class="stack">
+      <div class="eyebrow">selected</div>
+      <div class="meta-line">scopes={{ scopeOptions.filter(item => item.selected).length }}</div>
+      <div class="meta-line">premises={{ premiseOptions.filter(item => item.selected).length }}</div>
+      <div class="meta-line">users={{ app?.user_num || 0 }}</div>
+    </section>
+
+    <section class="stack">
+      <div class="eyebrow">return</div>
+      <button type="button" class="ghost full" (click)="router.navigateByUrl('/apps')">back to app center</button>
+    </section>
+  </div>
+</section>

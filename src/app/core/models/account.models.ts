@@ -9,7 +9,7 @@ export interface UserProfile {
   nickname?: string;
   description?: string;
   birthday?: string;
-  avatar?: string | null;
+  avatar?: string | { link?: string | null } | null;
   qitian?: string;
   allow_qitian_modify?: boolean;
   verify_status?: number;
@@ -22,11 +22,14 @@ export interface AccountApp {
   app_name: string;
   app_desc?: string;
   app_info?: string;
-  logo?: string | null;
+  logo?: string | { link?: string | null } | null;
   redirect_uri?: string;
   test_redirect_uri?: string;
   user_num?: number;
   create_time?: number;
+  app_secret?: string;
+  scopes?: ChoiceItem[];
+  premises?: ChoiceItem[];
   relation?: {
     belong?: boolean;
     bind?: boolean;
@@ -49,4 +52,17 @@ export interface AuthPayload {
 export interface OAuthPayload {
   auth_code: string;
   redirect_uri: string;
+}
+
+export interface ChoiceItem {
+  id: string;
+  key: string;
+  detail?: string;
+  always?: boolean | null;
+  selected?: boolean;
+}
+
+export interface UploadTokenPayload {
+  key: string;
+  upload_token: string;
 }
