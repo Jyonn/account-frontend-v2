@@ -19,16 +19,16 @@
 
     @if (loading) {
       <div class="empty-state">loading app...</div>
-    } @else if (app) {
+    } @else if (app; as managedApp) {
       <section class="hero">
         <div class="logo" [style.background-image]="logoUrl ? 'url(' + logoUrl + ')' : ''">
           @if (!logoUrl) {
-            <span>{{ app.app_name.slice(0, 1) }}</span>
+            <span>{{ managedApp.app_name.slice(0, 1) }}</span>
           }
         </div>
         <div class="hero-copy">
-          <div class="hero-name">{{ app.app_name }}</div>
-          <div class="hero-meta">app_id={{ app.app_id }}</div>
+          <div class="hero-name">{{ managedApp.app_name }}</div>
+          <div class="hero-meta">app_id={{ managedApp.app_id }}</div>
           <label class="upload-line">
             <input type="file" accept="image/*" (change)="uploadLogo($event)" />
             <span>{{ uploadingLogo ? 'uploading...' : 'change logo' }}</span>
@@ -89,12 +89,12 @@
 
   <div class="meta-pane">
     <section class="stack">
-      <div class="eyebrow">oauth</div>
+        <div class="eyebrow">oauth</div>
       <div class="secret-row">
         <span>ID</span>
-        <strong>{{ app?.app_id || 'unset' }}</strong>
-        @if (app?.app_id) {
-          <button type="button" class="ghost micro" (click)="copy(app.app_id, 'app_id')">copy</button>
+        <strong>{{ managedApp.app_id || 'unset' }}</strong>
+        @if (managedApp.app_id) {
+          <button type="button" class="ghost micro" (click)="copy(managedApp.app_id, 'app_id')">copy</button>
         }
       </div>
       <div class="secret-row">
@@ -117,12 +117,12 @@
       <div class="eyebrow">selected</div>
       <div class="meta-line">scopes={{ scopeOptions.filter(item => item.selected).length }}</div>
       <div class="meta-line">premises={{ premiseOptions.filter(item => item.selected).length }}</div>
-      <div class="meta-line">users={{ app?.user_num || 0 }}</div>
+      <div class="meta-line">users={{ managedApp.user_num || 0 }}</div>
     </section>
 
     <section class="stack">
       <div class="eyebrow">return</div>
-      <button type="button" class="ghost full" (click)="router.navigateByUrl('/apps')">back to app center</button>
+      <button type="button" class="ghost full" (click)="backToApps()">back to app center</button>
     </section>
   </div>
 </section>

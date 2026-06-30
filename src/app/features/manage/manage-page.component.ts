@@ -156,6 +156,10 @@ export class ManagePageComponent implements OnInit {
     return `${window.location.origin}/oauth/?app_id=${this.app.app_id}`;
   }
 
+  protected async backToApps() {
+    await this.router.navigateByUrl('/apps');
+  }
+
   private async loadApp(appId: string) {
     this.loading = true;
     this.error = '';
