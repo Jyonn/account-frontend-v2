@@ -95,7 +95,6 @@ export class AuthPageComponent implements OnInit {
         const payload = (await this.api.beginCaptchaFlow({
           mode: 2,
           response,
-          phone: '',
           qt: this.qitianId,
           pwd: this.password
         })) as AuthPayload;
@@ -161,7 +160,7 @@ export class AuthPageComponent implements OnInit {
       const payload = (await this.api.beginCaptchaFlow({
         mode: this.verificationMode,
         code: this.verificationCode,
-        pwd: this.needsPasswordForCodeStep ? this.password : ''
+        ...(this.needsPasswordForCodeStep ? { pwd: this.password } : {})
       })) as AuthPayload;
       await this.finishLogin(payload);
     } catch (error) {

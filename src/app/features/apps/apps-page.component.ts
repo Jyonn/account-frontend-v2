@@ -89,7 +89,7 @@ export class AppsPageComponent implements OnInit {
 
     try {
       const [allApps, devApps] = await Promise.all([
-        this.api.getAppList({ relation: 'none', frequent: false, count: 12 }),
+        this.api.getAppList({ relation: '', frequent: false, count: 12 }),
         this.api.getAppList({ relation: 'owner' })
       ]);
 
