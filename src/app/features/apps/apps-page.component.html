@@ -5,27 +5,27 @@
         <div class="eyebrow">app center</div>
         <h2>应用总览</h2>
       </div>
-      <button type="button" class="ghost" (click)="reload()" [disabled]="loading">refresh</button>
+      <button type="button" class="ghost" (click)="reload()" [disabled]="loading()">refresh</button>
     </div>
 
-    @if (error) {
-      <div class="feedback error">{{ error }}</div>
+    @if (error()) {
+      <div class="feedback error">{{ error() }}</div>
     }
-    @if (hint) {
-      <div class="feedback info">{{ hint }}</div>
+    @if (hint()) {
+      <div class="feedback info">{{ hint() }}</div>
     }
 
-    @if (loading) {
+    @if (loading()) {
       <div class="empty-state">loading app registry...</div>
     } @else {
       <section class="bucket">
         <div class="bucket-title">all apps</div>
         <div class="rows">
-          @for (app of allApps; track app.app_id) {
+          @for (app of allApps(); track app.app_id) {
             <button
               type="button"
               class="app-row"
-              [class.selected]="selectedApp?.app_id === app.app_id"
+              [class.selected]="selectedApp()?.app_id === app.app_id"
               (click)="inspect(app.app_id)"
             >
               <div class="logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
@@ -45,15 +45,15 @@
         </div>
       </section>
 
-      @if (devApps.length) {
+      @if (devApps().length) {
         <section class="bucket">
           <div class="bucket-title">owned apps</div>
           <div class="rows">
-            @for (app of devApps; track app.app_id) {
+            @for (app of devApps(); track app.app_id) {
               <button
                 type="button"
                 class="app-row"
-                [class.selected]="selectedApp?.app_id === app.app_id"
+                [class.selected]="selectedApp()?.app_id === app.app_id"
                 (click)="inspect(app.app_id)"
               >
                 <div class="logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
@@ -76,60 +76,60 @@
 
   <div class="detail-pane">
     <div class="pane-head">
-      <div>
-        <div class="eyebrow">inspect</div>
-        <h2>{{ selectedApp?.app_name || '选择一个应用' }}</h2>
+        <div>
+          <div class="eyebrow">inspect</div>
+        <h2>{{ selectedApp()?.app_name || '选择一个应用' }}</h2>
       </div>
     </div>
 
-    @if (detailLoading) {
+    @if (detailLoading()) {
       <div class="empty-state">loading detail...</div>
-    } @else if (selectedApp) {
+    } @else if (selectedApp(); as app) {
       <div class="hero">
-        <div class="hero-logo" [style.background-image]="selectedApp.logo ? 'url(' + selectedApp.logo + ')' : ''">
-          @if (!selectedApp.logo) {
-            <span>{{ selectedApp.app_name.slice(0, 1) }}</span>
+        <div class="hero-logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
+          @if (!app.logo) {
+            <span>{{ app.app_name.slice(0, 1) }}</span>
           }
         </div>
         <div class="hero-copy">
-          <div class="hero-name">{{ selectedApp.app_name }}</div>
-          <div class="hero-desc">{{ selectedApp.app_desc || 'no description' }}</div>
+          <div class="hero-name">{{ app.app_name }}</div>
+          <div class="hero-desc">{{ app.app_desc || 'no description' }}</div>
         </div>
       </div>
 
       <div class="action-row">
-        <button type="button" class="primary" (click)="enter(selectedApp)" [disabled]="launchingAppId === selectedApp.app_id">
-          {{ launchingAppId === selectedApp.app_id ? 'launching...' : 'enter app' }}
+        <button type="button" class="primary" (click)="enter(app)" [disabled]="launchingAppId() === app.app_id">
+          {{ launchingAppId() === app.app_id ? 'launching...' : 'enter app' }}
         </button>
-        @if (canManageSelectedApp) {
-          <button type="button" class="ghost" (click)="manage(selectedApp)">manage app</button>
+        @if (canManageSelectedApp()) {
+          <button type="button" class="ghost" (click)="manage(app)">manage app</button>
         }
-        <button type="button" class="ghost" (click)="copyAppId(selectedApp.app_id)">copy app_id</button>
+        <button type="button" class="ghost" (click)="copyAppId(app.app_id)">copy app_id</button>
       </div>
 
       <div class="detail-grid">
         <div class="detail-item">
           <span>app_id</span>
-          <strong>{{ selectedApp.app_id }}</strong>
+          <strong>{{ app.app_id }}</strong>
         </div>
         <div class="detail-item">
           <span>users</span>
-          <strong>{{ selectedApp.user_num || 0 }}</strong>
+          <strong>{{ app.user_num || 0 }}</strong>
         </div>
         <div class="detail-item">
           <span>created</span>
-          <strong>{{ formatTime(selectedApp.create_time) }}</strong>
+          <strong>{{ formatTime(app.create_time) }}</strong>
         </div>
         <div class="detail-item">
           <span>relation</span>
-          <strong>{{ selectedApp.relation?.belong ? 'owner' : selectedApp.relation?.bind ? 'bound' : 'public' }}</strong>
+          <strong>{{ app.relation?.belong ? 'owner' : app.relation?.bind ? 'bound' : 'public' }}</strong>
         </div>
       </div>
 
       <div class="terminal-block">
-        <div>$ redirect_uri = {{ selectedApp.redirect_uri || 'unset' }}</div>
-        <div>$ test_redirect_uri = {{ selectedApp.test_redirect_uri || 'unset' }}</div>
-        <div>$ description = {{ selectedApp.app_info || selectedApp.app_desc || 'empty' }}</div>
+        <div>$ redirect_uri = {{ app.redirect_uri || 'unset' }}</div>
+        <div>$ test_redirect_uri = {{ app.test_redirect_uri || 'unset' }}</div>
+        <div>$ description = {{ app.app_info || app.app_desc || 'empty' }}</div>
       </div>
     } @else {
       <div class="empty-state">没有可展示的应用。</div>

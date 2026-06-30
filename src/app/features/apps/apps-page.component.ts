@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AccountApp } from '../../core/models/account.models';
 import { ApiService } from '../../core/services/api.service';
@@ -14,14 +14,15 @@ export class AppsPageComponent implements OnInit {
   private readonly router = inject(Router);
   protected readonly session = inject(SessionService);
 
-  protected loading = true;
-  protected detailLoading = false;
-  protected launchingAppId = '';
-  protected error = '';
-  protected hint = '';
-  protected allApps: AccountApp[] = [];
-  protected devApps: AccountApp[] = [];
-  protected selectedApp: AccountApp | null = null;
+  protected readonly loading = signal(true);
+  protected readonly detailLoading = signal(false);
+  protected readonly launchingAppId = signal('');
+  protected readonly error = signal('');
+  protected readonly hint = signal('');
+  protected readonly allApps = signal<AccountApp[]>([]);
+  protected readonly devApps = signal<AccountApp[]>([]);
+  protected readonly selectedApp = signal<AccountApp | null>(null);
+  protected readonly canManageSelectedApp = computed(() => !!this.selectedApp()?.relation?.belong);
 
   async ngOnInit() {
     await this.session.bootstrap();
@@ -38,31 +39,31 @@ export class AppsPageComponent implements OnInit {
   }
 
   protected async inspect(appId: string) {
-    this.error = '';
-    this.hint = '';
-    this.detailLoading = true;
+    this.error.set('');
+    this.hint.set('');
+    this.detailLoading.set(true);
 
     try {
-      this.selectedApp = await this.api.getAppDetail(appId);
+      this.selectedApp.set(await this.api.getAppDetail(appId));
     } catch (error) {
-      this.error = error instanceof Error ? error.message : '应用详情加载失败';
+      this.error.set(error instanceof Error ? error.message : '应用详情加载失败');
     } finally {
-      this.detailLoading = false;
+      this.detailLoading.set(false);
     }
   }
 
   protected async enter(app: AccountApp) {
-    this.launchingAppId = app.app_id;
-    this.error = '';
-    this.hint = '';
+    this.launchingAppId.set(app.app_id);
+    this.error.set('');
+    this.hint.set('');
 
     try {
       const payload = await this.api.authorizeApp(app.app_id);
       window.location.href = this.attachAuthCode(payload.redirect_uri, payload.auth_code);
     } catch (error) {
-      this.error = error instanceof Error ? error.message : '进入应用失败';
+      this.error.set(error instanceof Error ? error.message : '进入应用失败');
     } finally {
-      this.launchingAppId = '';
+      this.launchingAppId.set('');
     }
   }
 
@@ -73,9 +74,9 @@ export class AppsPageComponent implements OnInit {
   protected async copyAppId(appId: string) {
     try {
       await navigator.clipboard.writeText(appId);
-      this.hint = `app_id copied: ${appId}`;
+      this.hint.set(`app_id copied: ${appId}`);
     } catch {
-      this.hint = `app_id: ${appId}`;
+      this.hint.set(`app_id: ${appId}`);
     }
   }
 
@@ -86,14 +87,10 @@ export class AppsPageComponent implements OnInit {
     return new Date(timestamp * 1000).toLocaleDateString('zh-CN');
   }
 
-  protected get canManageSelectedApp() {
-    return !!this.selectedApp?.relation?.belong;
-  }
-
   private async loadApps() {
-    this.loading = true;
-    this.error = '';
-    this.hint = '';
+    this.loading.set(true);
+    this.error.set('');
+    this.hint.set('');
 
     try {
       const [allApps, devApps] = await Promise.all([
@@ -101,23 +98,24 @@ export class AppsPageComponent implements OnInit {
         this.api.getAppList({ relation: 'owner' })
       ]);
 
-      this.allApps = allApps;
-      this.devApps = devApps;
+      this.allApps.set(allApps);
+      this.devApps.set(devApps);
 
-      const first = this.selectedApp
-        ? [...devApps, ...allApps].find((item) => item.app_id === this.selectedApp?.app_id)
+      const currentSelectedApp = this.selectedApp();
+      const first = currentSelectedApp
+        ? [...devApps, ...allApps].find((item) => item.app_id === currentSelectedApp.app_id)
         : devApps[0] || allApps[0];
 
       if (first) {
-        this.selectedApp = first;
+        this.selectedApp.set(first);
         void this.inspect(first.app_id);
       } else {
-        this.selectedApp = null;
+        this.selectedApp.set(null);
       }
     } catch (error) {
-      this.error = error instanceof Error ? error.message : '应用中心加载失败';
+      this.error.set(error instanceof Error ? error.message : '应用中心加载失败');
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 
