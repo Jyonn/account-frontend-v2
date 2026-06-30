@@ -1,0 +1,105 @@
+<section class="auth-grid">
+  <div class="auth-panel">
+    <div class="panel-head">
+      <div class="eyebrow">access</div>
+      <h2>进入账户工作台</h2>
+      <p>先验证身份，再进入应用中心。</p>
+    </div>
+
+    <div class="mode-strip">
+      <button type="button" [class.active]="mode === 'qitian-password'" (click)="switchMode('qitian-password')">
+        qt + pwd
+      </button>
+      <button type="button" [class.active]="mode === 'phone-password'" (click)="switchMode('phone-password')">
+        phone + pwd
+      </button>
+      <button type="button" [class.active]="mode === 'phone-code'" (click)="switchMode('phone-code')">
+        phone + code
+      </button>
+    </div>
+
+    <div class="form-grid">
+      @if (mode === 'qitian-password') {
+        <label class="field">
+          <span>齐天号</span>
+          <input [(ngModel)]="qitianId" autocomplete="username" />
+        </label>
+      } @else {
+        <div class="phone-row">
+          <label class="field region-field">
+            <span>区号</span>
+            <input [(ngModel)]="regionCode" />
+          </label>
+          <label class="field">
+            <span>手机号</span>
+            <input [(ngModel)]="phoneNumber" autocomplete="tel" />
+          </label>
+        </div>
+      }
+
+      @if (verificationMode === null) {
+        @if (mode !== 'phone-code') {
+          <label class="field">
+            <span>密码</span>
+            <input [(ngModel)]="password" type="password" autocomplete="current-password" />
+          </label>
+        }
+      } @else {
+        <div class="verify-grid">
+          <label class="field">
+            <span>6位验证码</span>
+            <input [(ngModel)]="verificationCode" maxlength="6" inputmode="numeric" />
+          </label>
+          @if (needsPasswordForCodeStep) {
+            <label class="field">
+              <span>{{ codeStepLabel }}</span>
+              <input [(ngModel)]="password" type="password" autocomplete="new-password" />
+            </label>
+          }
+        </div>
+      }
+
+      <div class="action-row">
+        <button type="button" class="primary" (click)="submit()" [disabled]="busy">
+          {{ verificationMode === null ? 'continue' : 'commit' }}
+        </button>
+        @if (verificationMode !== null) {
+          <button type="button" class="ghost" (click)="resetVerification()" [disabled]="busy">
+            reset
+          </button>
+        }
+      </div>
+    </div>
+
+    @if (message) {
+      <div class="feedback info">{{ message }}</div>
+    }
+    @if (error) {
+      <div class="feedback error">{{ error }}</div>
+    }
+
+    <app-recaptcha-panel
+      [visible]="captchaVisible"
+      [busy]="busy"
+      (resolved)="onCaptchaResolved($event)"
+      (cancelled)="cancelCaptcha()"
+      (failed)="onCaptchaFailed($event)"
+    />
+  </div>
+
+  <div class="status-panel">
+    <div class="eyebrow">protocol</div>
+    <div class="terminal-block">
+      <div>$ auth.mode = {{ mode }}</div>
+      <div>$ captcha.required = {{ verificationMode === null ? 'true' : 'false' }}</div>
+      <div>$ code.step = {{ verificationMode ?? 'idle' }}</div>
+      <div>$ session.cached = {{ session.token() ? 'true' : 'false' }}</div>
+    </div>
+
+    <div class="hint-list">
+      <div>使用齐天号登录时，会先通过 reCAPTCHA，再换取 token。</div>
+      <div>手机验证码模式会兼容“未注册自动转注册”的旧后端逻辑。</div>
+      <div>当前版本不再弹出手机壳式居中面板，桌面端直接全屏工作。</div>
+    </div>
+  </div>
+</section>

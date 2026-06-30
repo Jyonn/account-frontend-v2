@@ -1,0 +1,166 @@
+:host {
+  display: block;
+  min-height: 100%;
+}
+
+.auth-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 24rem);
+  gap: clamp(1rem, 2vw, 2rem);
+}
+
+.auth-panel,
+.status-panel {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.018);
+  box-shadow: var(--shadow);
+}
+
+.panel-head h2 {
+  margin: 0.3rem 0 0.35rem;
+  font-size: clamp(2rem, 1.4rem + 2vw, 3.25rem);
+  line-height: 0.94;
+  letter-spacing: -0.05em;
+}
+
+.panel-head p,
+.hint-list,
+.feedback,
+.terminal-block {
+  color: var(--text-dim);
+}
+
+.eyebrow,
+.mode-strip button,
+.field span,
+.primary,
+.ghost,
+.terminal-block {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.eyebrow {
+  color: var(--accent);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mode-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.mode-strip button,
+.primary,
+.ghost {
+  padding: 0.78rem 0.9rem;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.mode-strip button.active,
+.mode-strip button:hover,
+.primary:hover,
+.ghost:hover {
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-1px);
+}
+
+.form-grid,
+.verify-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.phone-row {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.field span {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.field input {
+  min-width: 0;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--line);
+  background: color-mix(in oklch, var(--bg-soft) 86%, transparent);
+  color: var(--text);
+  outline: none;
+}
+
+.field input:focus {
+  border-color: var(--accent-soft);
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.primary {
+  color: var(--accent);
+}
+
+.feedback {
+  padding: 0.9rem 1rem;
+  border-left: 2px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.feedback.error {
+  border-left-color: var(--danger);
+  color: color-mix(in oklch, var(--danger) 58%, var(--text));
+}
+
+.feedback.info {
+  border-left-color: var(--accent);
+}
+
+.terminal-block {
+  display: grid;
+  gap: 0.55rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.92rem;
+}
+
+.hint-list {
+  display: grid;
+  gap: 0.8rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 1080px) {
+  .auth-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .phone-row {
+    grid-template-columns: 1fr;
+  }
+}

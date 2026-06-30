@@ -1,0 +1,117 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+
+.workspace {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(18rem, 22rem) minmax(0, 1fr);
+}
+
+.sidebar {
+  display: grid;
+  grid-template-rows: auto auto auto 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-right: 1px solid var(--line);
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02), transparent 28%),
+    color-mix(in oklch, var(--panel) 92%, transparent);
+}
+
+.brand h1 {
+  margin: 0.4rem 0 0.35rem;
+  font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem);
+  letter-spacing: -0.03em;
+}
+
+.brand p,
+.session-meta,
+.meta-line,
+.status {
+  margin: 0;
+  color: var(--text-dim);
+}
+
+.brand-mark,
+.card-label,
+.nav a,
+.ghost-btn {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.brand-mark,
+.card-label {
+  color: var(--accent);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.nav {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.nav a,
+.ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.nav a:hover,
+.nav a.active,
+.ghost-btn:hover {
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.035);
+  transform: translateY(-1px);
+}
+
+.session-card,
+.stack {
+  display: grid;
+  gap: 0.8rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.session-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.status.error {
+  color: var(--danger);
+}
+
+.ghost-btn {
+  justify-content: center;
+}
+
+.main {
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 2rem);
+}
+
+@media (max-width: 900px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+}

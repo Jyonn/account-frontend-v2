@@ -1,0 +1,14 @@
+@if (visible) {
+  <section class="panel">
+    <div class="panel-head">
+      <div>
+        <div class="eyebrow">captcha</div>
+        <h3>验证当前操作</h3>
+      </div>
+      <button type="button" class="ghost" (click)="cancel()" [disabled]="busy">cancel</button>
+    </div>
+
+    <div class="terminal-line">执行前需要通过 reCAPTCHA。</div>
+    <div class="captcha-slot" #captchaSlot></div>
+  </section>
+}

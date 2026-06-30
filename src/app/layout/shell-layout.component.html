@@ -1,0 +1,49 @@
+<div class="workspace">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">account://qt</div>
+      <h1>Terminal Workspace</h1>
+      <p>登录、授权、应用中心。</p>
+    </div>
+
+    <nav class="nav">
+      <a routerLink="/login" routerLinkActive="active">auth/login</a>
+      <a routerLink="/apps" routerLinkActive="active">apps/center</a>
+    </nav>
+
+    <section class="session-card">
+      <div class="card-label">session</div>
+      @if (session.user(); as user) {
+        <div class="session-main">
+          <div class="session-name">{{ user.nickname || user.qitian || user.user_str_id }}</div>
+          <div class="session-meta">qt={{ user.qitian || 'unset' }}</div>
+          <div class="session-meta">dev={{ user.is_dev ? 'true' : 'false' }}</div>
+        </div>
+      } @else {
+        <div class="session-main">
+          <div class="session-name">anonymous</div>
+          <div class="session-meta">token={{ session.token() ? 'cached' : 'empty' }}</div>
+        </div>
+      }
+      @if (session.error()) {
+        <div class="status error">{{ session.error() }}</div>
+      } @else {
+        <div class="status">{{ session.status() }}</div>
+      }
+      @if (session.isLoggedIn()) {
+        <button class="ghost-btn" type="button" (click)="session.logout()">logout</button>
+      }
+    </section>
+
+    <section class="stack">
+      <div class="card-label">runtime</div>
+      <div class="meta-line">api.qt.6-79.cn</div>
+      <div class="meta-line">recaptcha.net</div>
+      <div class="meta-line">angular 21</div>
+    </section>
+  </aside>
+
+  <main class="main">
+    <router-outlet />
+  </main>
+</div>
