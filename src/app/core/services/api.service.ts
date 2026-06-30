@@ -21,15 +21,18 @@ export class ApiService {
   private readonly http = inject(HttpClient);
 
   async getProfile() {
-    return this.request<UserProfile>('GET', '/user/');
+    const profile = await this.request<UserProfile>('GET', '/user/');
+    return this.normalizeUser(profile);
   }
 
   async getAppList(params: Record<string, string | number | boolean | null | undefined>) {
-    return this.request<AccountApp[]>('GET', '/app/', { params });
+    const apps = await this.request<AccountApp[]>('GET', '/app/', { params });
+    return apps.map((app) => this.normalizeApp(app));
   }
 
   async getAppDetail(appId: string) {
-    return this.request<AccountApp>('GET', `/app/${appId}`);
+    const app = await this.request<AccountApp>('GET', `/app/${appId}`);
+    return this.normalizeApp(app);
   }
 
   async getAppSecret(appId: string) {
@@ -76,7 +79,8 @@ export class ApiService {
       premises: string[];
     }
   ) {
-    return this.request<AccountApp>('PUT', `/app/${appId}`, { body: payload });
+    const app = await this.request<AccountApp>('PUT', `/app/${appId}`, { body: payload });
+    return this.normalizeApp(app);
   }
 
   async updateUserInfo(payload: {
@@ -85,18 +89,20 @@ export class ApiService {
     qitian?: string;
     birthday?: string;
   }) {
-    return this.request<UserProfile>('PUT', '/user/', { body: payload });
+    const profile = await this.request<UserProfile>('PUT', '/user/', { body: payload });
+    return this.normalizeUser(profile);
   }
 
   async applyDev() {
-    return this.request<UserProfile>('POST', '/user/dev', { body: {} });
+    const profile = await this.request<UserProfile>('POST', '/user/dev', { body: {} });
+    return this.normalizeUser(profile);
   }
 
   async getLogoUploadToken(filename: string, appId: string) {
     return this.request<UploadTokenPayload>('GET', '/app/logo', {
       params: {
         filename,
-        app: appId
+        app_id: appId
       }
     });
   }
@@ -226,5 +232,42 @@ export class ApiService {
     }
 
     return '网络请求失败';
+  }
+
+  private normalizeApp(app: AccountApp) {
+    return {
+      ...app,
+      logo: this.normalizeMedia(app.logo),
+      scopes: this.normalizeChoices(
+        ((app.scopes as Array<{ name?: string; desc?: string; detail?: string; always?: boolean | null }> | undefined) || [])
+      ),
+      premises: this.normalizeChoices(
+        ((app.premises as Array<{ name?: string; desc?: string; detail?: string; always?: boolean | null }> | undefined) || [])
+      )
+    } satisfies AccountApp;
+  }
+
+  private normalizeUser(user: UserProfile) {
+    return {
+      ...user,
+      avatar: this.normalizeMedia(user.avatar)
+    } satisfies UserProfile;
+  }
+
+  private normalizeMedia(value: string | { link?: string | null } | null | undefined) {
+    if (!value) {
+      return null;
+    }
+    return typeof value === 'string' ? value : value.link || null;
+  }
+
+  private normalizeChoices(items: Array<{ name?: string; desc?: string; detail?: string; always?: boolean | null }>) {
+    return items.map((item) => ({
+      id: item.name || '',
+      key: item.desc || item.name || '',
+      detail: item.detail,
+      always: item.always,
+      selected: item.always === true
+    }));
   }
 }
