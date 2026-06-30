@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
@@ -15,18 +15,22 @@ export class SettingsPageComponent implements OnInit {
   private readonly router = inject(Router);
   protected readonly session = inject(SessionService);
 
-  protected loading = true;
-  protected saving = false;
-  protected applyingDev = false;
-  protected editMode = false;
-  protected message = '';
-  protected error = '';
+  protected readonly loading = signal(true);
+  protected readonly saving = signal(false);
+  protected readonly applyingDev = signal(false);
+  protected readonly editMode = signal(false);
+  protected readonly message = signal('');
+  protected readonly error = signal('');
   protected draft = {
     nickname: '',
     description: '',
     qitian: '',
     birthday: ''
   };
+  protected readonly canApplyDev = computed(() => {
+    const user = this.session.user();
+    return !!user && !user.is_dev && user.verify_status === 3;
+  });
 
   async ngOnInit() {
     await this.session.bootstrap();
@@ -40,32 +44,32 @@ export class SettingsPageComponent implements OnInit {
     }
 
     this.syncDraft();
-    this.loading = false;
+    this.loading.set(false);
   }
 
   protected beginEdit() {
-    this.editMode = true;
-    this.message = '';
-    this.error = '';
+    this.editMode.set(true);
+    this.message.set('');
+    this.error.set('');
     this.syncDraft();
   }
 
   protected cancelEdit() {
-    this.editMode = false;
-    this.message = '';
-    this.error = '';
+    this.editMode.set(false);
+    this.message.set('');
+    this.error.set('');
     this.syncDraft();
   }
 
   protected async saveProfile() {
     if (!this.draft.nickname.trim()) {
-      this.error = '昵称不能为空';
+      this.error.set('昵称不能为空');
       return;
     }
 
-    this.saving = true;
-    this.message = '';
-    this.error = '';
+    this.saving.set(true);
+    this.message.set('');
+    this.error.set('');
 
     try {
       const user = await this.api.updateUserInfo({
@@ -75,13 +79,13 @@ export class SettingsPageComponent implements OnInit {
         birthday: this.draft.birthday || ''
       });
       this.session.user.set(user);
-      this.editMode = false;
-      this.message = 'profile updated';
+      this.editMode.set(false);
+      this.message.set('profile updated');
       this.syncDraft();
     } catch (error) {
-      this.error = error instanceof Error ? error.message : '资料更新失败';
+      this.error.set(error instanceof Error ? error.message : '资料更新失败');
     } finally {
-      this.saving = false;
+      this.saving.set(false);
     }
   }
 
@@ -92,9 +96,9 @@ export class SettingsPageComponent implements OnInit {
       return;
     }
 
-    this.saving = true;
-    this.message = '';
-    this.error = '';
+    this.saving.set(true);
+    this.message.set('');
+    this.error.set('');
 
     try {
       const uploadToken = await this.api.getAvatarUploadToken(file.name);
@@ -108,32 +112,32 @@ export class SettingsPageComponent implements OnInit {
         ...current,
         ...(uploaded as Record<string, unknown>)
       } as typeof current);
-      this.message = 'avatar uploaded';
+      this.message.set('avatar uploaded');
     } catch (error) {
-      this.error = error instanceof Error ? error.message : '头像上传失败';
+      this.error.set(error instanceof Error ? error.message : '头像上传失败');
     } finally {
       input.value = '';
-      this.saving = false;
+      this.saving.set(false);
     }
   }
 
   protected async applyDev() {
-    if (!this.canApplyDev) {
+    if (!this.canApplyDev()) {
       return;
     }
 
-    this.applyingDev = true;
-    this.message = '';
-    this.error = '';
+    this.applyingDev.set(true);
+    this.message.set('');
+    this.error.set('');
 
     try {
       const user = await this.api.applyDev();
       this.session.user.set(user);
-      this.message = 'developer access granted';
+      this.message.set('developer access granted');
     } catch (error) {
-      this.error = error instanceof Error ? error.message : '开发者申请失败';
+      this.error.set(error instanceof Error ? error.message : '开发者申请失败');
     } finally {
-      this.applyingDev = false;
+      this.applyingDev.set(false);
     }
   }
 
@@ -161,11 +165,6 @@ export class SettingsPageComponent implements OnInit {
       default:
         return 'unverified';
     }
-  }
-
-  protected get canApplyDev() {
-    const user = this.session.user();
-    return !!user && !user.is_dev && user.verify_status === 3;
   }
 
   private syncDraft() {

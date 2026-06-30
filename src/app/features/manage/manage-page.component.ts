@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
@@ -17,15 +17,15 @@ export class ManagePageComponent implements OnInit {
   private readonly router = inject(Router);
   protected readonly session = inject(SessionService);
 
-  protected loading = true;
-  protected saving = false;
-  protected uploadingLogo = false;
-  protected error = '';
-  protected message = '';
-  protected app: AccountApp | null = null;
-  protected appSecret = '';
-  protected scopeOptions: ChoiceItem[] = [];
-  protected premiseOptions: ChoiceItem[] = [];
+  protected readonly loading = signal(true);
+  protected readonly saving = signal(false);
+  protected readonly uploadingLogo = signal(false);
+  protected readonly error = signal('');
+  protected readonly message = signal('');
+  protected readonly app = signal<AccountApp | null>(null);
+  protected readonly appSecret = signal('');
+  protected readonly scopeOptions = signal<ChoiceItem[]>([]);
+  protected readonly premiseOptions = signal<ChoiceItem[]>([]);
   protected draft = {
     app_name: '',
     app_desc: '',
@@ -33,6 +33,8 @@ export class ManagePageComponent implements OnInit {
     test_redirect_uri: '',
     app_info: ''
   };
+  protected readonly appId = computed(() => this.app()?.app_id || '');
+  protected readonly appUserCount = computed(() => this.app()?.user_num || 0);
 
   async ngOnInit() {
     await this.session.bootstrap();
@@ -43,8 +45,8 @@ export class ManagePageComponent implements OnInit {
 
     const appId = this.route.snapshot.paramMap.get('appId');
     if (!appId) {
-      this.error = 'missing app id';
-      this.loading = false;
+      this.error.set('missing app id');
+      this.loading.set(false);
       return;
     }
 
@@ -52,97 +54,109 @@ export class ManagePageComponent implements OnInit {
   }
 
   protected async save() {
-    if (!this.app) {
+    const app = this.app();
+    if (!app) {
       return;
     }
 
     const validationMessage = this.validate();
     if (validationMessage) {
-      this.error = validationMessage;
+      this.error.set(validationMessage);
       return;
     }
 
-    this.saving = true;
-    this.error = '';
-    this.message = '';
+    this.saving.set(true);
+    this.error.set('');
+    this.message.set('');
 
     try {
-      const updated = await this.api.updateAppInfo(this.app.app_id, {
+      const updated = await this.api.updateAppInfo(app.app_id, {
         name: this.draft.app_name.trim(),
         desc: this.draft.app_desc.trim(),
         info: this.draft.app_info.trim(),
         redirect_uri: this.draft.redirect_uri.trim(),
         test_redirect_uri: this.draft.test_redirect_uri.trim(),
-        scopes: this.scopeOptions.filter((item) => item.selected).map((item) => item.id),
-        premises: this.premiseOptions.filter((item) => item.selected).map((item) => item.id)
+        scopes: this.scopeOptions().filter((item) => item.selected).map((item) => item.id),
+        premises: this.premiseOptions().filter((item) => item.selected).map((item) => item.id)
       });
 
-      this.app = {
-        ...this.app,
+      this.app.set({
+        ...app,
         ...updated,
-        app_secret: this.appSecret,
-        scopes: this.scopeOptions.filter((item) => item.selected),
-        premises: this.premiseOptions.filter((item) => item.selected)
-      };
-      this.message = 'app updated';
+        app_secret: this.appSecret(),
+        scopes: this.scopeOptions().filter((item) => item.selected),
+        premises: this.premiseOptions().filter((item) => item.selected)
+      });
+      this.message.set('app updated');
       this.syncDraft();
     } catch (error) {
-      this.error = error instanceof Error ? error.message : '更新应用失败';
+      this.error.set(error instanceof Error ? error.message : '更新应用失败');
     } finally {
-      this.saving = false;
+      this.saving.set(false);
     }
   }
 
   protected async uploadLogo(event: Event) {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    if (!file || !this.app) {
+    const app = this.app();
+    if (!file || !app) {
       return;
     }
 
-    this.uploadingLogo = true;
-    this.error = '';
-    this.message = '';
+    this.uploadingLogo.set(true);
+    this.error.set('');
+    this.message.set('');
 
     try {
-      const uploadToken = await this.api.getLogoUploadToken(file.name, this.app.app_id);
+      const uploadToken = await this.api.getLogoUploadToken(file.name, app.app_id);
       const uploaded = await this.api.uploadFile({
         key: uploadToken.key,
         token: uploadToken.upload_token,
         file
       });
-      this.app = {
-        ...this.app,
+      this.app.set({
+        ...app,
         ...(uploaded as Record<string, unknown>)
-      } as AccountApp;
-      this.message = 'logo uploaded';
+      } as AccountApp);
+      this.message.set('logo uploaded');
     } catch (error) {
-      this.error = error instanceof Error ? error.message : '图标上传失败';
+      this.error.set(error instanceof Error ? error.message : '图标上传失败');
     } finally {
       input.value = '';
-      this.uploadingLogo = false;
+      this.uploadingLogo.set(false);
     }
   }
 
-  protected toggleChoice(list: ChoiceItem[], itemId: string) {
-    list.forEach((item) => {
+  protected toggleScope(itemId: string) {
+    this.scopeOptions.update((list) => list.map((item) => {
       if (item.id === itemId && item.always !== true) {
-        item.selected = !item.selected;
+        return { ...item, selected: !item.selected };
       }
-    });
+      return item;
+    }));
+  }
+
+  protected togglePremise(itemId: string) {
+    this.premiseOptions.update((list) => list.map((item) => {
+      if (item.id === itemId && item.always !== true) {
+        return { ...item, selected: !item.selected };
+      }
+      return item;
+    }));
   }
 
   protected async copy(value: string, label: string) {
     try {
       await navigator.clipboard.writeText(value);
-      this.message = `${label} copied`;
+      this.message.set(`${label} copied`);
     } catch {
-      this.message = `${label}: ${value}`;
+      this.message.set(`${label}: ${value}`);
     }
   }
 
   protected get logoUrl() {
-    const logo = this.app?.logo;
+    const logo = this.app()?.logo;
     if (!logo) {
       return '';
     }
@@ -150,18 +164,11 @@ export class ManagePageComponent implements OnInit {
   }
 
   protected get oauthUrl() {
-    if (!this.app?.app_id) {
+    const appId = this.app()?.app_id;
+    if (!appId) {
       return '';
     }
-    return `${window.location.origin}/oauth/?app_id=${this.app.app_id}`;
-  }
-
-  protected get appId() {
-    return this.app?.app_id || '';
-  }
-
-  protected get appUserCount() {
-    return this.app?.user_num || 0;
+    return `${window.location.origin}/oauth/?app_id=${appId}`;
   }
 
   protected async backToApps() {
@@ -169,8 +176,8 @@ export class ManagePageComponent implements OnInit {
   }
 
   private async loadApp(appId: string) {
-    this.loading = true;
-    this.error = '';
+    this.loading.set(true);
+    this.error.set('');
 
     try {
       const [app, appSecret, scopes, premises] = await Promise.all([
@@ -181,33 +188,33 @@ export class ManagePageComponent implements OnInit {
       ]);
 
       if (!app.relation?.belong) {
-        this.error = 'current session is not the owner of this app';
-        this.loading = false;
+        this.error.set('current session is not the owner of this app');
+        this.loading.set(false);
         return;
       }
 
       const selectedScopeIds = new Set((app.scopes || []).map((item) => item.id));
       const selectedPremiseIds = new Set((app.premises || []).map((item) => item.id));
 
-      this.scopeOptions = scopes.map((item) => ({
+      this.scopeOptions.set(scopes.map((item) => ({
         ...item,
         selected: item.always === true || selectedScopeIds.has(item.id)
-      }));
-      this.premiseOptions = premises.map((item) => ({
+      })));
+      this.premiseOptions.set(premises.map((item) => ({
         ...item,
         selected: item.always === true || selectedPremiseIds.has(item.id)
-      }));
+      })));
 
-      this.app = {
+      this.app.set({
         ...app,
         app_secret: appSecret
-      };
-      this.appSecret = appSecret;
+      });
+      this.appSecret.set(appSecret);
       this.syncDraft();
     } catch (error) {
-      this.error = error instanceof Error ? error.message : '应用信息加载失败';
+      this.error.set(error instanceof Error ? error.message : '应用信息加载失败');
     } finally {
-      this.loading = false;
+      this.loading.set(false);
     }
   }
 
@@ -228,12 +235,13 @@ export class ManagePageComponent implements OnInit {
   }
 
   private syncDraft() {
+    const app = this.app();
     this.draft = {
-      app_name: this.app?.app_name || '',
-      app_desc: this.app?.app_desc || '',
-      redirect_uri: this.app?.redirect_uri || '',
-      test_redirect_uri: this.app?.test_redirect_uri || '',
-      app_info: this.app?.app_info || ''
+      app_name: app?.app_name || '',
+      app_desc: app?.app_desc || '',
+      redirect_uri: app?.redirect_uri || '',
+      test_redirect_uri: app?.test_redirect_uri || '',
+      app_info: app?.app_info || ''
     };
   }
 }

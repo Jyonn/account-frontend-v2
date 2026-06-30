@@ -5,26 +5,26 @@
         <div class="eyebrow">user setting</div>
         <h2>账户与个人资料</h2>
       </div>
-      @if (!editMode) {
+      @if (!editMode()) {
         <button type="button" class="ghost" (click)="beginEdit()">edit</button>
       } @else {
         <div class="action-row">
-          <button type="button" class="ghost" (click)="cancelEdit()" [disabled]="saving">cancel</button>
-          <button type="button" class="primary" (click)="saveProfile()" [disabled]="saving">
-            {{ saving ? 'saving...' : 'save' }}
+          <button type="button" class="ghost" (click)="cancelEdit()" [disabled]="saving()">cancel</button>
+          <button type="button" class="primary" (click)="saveProfile()" [disabled]="saving()">
+            {{ saving() ? 'saving...' : 'save' }}
           </button>
         </div>
       }
     </div>
 
-    @if (message) {
-      <div class="feedback info">{{ message }}</div>
+    @if (message()) {
+      <div class="feedback info">{{ message() }}</div>
     }
-    @if (error) {
-      <div class="feedback error">{{ error }}</div>
+    @if (error()) {
+      <div class="feedback error">{{ error() }}</div>
     }
 
-    @if (loading) {
+    @if (loading()) {
       <div class="empty-state">loading profile...</div>
     } @else {
       <section class="profile-hero">
@@ -37,7 +37,7 @@
           <div class="hero-name">{{ session.user()?.nickname || 'unnamed' }}</div>
           <div class="hero-meta">qt={{ session.user()?.qitian || 'unset' }}</div>
           <div class="hero-meta">verify={{ verifyStatusText }}</div>
-          @if (editMode) {
+          @if (editMode()) {
             <label class="upload-line">
               <input type="file" accept="image/*" (change)="uploadAvatar($event)" />
               <span>upload avatar</span>
@@ -49,23 +49,23 @@
       <section class="form-pane">
         <label class="field">
           <span>昵称</span>
-          <input [(ngModel)]="draft.nickname" [readonly]="!editMode" />
+          <input [(ngModel)]="draft.nickname" [readonly]="!editMode()" />
         </label>
         <label class="field">
           <span>个性签名</span>
-          <textarea rows="3" [(ngModel)]="draft.description" [readonly]="!editMode"></textarea>
+          <textarea rows="3" [(ngModel)]="draft.description" [readonly]="!editMode()"></textarea>
         </label>
         <label class="field">
           <span>齐天号</span>
           <input
             [(ngModel)]="draft.qitian"
-            [readonly]="!editMode || session.user()?.allow_qitian_modify === false"
+            [readonly]="!editMode() || session.user()?.allow_qitian_modify === false"
             placeholder="只能设置一次"
           />
         </label>
         <label class="field">
           <span>生日</span>
-          <input type="date" [(ngModel)]="draft.birthday" [readonly]="!editMode" />
+          <input type="date" [(ngModel)]="draft.birthday" [readonly]="!editMode()" />
         </label>
       </section>
     }
@@ -78,8 +78,8 @@
       <div class="meta-line">dev={{ session.user()?.is_dev ? 'true' : 'false' }}</div>
       <div class="meta-line">user={{ session.user()?.user_str_id || 'anonymous' }}</div>
       @if (!session.user()?.is_dev) {
-        <button type="button" class="ghost full" (click)="applyDev()" [disabled]="!canApplyDev || applyingDev">
-          {{ applyingDev ? 'applying...' : canApplyDev ? 'apply dev' : 'verify required' }}
+        <button type="button" class="ghost full" (click)="applyDev()" [disabled]="!canApplyDev() || applyingDev()">
+          {{ applyingDev() ? 'applying...' : canApplyDev() ? 'apply dev' : 'verify required' }}
         </button>
       }
     </section>

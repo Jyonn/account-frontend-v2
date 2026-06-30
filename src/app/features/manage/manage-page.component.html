@@ -3,23 +3,23 @@
     <div class="pane-head">
       <div>
         <div class="eyebrow">app manage</div>
-        <h2>{{ app?.app_name || '管理应用' }}</h2>
+        <h2>{{ app()?.app_name || '管理应用' }}</h2>
       </div>
-      <button type="button" class="primary" (click)="save()" [disabled]="saving || loading">
-        {{ saving ? 'saving...' : 'update' }}
+      <button type="button" class="primary" (click)="save()" [disabled]="saving() || loading()">
+        {{ saving() ? 'saving...' : 'update' }}
       </button>
     </div>
 
-    @if (message) {
-      <div class="feedback info">{{ message }}</div>
+    @if (message()) {
+      <div class="feedback info">{{ message() }}</div>
     }
-    @if (error) {
-      <div class="feedback error">{{ error }}</div>
+    @if (error()) {
+      <div class="feedback error">{{ error() }}</div>
     }
 
-    @if (loading) {
+    @if (loading()) {
       <div class="empty-state">loading app...</div>
-    } @else if (app; as managedApp) {
+    } @else if (app(); as managedApp) {
       <section class="hero">
         <div class="logo" [style.background-image]="logoUrl ? 'url(' + logoUrl + ')' : ''">
           @if (!logoUrl) {
@@ -31,7 +31,7 @@
           <div class="hero-meta">app_id={{ managedApp.app_id }}</div>
           <label class="upload-line">
             <input type="file" accept="image/*" (change)="uploadLogo($event)" />
-            <span>{{ uploadingLogo ? 'uploading...' : 'change logo' }}</span>
+            <span>{{ uploadingLogo() ? 'uploading...' : 'change logo' }}</span>
           </label>
         </div>
       </section>
@@ -59,8 +59,8 @@
         <div class="choice-pane">
           <div class="eyebrow">scope</div>
           <div class="choice-list">
-            @for (item of scopeOptions; track item.id) {
-              <button type="button" class="choice-item" [class.selected]="item.selected" (click)="toggleChoice(scopeOptions, item.id)">
+            @for (item of scopeOptions(); track item.id) {
+              <button type="button" class="choice-item" [class.selected]="item.selected" (click)="toggleScope(item.id)">
                 <span>{{ item.key }}</span>
                 <small>{{ item.detail || item.id }}</small>
               </button>
@@ -70,8 +70,8 @@
         <div class="choice-pane">
           <div class="eyebrow">premise</div>
           <div class="choice-list">
-            @for (item of premiseOptions; track item.id) {
-              <button type="button" class="choice-item" [class.selected]="item.selected" (click)="toggleChoice(premiseOptions, item.id)">
+            @for (item of premiseOptions(); track item.id) {
+              <button type="button" class="choice-item" [class.selected]="item.selected" (click)="togglePremise(item.id)">
                 <span>{{ item.key }}</span>
                 <small>{{ item.detail || item.id }}</small>
               </button>
@@ -92,16 +92,16 @@
       <div class="eyebrow">oauth</div>
       <div class="secret-row">
         <span>ID</span>
-        <strong>{{ appId || 'unset' }}</strong>
-        @if (appId) {
-          <button type="button" class="ghost micro" (click)="copy(appId, 'app_id')">copy</button>
+        <strong>{{ appId() || 'unset' }}</strong>
+        @if (appId()) {
+          <button type="button" class="ghost micro" (click)="copy(appId(), 'app_id')">copy</button>
         }
       </div>
       <div class="secret-row">
         <span>SECRET</span>
-        <strong>{{ appSecret || 'unset' }}</strong>
-        @if (appSecret) {
-          <button type="button" class="ghost micro" (click)="copy(appSecret, 'secret')">copy</button>
+        <strong>{{ appSecret() || 'unset' }}</strong>
+        @if (appSecret()) {
+          <button type="button" class="ghost micro" (click)="copy(appSecret(), 'secret')">copy</button>
         }
       </div>
       <div class="secret-row full-row">
@@ -115,9 +115,9 @@
 
     <section class="stack">
       <div class="eyebrow">selected</div>
-      <div class="meta-line">scopes={{ scopeOptions.filter(item => item.selected).length }}</div>
-      <div class="meta-line">premises={{ premiseOptions.filter(item => item.selected).length }}</div>
-      <div class="meta-line">users={{ appUserCount }}</div>
+      <div class="meta-line">scopes={{ scopeOptions().filter(item => item.selected).length }}</div>
+      <div class="meta-line">premises={{ premiseOptions().filter(item => item.selected).length }}</div>
+      <div class="meta-line">users={{ appUserCount() }}</div>
     </section>
 
     <section class="stack">
