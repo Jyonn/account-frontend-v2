@@ -109,7 +109,8 @@ export class AppsPageComponent implements OnInit {
         : devApps[0] || allApps[0];
 
       if (first) {
-        await this.inspect(first.app_id);
+        this.selectedApp = first;
+        void this.inspect(first.app_id);
       } else {
         this.selectedApp = null;
       }
