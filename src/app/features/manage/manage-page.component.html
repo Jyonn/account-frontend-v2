@@ -89,12 +89,12 @@
 
   <div class="meta-pane">
     <section class="stack">
-        <div class="eyebrow">oauth</div>
+      <div class="eyebrow">oauth</div>
       <div class="secret-row">
         <span>ID</span>
-        <strong>{{ managedApp.app_id || 'unset' }}</strong>
-        @if (managedApp.app_id) {
-          <button type="button" class="ghost micro" (click)="copy(managedApp.app_id, 'app_id')">copy</button>
+        <strong>{{ appId || 'unset' }}</strong>
+        @if (appId) {
+          <button type="button" class="ghost micro" (click)="copy(appId, 'app_id')">copy</button>
         }
       </div>
       <div class="secret-row">
@@ -117,7 +117,7 @@
       <div class="eyebrow">selected</div>
       <div class="meta-line">scopes={{ scopeOptions.filter(item => item.selected).length }}</div>
       <div class="meta-line">premises={{ premiseOptions.filter(item => item.selected).length }}</div>
-      <div class="meta-line">users={{ managedApp.user_num || 0 }}</div>
+      <div class="meta-line">users={{ appUserCount }}</div>
     </section>
 
     <section class="stack">

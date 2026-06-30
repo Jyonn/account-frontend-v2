@@ -156,6 +156,14 @@ export class ManagePageComponent implements OnInit {
     return `${window.location.origin}/oauth/?app_id=${this.app.app_id}`;
   }
 
+  protected get appId() {
+    return this.app?.app_id || '';
+  }
+
+  protected get appUserCount() {
+    return this.app?.user_num || 0;
+  }
+
   protected async backToApps() {
     await this.router.navigateByUrl('/apps');
   }
