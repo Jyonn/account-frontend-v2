@@ -46,15 +46,22 @@ export class ApiService {
     } = {}
   ) {
     try {
-      const response = await firstValueFrom(
-        this.http.request<LegacyEnvelope<T>>(method, `${API_HOST}${path}`, {
-          body: options.body,
-          params: this.cleanParams(options.params),
-          headers: this.buildHeaders(),
-          withCredentials: true,
-          responseType: 'json'
-        })
-      );
+      const response =
+        method === 'GET'
+          ? await firstValueFrom(
+              this.http.get<LegacyEnvelope<T>>(`${API_HOST}${path}`, {
+                params: this.cleanParams(options.params),
+                headers: this.buildHeaders(),
+                withCredentials: true
+              })
+            )
+          : await firstValueFrom(
+              this.http.post<LegacyEnvelope<T>>(`${API_HOST}${path}`, options.body, {
+                params: this.cleanParams(options.params),
+                headers: this.buildHeaders(),
+                withCredentials: true
+              })
+            );
 
       if (!response || response.identifier !== 'OK') {
         throw new Error(response?.user_message || response?.identifier || '请求失败');
@@ -80,7 +87,7 @@ export class ApiService {
 
     return Object.fromEntries(
       Object.entries(params).filter(([, value]) => value !== undefined && value !== null)
-    );
+    ) as Record<string, string | number | boolean>;
   }
 
   private readToken() {

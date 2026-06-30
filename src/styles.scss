@@ -1,8 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Instrument+Sans:wght@400;500;600;700&display=swap');
-
 :root {
   color-scheme: dark;
-  font-family: 'Instrument Sans', sans-serif;
+  font-family: 'IBM Plex Sans', 'Instrument Sans', 'Helvetica Neue', sans-serif;
   --bg: oklch(14% 0.018 240);
   --bg-soft: oklch(18% 0.02 240);
   --panel: oklch(17% 0.016 240);
@@ -41,7 +39,7 @@ body {
 }
 
 body {
-  font-family: 'Instrument Sans', sans-serif;
+  font-family: 'IBM Plex Sans', 'Instrument Sans', 'Helvetica Neue', sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
