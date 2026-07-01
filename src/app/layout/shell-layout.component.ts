@@ -22,7 +22,6 @@ export class ShellLayoutComponent implements OnInit {
         return '等待检查本地会话';
     }
   });
-  protected readonly tokenStatusText = computed(() => this.session.token() ? '已缓存' : '未缓存');
   protected readonly developerStatusText = computed(() => this.session.user()?.is_dev ? '已开通' : '未开通');
   protected readonly qitianStatusText = computed(() => this.session.user()?.qitian || '未设置');
 

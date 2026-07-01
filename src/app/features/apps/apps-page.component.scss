@@ -19,6 +19,12 @@
   min-width: 0;
 }
 
+.detail-pane {
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0.012)),
+    color-mix(in oklch, var(--panel) 94%, rgba(0, 0, 0, 0.24));
+}
+
 .detail-backdrop,
 .mobile-only {
   display: none;
@@ -50,7 +56,6 @@
 .meta,
 .ghost,
 .primary,
-.terminal-block,
 .detail-item span {
   font-family: 'IBM Plex Mono', monospace;
 }
@@ -139,7 +144,7 @@
 .desc,
 .feedback,
 .detail-item strong,
-.terminal-block {
+.markdown-content {
   min-width: 0;
 }
 
@@ -194,14 +199,78 @@
   font-size: 0.76rem;
 }
 
-.terminal-block {
+.markdown-pane {
   display: grid;
-  gap: 0.55rem;
+  gap: 0.85rem;
   padding: 1rem;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.028);
+}
+
+.markdown-content {
+  font-family: inherit;
   color: var(--text-dim);
   line-height: 1.45;
+}
+
+.markdown-content :is(h2, h3, h4) {
+  margin: 0;
+  color: var(--text);
+  font-size: clamp(1rem, 0.92rem + 0.45vw, 1.28rem);
+  letter-spacing: -0.03em;
+}
+
+.markdown-content p,
+.markdown-content ul,
+.markdown-content blockquote,
+.markdown-content pre {
+  margin: 0;
+}
+
+.markdown-content ul {
+  padding-left: 1.2rem;
+}
+
+.markdown-content li + li,
+.markdown-content p + p,
+.markdown-content p + ul,
+.markdown-content ul + p,
+.markdown-content blockquote + p,
+.markdown-content p + blockquote,
+.markdown-content pre + p,
+.markdown-content p + pre,
+.markdown-content h2 + p,
+.markdown-content h3 + p,
+.markdown-content h4 + p {
+  margin-top: 0.72rem;
+}
+
+.markdown-content blockquote {
+  padding-left: 0.9rem;
+  border-left: 2px solid var(--line-strong);
+  color: var(--text-faint);
+}
+
+.markdown-content code {
+  padding: 0.08rem 0.28rem;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+}
+
+.markdown-content pre {
+  overflow-x: auto;
+  padding: 0.9rem;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.markdown-content pre code {
+  padding: 0;
+  background: transparent;
+}
+
+.markdown-content a {
+  color: var(--accent);
 }
 
 .feedback {
@@ -244,6 +313,13 @@
     border-inline: 0;
     border-bottom: 0;
     border-top: 1px solid var(--line);
+    border-top-left-radius: 1.1rem;
+    border-top-right-radius: 1.1rem;
+    padding-bottom: max(1.15rem, env(safe-area-inset-bottom));
+    background:
+      linear-gradient(to bottom, rgba(14, 18, 24, 0.98), rgba(10, 14, 19, 0.98)),
+      color-mix(in oklch, var(--panel) 98%, black);
+    box-shadow: 0 -22px 60px rgba(0, 0, 0, 0.34);
     transform: translateY(calc(100% + 1rem));
     transition: transform 220ms ease;
     z-index: 30;

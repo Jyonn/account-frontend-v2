@@ -2,7 +2,7 @@
   <div class="main-pane">
     <div class="pane-head">
       <div>
-        <div class="eyebrow">user setting</div>
+        <div class="eyebrow">账户设置</div>
         <h2>账户与个人资料</h2>
       </div>
       @if (!editMode()) {
@@ -72,15 +72,14 @@
   </div>
 
   <button type="button" class="mobile-panel-toggle" (click)="toggleMobileSide()">
-    {{ mobileSideOpen() ? '收起账户状态与支持信息' : '展开账户状态与支持信息' }}
+    {{ mobileSideOpen() ? '收起账户补充信息' : '展开账户补充信息' }}
   </button>
 
   <div class="side-pane" [class.mobile-open]="mobileSideOpen()">
     <section class="stack">
-      <div class="eyebrow">security</div>
+      <div class="eyebrow">账户状态</div>
       <div class="meta-line">认证状态：{{ verifyStatusText }}</div>
       <div class="meta-line">开发者权限：{{ session.user()?.is_dev ? '已开通' : '未开通' }}</div>
-      <div class="meta-line">账户标识：{{ session.user()?.user_str_id || '未登录' }}</div>
       @if (!session.user()?.is_dev) {
         <button type="button" class="ghost full" (click)="applyDev()" [disabled]="!canApplyDev() || applyingDev()">
           {{ applyingDev() ? '申请中...' : canApplyDev() ? '申请开发者权限' : '完成认证后可申请' }}
@@ -89,26 +88,13 @@
     </section>
 
     <section class="stack">
-      <div class="eyebrow">workspace</div>
+      <div class="eyebrow">快捷入口</div>
       <a routerLink="/apps" class="inline-link">进入应用中心</a>
       <a routerLink="/apps" class="inline-link">查看自己创建的应用</a>
     </section>
 
     <section class="stack">
-      <div class="eyebrow">support</div>
-      <button type="button" class="ghost full" (click)="openExternal('https://github.com/lqj679ssn/account-frontend/issues/new')">
-        提交 GitHub 问题
-      </button>
-      <button type="button" class="ghost full" (click)="openExternal('https://github.com/lqj679ssn/account-frontend')">
-        查看源代码
-      </button>
-      <button type="button" class="ghost full" (click)="openExternal('mailto:i@6-79.cn')">
-        联系维护者
-      </button>
-    </section>
-
-    <section class="stack">
-      <div class="eyebrow">session</div>
+      <div class="eyebrow">登录操作</div>
       <button type="button" class="danger full" (click)="session.logout()">退出登录</button>
     </section>
   </div>

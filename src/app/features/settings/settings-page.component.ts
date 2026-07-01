@@ -142,10 +142,6 @@ export class SettingsPageComponent implements OnInit {
     }
   }
 
-  protected openExternal(url: string) {
-    window.open(url, '_blank', 'noopener');
-  }
-
   protected toggleMobileSide() {
     this.mobileSideOpen.update((value) => !value);
   }

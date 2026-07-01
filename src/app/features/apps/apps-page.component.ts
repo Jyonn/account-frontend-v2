@@ -3,9 +3,11 @@ import { Router } from '@angular/router';
 import { AccountApp } from '../../core/models/account.models';
 import { ApiService } from '../../core/services/api.service';
 import { SessionService } from '../../core/services/session.service';
+import { MarkdownPipe } from '../../shared/markdown.pipe';
 
 @Component({
   selector: 'app-apps-page',
+  imports: [MarkdownPipe],
   templateUrl: './apps-page.component.html',
   styleUrl: './apps-page.component.scss'
 })
@@ -19,7 +21,6 @@ export class AppsPageComponent implements OnInit {
   protected readonly detailDrawerOpen = signal(false);
   protected readonly launchingAppId = signal('');
   protected readonly error = signal('');
-  protected readonly hint = signal('');
   protected readonly allApps = signal<AccountApp[]>([]);
   protected readonly devApps = signal<AccountApp[]>([]);
   protected readonly selectedApp = signal<AccountApp | null>(null);
@@ -46,7 +47,6 @@ export class AppsPageComponent implements OnInit {
 
   protected async inspect(appId: string) {
     this.error.set('');
-    this.hint.set('');
     this.detailLoading.set(true);
 
     try {
@@ -61,7 +61,6 @@ export class AppsPageComponent implements OnInit {
   protected async enter(app: AccountApp) {
     this.launchingAppId.set(app.app_id);
     this.error.set('');
-    this.hint.set('');
 
     try {
       const payload = await this.api.authorizeApp(app.app_id);
@@ -87,18 +86,9 @@ export class AppsPageComponent implements OnInit {
     this.detailDrawerOpen.set(false);
   }
 
-  protected async copyAppId(appId: string) {
-    try {
-      await navigator.clipboard.writeText(appId);
-      this.hint.set(`应用 ID 已复制：${appId}`);
-    } catch {
-      this.hint.set(`应用 ID：${appId}`);
-    }
-  }
-
   protected formatTime(timestamp?: number) {
     if (!timestamp) {
-      return 'unknown';
+      return '未知';
     }
     return new Date(timestamp * 1000).toLocaleDateString('zh-CN');
   }
@@ -106,7 +96,6 @@ export class AppsPageComponent implements OnInit {
   private async loadApps() {
     this.loading.set(true);
     this.error.set('');
-    this.hint.set('');
 
     try {
       const [allApps, devApps] = await Promise.all([

@@ -2,7 +2,7 @@
   <div class="list-pane">
     <div class="pane-head">
       <div>
-        <div class="eyebrow">app center</div>
+        <div class="eyebrow">应用中心</div>
         <h2>应用总览</h2>
       </div>
       <div class="pane-actions">
@@ -15,9 +15,6 @@
 
     @if (error()) {
       <div class="feedback error">{{ error() }}</div>
-    }
-    @if (hint()) {
-      <div class="feedback info">{{ hint() }}</div>
     }
 
     @if (loading()) {
@@ -68,7 +65,7 @@
                 </div>
                 <div class="content">
                   <div class="name">{{ app.app_name }}</div>
-                  <div class="desc">{{ app.app_desc || '当前登录账户创建的应用' }}</div>
+                  <div class="desc">{{ app.app_desc || '你创建的应用' }}</div>
                 </div>
                 <div class="meta">自有</div>
               </button>
@@ -86,7 +83,7 @@
   <div class="detail-pane" [class.mobile-open]="detailDrawerOpen()">
     <div class="pane-head">
       <div>
-        <div class="eyebrow">inspect</div>
+        <div class="eyebrow">应用详情</div>
         <h2>{{ selectedApp()?.app_name || '选择一个应用' }}</h2>
       </div>
       <button type="button" class="ghost mobile-only" (click)="closeDetailDrawer()">收起详情</button>
@@ -114,14 +111,9 @@
         @if (canManageSelectedApp()) {
           <button type="button" class="ghost" (click)="manage(app)">管理应用</button>
         }
-        <button type="button" class="ghost" (click)="copyAppId(app.app_id)">复制应用 ID</button>
       </div>
 
       <div class="detail-grid">
-        <div class="detail-item">
-          <span>应用 ID</span>
-          <strong>{{ app.app_id }}</strong>
-        </div>
         <div class="detail-item">
           <span>用户数</span>
           <strong>{{ app.user_num || 0 }}</strong>
@@ -136,11 +128,10 @@
         </div>
       </div>
 
-      <div class="terminal-block">
-        <div>$ 正式回调地址 = {{ app.redirect_uri || '未设置' }}</div>
-        <div>$ 测试回调地址 = {{ app.test_redirect_uri || '未设置' }}</div>
-        <div>$ 应用说明 = {{ app.app_info || app.app_desc || '暂无内容' }}</div>
-      </div>
+      <section class="markdown-pane">
+        <div class="bucket-title">应用介绍</div>
+        <div class="markdown-content" [innerHTML]="(app.app_info || app.app_desc) | markdown"></div>
+      </section>
     } @else {
       <div class="empty-state">没有可展示的应用。</div>
     }

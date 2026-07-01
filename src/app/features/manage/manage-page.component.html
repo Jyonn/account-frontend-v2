@@ -2,7 +2,7 @@
   <div class="editor-pane">
     <div class="pane-head">
       <div>
-        <div class="eyebrow">app manage</div>
+        <div class="eyebrow">应用管理</div>
         <h2>{{ app()?.app_name || '管理应用' }}</h2>
       </div>
       <button type="button" class="primary" (click)="save()" [disabled]="saving() || loading()">
