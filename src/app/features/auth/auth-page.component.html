@@ -8,13 +8,13 @@
 
     <div class="mode-strip">
       <button type="button" [class.active]="mode === 'qitian-password'" (click)="switchMode('qitian-password')">
-        qt + pwd
+        齐天号 + 密码
       </button>
       <button type="button" [class.active]="mode === 'phone-password'" (click)="switchMode('phone-password')">
-        phone + pwd
+        手机号 + 密码
       </button>
       <button type="button" [class.active]="mode === 'phone-code'" (click)="switchMode('phone-code')">
-        phone + code
+        手机号 + 验证码
       </button>
     </div>
 
@@ -61,11 +61,11 @@
 
       <div class="action-row">
         <button type="button" class="primary" (click)="submit()" [disabled]="busy">
-          {{ verificationMode === null ? 'continue' : 'commit' }}
+          {{ verificationMode === null ? '继续验证' : '提交登录' }}
         </button>
         @if (verificationMode !== null) {
           <button type="button" class="ghost" (click)="resetVerification()" [disabled]="busy">
-            reset
+            重新开始
           </button>
         }
       </div>
@@ -88,12 +88,12 @@
   </div>
 
   <div class="status-panel">
-    <div class="eyebrow">protocol</div>
+    <div class="eyebrow">登录说明</div>
     <div class="terminal-block">
-      <div>$ auth.mode = {{ mode }}</div>
-      <div>$ captcha.required = {{ verificationMode === null ? 'true' : 'false' }}</div>
-      <div>$ code.step = {{ verificationMode ?? 'idle' }}</div>
-      <div>$ session.cached = {{ session.token() ? 'true' : 'false' }}</div>
+      <div>$ 当前登录方式 = {{ modeLabel }}</div>
+      <div>$ 人机验证状态 = {{ verificationRequiredText }}</div>
+      <div>$ 验证码流程 = {{ verificationStepText }}</div>
+      <div>$ 本地会话缓存 = {{ session.token() ? '已存在' : '尚未缓存' }}</div>
     </div>
 
     <div class="hint-list">

@@ -6,12 +6,12 @@
         <h2>账户与个人资料</h2>
       </div>
       @if (!editMode()) {
-        <button type="button" class="ghost" (click)="beginEdit()">edit</button>
+        <button type="button" class="ghost" (click)="beginEdit()">编辑资料</button>
       } @else {
         <div class="action-row">
-          <button type="button" class="ghost" (click)="cancelEdit()" [disabled]="saving()">cancel</button>
+          <button type="button" class="ghost" (click)="cancelEdit()" [disabled]="saving()">取消</button>
           <button type="button" class="primary" (click)="saveProfile()" [disabled]="saving()">
-            {{ saving() ? 'saving...' : 'save' }}
+            {{ saving() ? '保存中...' : '保存修改' }}
           </button>
         </div>
       }
@@ -25,7 +25,7 @@
     }
 
     @if (loading()) {
-      <div class="empty-state">loading profile...</div>
+      <div class="empty-state">正在读取账户资料...</div>
     } @else {
       <section class="profile-hero">
         <div class="avatar" [style.background-image]="avatarUrl ? 'url(' + avatarUrl + ')' : ''">
@@ -34,13 +34,13 @@
           }
         </div>
         <div class="hero-copy">
-          <div class="hero-name">{{ session.user()?.nickname || 'unnamed' }}</div>
-          <div class="hero-meta">qt={{ session.user()?.qitian || 'unset' }}</div>
-          <div class="hero-meta">verify={{ verifyStatusText }}</div>
+          <div class="hero-name">{{ session.user()?.nickname || '未命名用户' }}</div>
+          <div class="hero-meta">齐天号：{{ session.user()?.qitian || '未设置' }}</div>
+          <div class="hero-meta">认证状态：{{ verifyStatusText }}</div>
           @if (editMode()) {
             <label class="upload-line">
               <input type="file" accept="image/*" (change)="uploadAvatar($event)" />
-              <span>upload avatar</span>
+              <span>上传头像</span>
             </label>
           }
         </div>
@@ -74,38 +74,38 @@
   <div class="side-pane">
     <section class="stack">
       <div class="eyebrow">security</div>
-      <div class="meta-line">verify={{ verifyStatusText }}</div>
-      <div class="meta-line">dev={{ session.user()?.is_dev ? 'true' : 'false' }}</div>
-      <div class="meta-line">user={{ session.user()?.user_str_id || 'anonymous' }}</div>
+      <div class="meta-line">认证状态：{{ verifyStatusText }}</div>
+      <div class="meta-line">开发者权限：{{ session.user()?.is_dev ? '已开通' : '未开通' }}</div>
+      <div class="meta-line">账户标识：{{ session.user()?.user_str_id || '未登录' }}</div>
       @if (!session.user()?.is_dev) {
         <button type="button" class="ghost full" (click)="applyDev()" [disabled]="!canApplyDev() || applyingDev()">
-          {{ applyingDev() ? 'applying...' : canApplyDev() ? 'apply dev' : 'verify required' }}
+          {{ applyingDev() ? '申请中...' : canApplyDev() ? '申请开发者权限' : '完成认证后可申请' }}
         </button>
       }
     </section>
 
     <section class="stack">
       <div class="eyebrow">workspace</div>
-      <a routerLink="/apps" class="inline-link">go app center</a>
-      <a routerLink="/apps" class="inline-link">review owned apps</a>
+      <a routerLink="/apps" class="inline-link">进入应用中心</a>
+      <a routerLink="/apps" class="inline-link">查看自己创建的应用</a>
     </section>
 
     <section class="stack">
       <div class="eyebrow">support</div>
       <button type="button" class="ghost full" (click)="openExternal('https://github.com/lqj679ssn/account-frontend/issues/new')">
-        github issue
+        提交 GitHub 问题
       </button>
       <button type="button" class="ghost full" (click)="openExternal('https://github.com/lqj679ssn/account-frontend')">
-        source code
+        查看源代码
       </button>
       <button type="button" class="ghost full" (click)="openExternal('mailto:i@6-79.cn')">
-        contact
+        联系维护者
       </button>
     </section>
 
     <section class="stack">
       <div class="eyebrow">session</div>
-      <button type="button" class="danger full" (click)="session.logout()">logout</button>
+      <button type="button" class="danger full" (click)="session.logout()">退出登录</button>
     </section>
   </div>
 </section>

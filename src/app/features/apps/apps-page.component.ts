@@ -74,9 +74,9 @@ export class AppsPageComponent implements OnInit {
   protected async copyAppId(appId: string) {
     try {
       await navigator.clipboard.writeText(appId);
-      this.hint.set(`app_id copied: ${appId}`);
+      this.hint.set(`应用 ID 已复制：${appId}`);
     } catch {
-      this.hint.set(`app_id: ${appId}`);
+      this.hint.set(`应用 ID：${appId}`);
     }
   }
 

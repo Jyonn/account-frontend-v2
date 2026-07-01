@@ -2,45 +2,75 @@
   <aside class="sidebar">
     <div class="brand">
       <div class="brand-mark">account://qt</div>
-      <h1>Terminal Workspace</h1>
-      <p>登录、授权、应用中心。</p>
+      <h1>齐天账户控制台</h1>
+      <p>面向开发者的账户入口，集中处理登录、应用授权、资料维护与应用管理。</p>
     </div>
 
     <nav class="nav">
-      <a routerLink="/login" routerLinkActive="active">auth/login</a>
-      <a routerLink="/apps" routerLinkActive="active">apps/center</a>
-      <a routerLink="/settings" routerLinkActive="active">user/settings</a>
+      @if (shouldShowLoginNav()) {
+        <a routerLink="/login" routerLinkActive="active">
+          <span class="nav-label">登录与验证</span>
+          <span class="nav-note">使用齐天号或手机号进入控制台</span>
+        </a>
+      }
+      <a routerLink="/apps" routerLinkActive="active">
+        <span class="nav-label">应用中心</span>
+        <span class="nav-note">查看可访问应用，以及你创建的应用</span>
+      </a>
+      <a routerLink="/settings" routerLinkActive="active">
+        <span class="nav-label">账户设置</span>
+        <span class="nav-note">维护头像、昵称、齐天号与开发者资格</span>
+      </a>
     </nav>
 
     <section class="session-card">
-      <div class="card-label">session</div>
+      <div class="card-label">当前会话</div>
       @if (session.user(); as user) {
         <div class="session-main">
           <div class="session-name">{{ user.nickname || user.qitian || user.user_str_id }}</div>
-          <div class="session-meta">qt={{ user.qitian || 'unset' }}</div>
-          <div class="session-meta">dev={{ user.is_dev ? 'true' : 'false' }}</div>
+          <div class="session-meta">当前已登录，可直接进入应用中心和账户设置。</div>
+        </div>
+        <div class="session-detail">
+          <div class="session-row">
+            <span>齐天号</span>
+            <strong>{{ qitianStatusText() }}</strong>
+          </div>
+          <div class="session-row">
+            <span>开发者权限</span>
+            <strong>{{ developerStatusText() }}</strong>
+          </div>
+          <div class="session-row">
+            <span>用户标识</span>
+            <strong>{{ user.user_str_id || '未分配' }}</strong>
+          </div>
         </div>
       } @else {
         <div class="session-main">
-          <div class="session-name">anonymous</div>
-          <div class="session-meta">token={{ session.token() ? 'cached' : 'empty' }}</div>
+          <div class="session-name">未登录</div>
+          <div class="session-meta">请先完成身份验证，系统会在本地恢复已有会话。</div>
+        </div>
+        <div class="session-detail">
+          <div class="session-row">
+            <span>本地令牌</span>
+            <strong>{{ tokenStatusText() }}</strong>
+          </div>
         </div>
       }
       @if (session.error()) {
         <div class="status error">{{ session.error() }}</div>
       } @else {
-        <div class="status">{{ session.status() }}</div>
+        <div class="status">{{ sessionStatusText() }}</div>
       }
       @if (session.isLoggedIn()) {
-        <button class="ghost-btn" type="button" (click)="session.logout()">logout</button>
+        <button class="ghost-btn" type="button" (click)="session.logout()">退出当前登录</button>
       }
     </section>
 
     <section class="stack">
-      <div class="card-label">runtime</div>
-      <div class="meta-line">api.qt.6-79.cn</div>
-      <div class="meta-line">recaptcha.net</div>
-      <div class="meta-line">angular 21</div>
+      <div class="card-label">当前环境</div>
+      <div class="meta-line">接口服务：api.qt.6-79.cn</div>
+      <div class="meta-line">人机验证：recaptcha.net</div>
+      <div class="meta-line">前端框架：Angular 21</div>
     </section>
   </aside>
 

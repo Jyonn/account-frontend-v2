@@ -142,6 +142,34 @@ export class AuthPageComponent implements OnInit {
     return `${this.regionCode}${this.phoneNumber}`;
   }
 
+  protected get modeLabel() {
+    switch (this.mode) {
+      case 'phone-password':
+        return '手机号 + 密码';
+      case 'phone-code':
+        return '手机号 + 验证码';
+      default:
+        return '齐天号 + 密码';
+    }
+  }
+
+  protected get verificationRequiredText() {
+    return this.verificationMode === null ? '需要' : '已进入下一步';
+  }
+
+  protected get verificationStepText() {
+    if (this.verificationMode === 5) {
+      return '等待输入短信验证码';
+    }
+    if (this.verificationMode === 6) {
+      return '验证码通过后需要设置密码';
+    }
+    if (this.verificationMode === 7) {
+      return '验证码通过后需要重设密码';
+    }
+    return '尚未开始';
+  }
+
   private async submitVerificationCode() {
     if (!this.verificationCode || this.verificationCode.length !== 6) {
       this.error = '请输入 6 位验证码';

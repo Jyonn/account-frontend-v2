@@ -157,13 +157,13 @@ export class SettingsPageComponent implements OnInit {
     const status = this.session.user()?.verify_status ?? 0;
     switch (status) {
       case 3:
-        return 'verified';
+        return '已完成实名认证';
       case 2:
-        return 'manual-review';
+        return '人工审核中';
       case 1:
-        return 'auto-review';
+        return '系统审核中';
       default:
-        return 'unverified';
+        return '尚未认证';
     }
   }
 

@@ -5,7 +5,7 @@
         <div class="eyebrow">app center</div>
         <h2>应用总览</h2>
       </div>
-      <button type="button" class="ghost" (click)="reload()" [disabled]="loading()">refresh</button>
+      <button type="button" class="ghost" (click)="reload()" [disabled]="loading()">重新加载</button>
     </div>
 
     @if (error()) {
@@ -16,10 +16,10 @@
     }
 
     @if (loading()) {
-      <div class="empty-state">loading app registry...</div>
+      <div class="empty-state">正在读取应用列表...</div>
     } @else {
       <section class="bucket">
-        <div class="bucket-title">all apps</div>
+        <div class="bucket-title">可访问应用</div>
         <div class="rows">
           @for (app of allApps(); track app.app_id) {
             <button
@@ -35,19 +35,19 @@
               </div>
               <div class="content">
                 <div class="name">{{ app.app_name }}</div>
-                <div class="desc">{{ app.app_desc || 'no description' }}</div>
+                <div class="desc">{{ app.app_desc || '暂无简介' }}</div>
               </div>
               <div class="meta">{{ app.user_num || 0 }}</div>
             </button>
           } @empty {
-            <div class="empty-state">no visible apps</div>
+            <div class="empty-state">当前没有可访问的应用。</div>
           }
         </div>
       </section>
 
       @if (devApps().length) {
         <section class="bucket">
-          <div class="bucket-title">owned apps</div>
+          <div class="bucket-title">我创建的应用</div>
           <div class="rows">
             @for (app of devApps(); track app.app_id) {
               <button
@@ -63,9 +63,9 @@
                 </div>
                 <div class="content">
                   <div class="name">{{ app.app_name }}</div>
-                  <div class="desc">{{ app.app_desc || 'owned by current session' }}</div>
+                  <div class="desc">{{ app.app_desc || '当前登录账户创建的应用' }}</div>
                 </div>
-                <div class="meta">dev</div>
+                <div class="meta">自有</div>
               </button>
             }
           </div>
@@ -83,7 +83,7 @@
     </div>
 
     @if (detailLoading()) {
-      <div class="empty-state">loading detail...</div>
+      <div class="empty-state">正在读取应用详情...</div>
     } @else if (selectedApp(); as app) {
       <div class="hero">
         <div class="hero-logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
@@ -93,43 +93,43 @@
         </div>
         <div class="hero-copy">
           <div class="hero-name">{{ app.app_name }}</div>
-          <div class="hero-desc">{{ app.app_desc || 'no description' }}</div>
+          <div class="hero-desc">{{ app.app_desc || '暂无简介' }}</div>
         </div>
       </div>
 
       <div class="action-row">
         <button type="button" class="primary" (click)="enter(app)" [disabled]="launchingAppId() === app.app_id">
-          {{ launchingAppId() === app.app_id ? 'launching...' : 'enter app' }}
+          {{ launchingAppId() === app.app_id ? '正在进入...' : '进入应用' }}
         </button>
         @if (canManageSelectedApp()) {
-          <button type="button" class="ghost" (click)="manage(app)">manage app</button>
+          <button type="button" class="ghost" (click)="manage(app)">管理应用</button>
         }
-        <button type="button" class="ghost" (click)="copyAppId(app.app_id)">copy app_id</button>
+        <button type="button" class="ghost" (click)="copyAppId(app.app_id)">复制应用 ID</button>
       </div>
 
       <div class="detail-grid">
         <div class="detail-item">
-          <span>app_id</span>
+          <span>应用 ID</span>
           <strong>{{ app.app_id }}</strong>
         </div>
         <div class="detail-item">
-          <span>users</span>
+          <span>用户数</span>
           <strong>{{ app.user_num || 0 }}</strong>
         </div>
         <div class="detail-item">
-          <span>created</span>
+          <span>创建时间</span>
           <strong>{{ formatTime(app.create_time) }}</strong>
         </div>
         <div class="detail-item">
-          <span>relation</span>
-          <strong>{{ app.relation?.belong ? 'owner' : app.relation?.bind ? 'bound' : 'public' }}</strong>
+          <span>当前关系</span>
+          <strong>{{ app.relation?.belong ? '应用所有者' : app.relation?.bind ? '已绑定账户' : '公开可访问' }}</strong>
         </div>
       </div>
 
       <div class="terminal-block">
-        <div>$ redirect_uri = {{ app.redirect_uri || 'unset' }}</div>
-        <div>$ test_redirect_uri = {{ app.test_redirect_uri || 'unset' }}</div>
-        <div>$ description = {{ app.app_info || app.app_desc || 'empty' }}</div>
+        <div>$ 正式回调地址 = {{ app.redirect_uri || '未设置' }}</div>
+        <div>$ 测试回调地址 = {{ app.test_redirect_uri || '未设置' }}</div>
+        <div>$ 应用说明 = {{ app.app_info || app.app_desc || '暂无内容' }}</div>
       </div>
     } @else {
       <div class="empty-state">没有可展示的应用。</div>

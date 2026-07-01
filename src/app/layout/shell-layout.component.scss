@@ -56,9 +56,11 @@
 
 .nav a,
 .ghost-btn {
+  gap: 0.5rem;
   display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
   padding: 0.8rem 0.9rem;
   border: 1px solid var(--line);
   background: transparent;
@@ -68,6 +70,18 @@
     background-color 160ms ease,
     color 160ms ease,
     transform 160ms ease;
+}
+
+.nav-label {
+  color: var(--text);
+  font-size: 0.98rem;
+  letter-spacing: -0.01em;
+}
+
+.nav-note {
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  line-height: 1.45;
 }
 
 .nav a:hover,
@@ -92,11 +106,34 @@
   font-weight: 600;
 }
 
+.session-detail {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.session-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.92rem;
+}
+
+.session-row span {
+  color: var(--text-dim);
+}
+
+.session-row strong {
+  font-weight: 600;
+  text-align: right;
+}
+
 .status.error {
   color: var(--danger);
 }
 
 .ghost-btn {
+  align-items: center;
   justify-content: center;
 }
 

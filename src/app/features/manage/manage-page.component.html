@@ -6,7 +6,7 @@
         <h2>{{ app()?.app_name || '管理应用' }}</h2>
       </div>
       <button type="button" class="primary" (click)="save()" [disabled]="saving() || loading()">
-        {{ saving() ? 'saving...' : 'update' }}
+        {{ saving() ? '保存中...' : '保存应用设置' }}
       </button>
     </div>
 
@@ -18,7 +18,7 @@
     }
 
     @if (loading()) {
-      <div class="empty-state">loading app...</div>
+      <div class="empty-state">正在读取应用资料...</div>
     } @else if (app(); as managedApp) {
       <section class="hero">
         <div class="logo" [style.background-image]="logoUrl ? 'url(' + logoUrl + ')' : ''">
@@ -28,10 +28,10 @@
         </div>
         <div class="hero-copy">
           <div class="hero-name">{{ managedApp.app_name }}</div>
-          <div class="hero-meta">app_id={{ managedApp.app_id }}</div>
+          <div class="hero-meta">应用 ID：{{ managedApp.app_id }}</div>
           <label class="upload-line">
             <input type="file" accept="image/*" (change)="uploadLogo($event)" />
-            <span>{{ uploadingLogo() ? 'uploading...' : 'change logo' }}</span>
+            <span>{{ uploadingLogo() ? '上传中...' : '更换图标' }}</span>
           </label>
         </div>
       </section>
@@ -57,7 +57,7 @@
 
       <section class="choice-grid">
         <div class="choice-pane">
-          <div class="eyebrow">scope</div>
+          <div class="eyebrow">授权范围</div>
           <div class="choice-list">
             @for (item of scopeOptions(); track item.id) {
               <button type="button" class="choice-item" [class.selected]="item.selected" (click)="toggleScope(item.id)">
@@ -68,7 +68,7 @@
           </div>
         </div>
         <div class="choice-pane">
-          <div class="eyebrow">premise</div>
+          <div class="eyebrow">前置条件</div>
           <div class="choice-list">
             @for (item of premiseOptions(); track item.id) {
               <button type="button" class="choice-item" [class.selected]="item.selected" (click)="togglePremise(item.id)">
@@ -89,40 +89,40 @@
 
   <div class="meta-pane">
     <section class="stack">
-      <div class="eyebrow">oauth</div>
+      <div class="eyebrow">OAuth 参数</div>
       <div class="secret-row">
-        <span>ID</span>
-        <strong>{{ appId() || 'unset' }}</strong>
+        <span>应用 ID</span>
+        <strong>{{ appId() || '未设置' }}</strong>
         @if (appId()) {
-          <button type="button" class="ghost micro" (click)="copy(appId(), 'app_id')">copy</button>
+          <button type="button" class="ghost micro" (click)="copy(appId(), '应用 ID')">复制</button>
         }
       </div>
       <div class="secret-row">
-        <span>SECRET</span>
-        <strong>{{ appSecret() || 'unset' }}</strong>
+        <span>应用密钥</span>
+        <strong>{{ appSecret() || '未设置' }}</strong>
         @if (appSecret()) {
-          <button type="button" class="ghost micro" (click)="copy(appSecret(), 'secret')">copy</button>
+          <button type="button" class="ghost micro" (click)="copy(appSecret(), '应用密钥')">复制</button>
         }
       </div>
       <div class="secret-row full-row">
-        <span>AUTH URL</span>
-        <strong>{{ oauthUrl || 'unset' }}</strong>
+        <span>授权地址</span>
+        <strong>{{ oauthUrl || '未设置' }}</strong>
         @if (oauthUrl) {
-          <button type="button" class="ghost micro" (click)="copy(oauthUrl, 'oauth url')">copy</button>
+          <button type="button" class="ghost micro" (click)="copy(oauthUrl, '授权地址')">复制</button>
         }
       </div>
     </section>
 
     <section class="stack">
-      <div class="eyebrow">selected</div>
-      <div class="meta-line">scopes={{ scopeOptions().filter(item => item.selected).length }}</div>
-      <div class="meta-line">premises={{ premiseOptions().filter(item => item.selected).length }}</div>
-      <div class="meta-line">users={{ appUserCount() }}</div>
+      <div class="eyebrow">当前统计</div>
+      <div class="meta-line">已选授权范围：{{ scopeOptions().filter(item => item.selected).length }}</div>
+      <div class="meta-line">已选前置条件：{{ premiseOptions().filter(item => item.selected).length }}</div>
+      <div class="meta-line">关联用户数：{{ appUserCount() }}</div>
     </section>
 
     <section class="stack">
-      <div class="eyebrow">return</div>
-      <button type="button" class="ghost full" (click)="backToApps()">back to app center</button>
+      <div class="eyebrow">返回入口</div>
+      <button type="button" class="ghost full" (click)="backToApps()">回到应用中心</button>
     </section>
   </div>
 </section>
