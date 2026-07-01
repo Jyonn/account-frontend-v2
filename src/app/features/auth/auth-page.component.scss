@@ -13,11 +13,15 @@
 .status-panel {
   display: grid;
   align-content: start;
-  gap: 1rem;
-  padding: clamp(1rem, 2vw, 1.5rem);
+  gap: 1.15rem;
+  padding: clamp(1.2rem, 2vw, 1.8rem);
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.018);
-  box-shadow: var(--shadow);
+  border-radius: var(--radius-xl);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.016) 24%, transparent),
+    var(--panel);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px);
 }
 
 .mobile-panel-toggle {
@@ -25,9 +29,10 @@
 }
 
 .panel-head h2 {
-  margin: 0.3rem 0 0.35rem;
-  font-size: clamp(2rem, 1.4rem + 2vw, 3.25rem);
-  line-height: 0.94;
+  margin: 0.45rem 0 0.5rem;
+  max-width: 10ch;
+  font-size: clamp(2.45rem, 1.8rem + 2.35vw, 4.4rem);
+  line-height: 0.88;
   letter-spacing: -0.05em;
 }
 
@@ -39,35 +44,33 @@
 }
 
 .eyebrow,
-.mode-strip button,
 .field span,
-.primary,
-.ghost,
-.terminal-block,
 .mobile-panel-toggle {
   font-family: 'IBM Plex Mono', monospace;
 }
 
 .eyebrow {
-  color: var(--accent);
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
 .mode-strip {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
 }
 
 .mode-strip button,
 .primary,
 .ghost {
-  padding: 0.78rem 0.9rem;
+  padding: 0.9rem 1rem;
   border: 1px solid var(--line);
-  background: transparent;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.026);
   color: var(--text);
+  font-weight: 500;
   transition:
     background-color 160ms ease,
     border-color 160ms ease,
@@ -80,14 +83,20 @@
 .ghost:hover,
 .mobile-panel-toggle:hover {
   border-color: var(--line-strong);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.07);
   transform: translateY(-1px);
+}
+
+.mode-strip button.active,
+.primary {
+  background: var(--accent);
+  color: oklch(10% 0.004 260);
 }
 
 .form-grid,
 .verify-grid {
   display: grid;
-  gap: 1rem;
+  gap: 1.05rem;
 }
 
 .phone-row {
@@ -103,20 +112,23 @@
 
 .field span {
   color: var(--text-dim);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
 }
 
 .field input {
   min-width: 0;
-  padding: 0.95rem 1rem;
+  padding: 1rem 1rem;
   border: 1px solid var(--line);
-  background: color-mix(in oklch, var(--bg-soft) 86%, transparent);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
   color: var(--text);
   outline: none;
 }
 
 .field input:focus {
-  border-color: var(--accent-soft);
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .action-row {
@@ -125,23 +137,20 @@
   gap: 0.75rem;
 }
 
-.primary {
-  color: var(--accent);
-}
-
 .feedback {
   padding: 0.9rem 1rem;
-  border-left: 2px solid var(--line-strong);
-  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .feedback.error {
-  border-left-color: var(--danger);
+  border-color: color-mix(in oklch, var(--danger) 40%, var(--line));
   color: color-mix(in oklch, var(--danger) 58%, var(--text));
 }
 
 .feedback.info {
-  border-left-color: var(--accent);
+  border-color: var(--line-strong);
 }
 
 .terminal-block {
@@ -149,7 +158,8 @@
   gap: 0.55rem;
   padding: 1rem;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
   font-size: 0.92rem;
 }
 
@@ -167,9 +177,10 @@
   .mobile-panel-toggle {
     display: inline-flex;
     justify-content: center;
-    padding: 0.78rem 0.9rem;
+    padding: 0.9rem 1rem;
     border: 1px solid var(--line);
-    background: transparent;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.026);
     color: var(--text);
     transition:
       background-color 160ms ease,
@@ -187,6 +198,10 @@
 }
 
 @media (max-width: 640px) {
+  .mode-strip {
+    grid-template-columns: 1fr;
+  }
+
   .phone-row {
     grid-template-columns: 1fr;
   }

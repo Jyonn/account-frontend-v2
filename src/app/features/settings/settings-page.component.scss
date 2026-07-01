@@ -22,9 +22,14 @@
 
 .main-pane,
 .stack {
-  padding: clamp(1rem, 2vw, 1.5rem);
+  padding: clamp(1.2rem, 2vw, 1.8rem);
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.018);
+  border-radius: var(--radius-xl);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.016) 24%, transparent),
+    var(--panel);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px);
 }
 
 .pane-head {
@@ -35,9 +40,6 @@
 }
 
 .eyebrow,
-.ghost,
-.primary,
-.danger,
 .hero-meta,
 .meta-line,
 .inline-link,
@@ -46,16 +48,16 @@
 }
 
 .eyebrow {
-  color: var(--accent);
-  font-size: 0.78rem;
+  color: var(--text-faint);
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
 }
 
 h2,
 .hero-name {
-  margin: 0.25rem 0 0;
-  font-size: clamp(1.75rem, 1.2rem + 1.2vw, 2.5rem);
+  margin: 0.35rem 0 0;
+  font-size: clamp(1.95rem, 1.3rem + 1.3vw, 3rem);
   letter-spacing: -0.04em;
 }
 
@@ -72,7 +74,8 @@ h2,
   display: grid;
   place-items: center;
   border: 1px solid var(--line);
-  background-color: color-mix(in oklch, var(--panel-strong) 92%, transparent);
+  border-radius: 1.3rem;
+  background-color: rgba(255, 255, 255, 0.035);
   background-position: center;
   background-size: cover;
   color: var(--accent);
@@ -94,6 +97,7 @@ h2,
   width: fit-content;
   padding: 0.55rem 0.7rem;
   border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
@@ -122,9 +126,10 @@ h2,
 .field input,
 .field textarea {
   min-width: 0;
-  padding: 0.9rem 1rem;
+  padding: 1rem 1rem;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.022);
   color: var(--text);
   outline: none;
   resize: vertical;
@@ -132,7 +137,8 @@ h2,
 
 .field input:focus,
 .field textarea:focus {
-  border-color: var(--accent-soft);
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.032);
 }
 
 .field input[readonly],
@@ -149,10 +155,12 @@ h2,
 .primary,
 .danger,
 .mobile-panel-toggle {
-  padding: 0.75rem 0.95rem;
+  padding: 0.9rem 1rem;
   border: 1px solid var(--line);
-  background: transparent;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.026);
   color: var(--text);
+  font-weight: 500;
 }
 
 .ghost:hover,
@@ -160,11 +168,12 @@ h2,
 .danger:hover,
 .mobile-panel-toggle:hover {
   border-color: var(--line-strong);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.065);
 }
 
 .primary {
-  color: var(--accent);
+  background: var(--accent);
+  color: oklch(10% 0.004 260);
 }
 
 .danger {
@@ -181,17 +190,20 @@ h2,
 
 .feedback {
   padding: 0.85rem 1rem;
-  border-left: 2px solid var(--accent);
-  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .feedback.error {
-  border-left-color: var(--danger);
+  border-color: color-mix(in oklch, var(--danger) 44%, var(--line));
 }
 
 .empty-state {
   padding: 1rem;
-  border: 1px dashed var(--line);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.014);
 }
 
 @media (max-width: 1080px) {

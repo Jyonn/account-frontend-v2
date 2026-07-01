@@ -12,17 +12,22 @@
 .detail-pane {
   display: grid;
   align-content: start;
-  gap: 1rem;
-  padding: clamp(1rem, 2vw, 1.5rem);
+  gap: 1.1rem;
+  padding: clamp(1.2rem, 2vw, 1.8rem);
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.018);
+  border-radius: var(--radius-xl);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.016) 24%, transparent),
+    var(--panel);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px);
   min-width: 0;
 }
 
 .detail-pane {
   background:
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.028), rgba(255, 255, 255, 0.012)),
-    color-mix(in oklch, var(--panel) 94%, rgba(0, 0, 0, 0.24));
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018) 24%, transparent),
+    var(--panel-strong);
 }
 
 .detail-backdrop,
@@ -46,26 +51,24 @@
 
 .pane-head h2,
 .hero-name {
-  margin: 0.25rem 0 0;
-  font-size: clamp(1.5rem, 1.1rem + 1vw, 2.4rem);
+  margin: 0.35rem 0 0;
+  font-size: clamp(1.8rem, 1.2rem + 1.15vw, 2.85rem);
   letter-spacing: -0.04em;
 }
 
 .eyebrow,
 .bucket-title,
 .meta,
-.ghost,
-.primary,
 .detail-item span {
   font-family: 'IBM Plex Mono', monospace;
 }
 
 .eyebrow,
 .bucket-title {
-  color: var(--accent);
-  font-size: 0.78rem;
+  color: var(--text-faint);
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
 }
 
 .bucket {
@@ -82,7 +85,8 @@
 .ghost,
 .primary {
   border: 1px solid var(--line);
-  background: transparent;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.024);
   color: var(--text);
 }
 
@@ -106,18 +110,19 @@
 .primary:hover {
   transform: translateY(-1px);
   border-color: var(--line-strong);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.065);
 }
 
 .logo,
 .hero-logo {
   display: grid;
   place-items: center;
-  background-color: color-mix(in oklch, var(--panel-strong) 92%, transparent);
+  background-color: rgba(255, 255, 255, 0.035);
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
   border: 1px solid var(--line);
+  border-radius: 1.2rem;
   color: var(--accent);
   font-family: 'IBM Plex Mono', monospace;
 }
@@ -173,11 +178,13 @@
 
 .ghost,
 .primary {
-  padding: 0.8rem 1rem;
+  padding: 0.9rem 1rem;
+  font-weight: 500;
 }
 
 .primary {
-  color: var(--accent);
+  background: var(--accent);
+  color: oklch(10% 0.004 260);
 }
 
 .detail-grid {
@@ -191,7 +198,8 @@
   gap: 0.35rem;
   padding: 0.85rem;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.015);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.026);
 }
 
 .detail-item span {
@@ -204,7 +212,8 @@
   gap: 0.85rem;
   padding: 1rem;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.028);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .markdown-content {
@@ -275,17 +284,20 @@
 
 .feedback {
   padding: 0.85rem 1rem;
-  border-left: 2px solid var(--accent);
-  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .feedback.error {
-  border-left-color: var(--danger);
+  border-color: color-mix(in oklch, var(--danger) 44%, var(--line));
 }
 
 .empty-state {
   padding: 1rem;
-  border: 1px dashed var(--line);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.014);
 }
 
 @media (max-width: 1080px) {
@@ -317,8 +329,8 @@
     border-top-right-radius: 1.1rem;
     padding-bottom: max(1.15rem, env(safe-area-inset-bottom));
     background:
-      linear-gradient(to bottom, rgba(14, 18, 24, 0.98), rgba(10, 14, 19, 0.98)),
-      color-mix(in oklch, var(--panel) 98%, black);
+      linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.016) 14%, transparent),
+      color-mix(in oklch, var(--panel-strong) 98%, black);
     box-shadow: 0 -22px 60px rgba(0, 0, 0, 0.34);
     transform: translateY(calc(100% + 1rem));
     transition: transform 220ms ease;

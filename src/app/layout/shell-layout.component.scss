@@ -7,7 +7,9 @@
   position: relative;
   min-height: 100dvh;
   display: grid;
-  grid-template-columns: minmax(18rem, 22rem) minmax(0, 1fr);
+  grid-template-columns: minmax(18rem, 21rem) minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1rem;
 }
 
 .drawer-backdrop {
@@ -19,10 +21,13 @@
   grid-template-rows: auto auto auto 1fr;
   gap: 1.5rem;
   padding: 1.5rem;
-  border-right: 1px solid var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
   background:
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.02), transparent 28%),
-    color-mix(in oklch, var(--panel) 92%, transparent);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012) 26%, transparent 100%),
+    var(--panel-strong);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(18px);
 }
 
 .mobile-sidebar-bar,
@@ -31,9 +36,11 @@
 }
 
 .brand h1 {
-  margin: 0.4rem 0 0.35rem;
-  font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem);
-  letter-spacing: -0.03em;
+  margin: 0.5rem 0 0.45rem;
+  max-width: 12ch;
+  font-size: clamp(2rem, 1.4rem + 1.35vw, 2.9rem);
+  line-height: 0.94;
+  letter-spacing: -0.05em;
 }
 
 .brand p,
@@ -42,40 +49,39 @@
 .status {
   margin: 0;
   color: var(--text-dim);
+  line-height: 1.55;
 }
 
 .brand-mark,
 .card-label,
-.nav a,
-.ghost-btn,
-.icon-btn,
-.mobile-menu-btn {
+.card-label {
   font-family: 'IBM Plex Mono', monospace;
 }
 
 .brand-mark,
 .card-label {
-  color: var(--accent);
-  font-size: 0.78rem;
+  color: var(--text-faint);
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
 }
 
 .nav {
   display: grid;
-  gap: 0.5rem;
+  gap: 0.7rem;
 }
 
 .nav a,
 .ghost-btn {
-  gap: 0.5rem;
+  gap: 0.35rem;
   display: inline-flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  padding: 0.8rem 0.9rem;
+  padding: 1rem 1.05rem;
   border: 1px solid var(--line);
-  background: transparent;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.025);
   color: var(--text);
   transition:
     border-color 160ms ease,
@@ -86,13 +92,14 @@
 
 .nav-label {
   color: var(--text);
-  font-size: 0.98rem;
-  letter-spacing: -0.01em;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
 }
 
 .nav-note {
   color: var(--text-dim);
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   line-height: 1.45;
 }
 
@@ -102,22 +109,24 @@
 .icon-btn:hover,
 .mobile-menu-btn:hover {
   border-color: var(--line-strong);
-  background: rgba(255, 255, 255, 0.035);
+  background: rgba(255, 255, 255, 0.055);
   transform: translateY(-1px);
 }
 
 .session-card,
 .stack {
   display: grid;
-  gap: 0.8rem;
-  padding: 1rem;
+  gap: 0.85rem;
+  padding: 1rem 1.05rem;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.015);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.022);
 }
 
 .session-name {
-  font-size: 1.05rem;
-  font-weight: 600;
+  font-size: 1.08rem;
+  font-weight: 550;
+  letter-spacing: -0.02em;
 }
 
 .session-detail {
@@ -149,13 +158,14 @@
 .ghost-btn {
   align-items: center;
   justify-content: center;
+  font-weight: 500;
 }
 
 .icon-btn,
 .mobile-menu-btn {
-  padding: 0.75rem 0.9rem;
+  padding: 0.8rem 0.98rem;
   border: 1px solid var(--line);
-  background: transparent;
+  background: rgba(255, 255, 255, 0.025);
   color: var(--text);
   transition:
     border-color 160ms ease,
@@ -165,21 +175,24 @@
 
 .main {
   min-width: 0;
-  padding: clamp(1rem, 2vw, 2rem);
+  padding: 0;
+  display: grid;
+  align-content: start;
+  gap: 1rem;
 }
 
 @media (max-width: 900px) {
   .workspace {
     grid-template-columns: 1fr;
+    padding: 0.8rem;
   }
 
   .sidebar {
     position: fixed;
-    inset: 0 auto 0 0;
+    inset: 0 auto 0 0.75rem;
     width: min(24rem, calc(100vw - 2rem));
     min-height: 100dvh;
     border-right: 1px solid var(--line);
-    border-bottom: 0;
     transform: translateX(calc(-100% - 1rem));
     transition: transform 220ms ease;
     z-index: 30;
@@ -210,10 +223,12 @@
     display: flex;
     align-items: flex-start;
     gap: 0.85rem;
-    margin-bottom: 1rem;
     padding: 0.95rem 1rem;
     border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.018);
+    border-radius: var(--radius-lg);
+    background: var(--panel);
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(18px);
   }
 
   .mobile-topbar-copy {
