@@ -1,5 +1,14 @@
-<div class="workspace">
-  <aside class="sidebar">
+<div class="workspace" [class.drawer-open]="mobileNavOpen()">
+  @if (mobileNavOpen()) {
+    <button type="button" class="drawer-backdrop" (click)="closeMobileNav()" aria-label="关闭导航抽屉"></button>
+  }
+
+  <aside class="sidebar" [class.mobile-open]="mobileNavOpen()">
+    <div class="mobile-sidebar-bar">
+      <div class="card-label">工作台导航</div>
+      <button type="button" class="icon-btn" (click)="closeMobileNav()">关闭</button>
+    </div>
+
     <div class="brand">
       <div class="brand-mark">account://qt</div>
       <h1>齐天账户控制台</h1>
@@ -8,16 +17,16 @@
 
     <nav class="nav">
       @if (shouldShowLoginNav()) {
-        <a routerLink="/login" routerLinkActive="active">
+        <a routerLink="/login" routerLinkActive="active" (click)="closeMobileNav()">
           <span class="nav-label">登录与验证</span>
           <span class="nav-note">使用齐天号或手机号进入控制台</span>
         </a>
       }
-      <a routerLink="/apps" routerLinkActive="active">
+      <a routerLink="/apps" routerLinkActive="active" (click)="closeMobileNav()">
         <span class="nav-label">应用中心</span>
         <span class="nav-note">查看可访问应用，以及你创建的应用</span>
       </a>
-      <a routerLink="/settings" routerLinkActive="active">
+      <a routerLink="/settings" routerLinkActive="active" (click)="closeMobileNav()">
         <span class="nav-label">账户设置</span>
         <span class="nav-note">维护头像、昵称、齐天号与开发者资格</span>
       </a>
@@ -75,6 +84,14 @@
   </aside>
 
   <main class="main">
+    <div class="mobile-topbar">
+      <button type="button" class="mobile-menu-btn" (click)="toggleMobileNav()">导航菜单</button>
+      <div class="mobile-topbar-copy">
+        <strong>齐天账户控制台</strong>
+        <span>竖屏时自动收起导航和次级说明</span>
+      </div>
+    </div>
+
     <router-outlet />
   </main>
 </div>

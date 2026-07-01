@@ -87,7 +87,11 @@
     />
   </div>
 
-  <div class="status-panel">
+  <button type="button" class="mobile-panel-toggle" (click)="toggleMobileStatus()">
+    {{ mobileStatusOpen() ? '收起登录说明' : '展开登录说明' }}
+  </button>
+
+  <div class="status-panel" [class.mobile-open]="mobileStatusOpen()">
     <div class="eyebrow">登录说明</div>
     <div class="terminal-block">
       <div>$ 当前登录方式 = {{ modeLabel }}</div>

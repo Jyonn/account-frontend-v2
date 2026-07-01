@@ -71,7 +71,11 @@
     }
   </div>
 
-  <div class="side-pane">
+  <button type="button" class="mobile-panel-toggle" (click)="toggleMobileSide()">
+    {{ mobileSideOpen() ? '收起账户状态与支持信息' : '展开账户状态与支持信息' }}
+  </button>
+
+  <div class="side-pane" [class.mobile-open]="mobileSideOpen()">
     <section class="stack">
       <div class="eyebrow">security</div>
       <div class="meta-line">认证状态：{{ verifyStatusText }}</div>

@@ -16,6 +16,7 @@ export class AppsPageComponent implements OnInit {
 
   protected readonly loading = signal(true);
   protected readonly detailLoading = signal(false);
+  protected readonly detailDrawerOpen = signal(false);
   protected readonly launchingAppId = signal('');
   protected readonly error = signal('');
   protected readonly hint = signal('');
@@ -36,6 +37,11 @@ export class AppsPageComponent implements OnInit {
 
   protected async reload() {
     await this.loadApps();
+  }
+
+  protected async preview(appId: string) {
+    this.detailDrawerOpen.set(true);
+    await this.inspect(appId);
   }
 
   protected async inspect(appId: string) {
@@ -69,6 +75,16 @@ export class AppsPageComponent implements OnInit {
 
   protected async manage(app: AccountApp) {
     await this.router.navigate(['/apps', app.app_id, 'manage']);
+  }
+
+  protected openDetailDrawer() {
+    if (this.selectedApp()) {
+      this.detailDrawerOpen.set(true);
+    }
+  }
+
+  protected closeDetailDrawer() {
+    this.detailDrawerOpen.set(false);
   }
 
   protected async copyAppId(appId: string) {

@@ -87,7 +87,11 @@
     }
   </div>
 
-  <div class="meta-pane">
+  <button type="button" class="mobile-panel-toggle" (click)="toggleMobileMeta()">
+    {{ mobileMetaOpen() ? '收起授权参数与统计信息' : '展开授权参数与统计信息' }}
+  </button>
+
+  <div class="meta-pane" [class.mobile-open]="mobileMetaOpen()">
     <section class="stack">
       <div class="eyebrow">OAuth 参数</div>
       <div class="secret-row">

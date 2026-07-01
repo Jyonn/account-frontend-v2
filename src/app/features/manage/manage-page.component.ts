@@ -20,6 +20,7 @@ export class ManagePageComponent implements OnInit {
   protected readonly loading = signal(true);
   protected readonly saving = signal(false);
   protected readonly uploadingLogo = signal(false);
+  protected readonly mobileMetaOpen = signal(false);
   protected readonly error = signal('');
   protected readonly message = signal('');
   protected readonly app = signal<AccountApp | null>(null);
@@ -173,6 +174,10 @@ export class ManagePageComponent implements OnInit {
 
   protected async backToApps() {
     await this.router.navigateByUrl('/apps');
+  }
+
+  protected toggleMobileMeta() {
+    this.mobileMetaOpen.update((value) => !value);
   }
 
   private async loadApp(appId: string) {

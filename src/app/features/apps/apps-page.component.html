@@ -5,7 +5,12 @@
         <div class="eyebrow">app center</div>
         <h2>应用总览</h2>
       </div>
-      <button type="button" class="ghost" (click)="reload()" [disabled]="loading()">重新加载</button>
+      <div class="pane-actions">
+        @if (selectedApp()) {
+          <button type="button" class="ghost mobile-only" (click)="openDetailDrawer()">查看详情</button>
+        }
+        <button type="button" class="ghost" (click)="reload()" [disabled]="loading()">重新加载</button>
+      </div>
     </div>
 
     @if (error()) {
@@ -26,7 +31,7 @@
               type="button"
               class="app-row"
               [class.selected]="selectedApp()?.app_id === app.app_id"
-              (click)="inspect(app.app_id)"
+              (click)="preview(app.app_id)"
             >
               <div class="logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
                 @if (!app.logo) {
@@ -54,7 +59,7 @@
                 type="button"
                 class="app-row"
                 [class.selected]="selectedApp()?.app_id === app.app_id"
-                (click)="inspect(app.app_id)"
+                (click)="preview(app.app_id)"
               >
                 <div class="logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
                   @if (!app.logo) {
@@ -74,12 +79,17 @@
     }
   </div>
 
-  <div class="detail-pane">
+  @if (detailDrawerOpen()) {
+    <button type="button" class="detail-backdrop" (click)="closeDetailDrawer()" aria-label="关闭应用详情"></button>
+  }
+
+  <div class="detail-pane" [class.mobile-open]="detailDrawerOpen()">
     <div class="pane-head">
-        <div>
-          <div class="eyebrow">inspect</div>
+      <div>
+        <div class="eyebrow">inspect</div>
         <h2>{{ selectedApp()?.app_name || '选择一个应用' }}</h2>
       </div>
+      <button type="button" class="ghost mobile-only" (click)="closeDetailDrawer()">收起详情</button>
     </div>
 
     @if (detailLoading()) {

@@ -16,6 +16,10 @@
   gap: 1rem;
 }
 
+.mobile-panel-toggle {
+  display: none;
+}
+
 .editor-pane,
 .stack {
   padding: clamp(1rem, 2vw, 1.5rem);
@@ -55,11 +59,19 @@ h2,
 }
 
 .primary,
-.ghost {
+.ghost,
+.mobile-panel-toggle {
   padding: 0.75rem 0.95rem;
   border: 1px solid var(--line);
   background: transparent;
   color: var(--text);
+}
+
+.primary:hover,
+.ghost:hover,
+.mobile-panel-toggle:hover {
+  border-color: var(--line-strong);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .primary {
@@ -208,6 +220,20 @@ h2,
 @media (max-width: 1080px) {
   .manage-grid {
     grid-template-columns: 1fr;
+  }
+
+  .mobile-panel-toggle {
+    display: inline-flex;
+    justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .meta-pane {
+    display: none;
+  }
+
+  .meta-pane.mobile-open {
+    display: grid;
   }
 }
 

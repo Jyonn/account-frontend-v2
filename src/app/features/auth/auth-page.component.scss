@@ -20,6 +20,10 @@
   box-shadow: var(--shadow);
 }
 
+.mobile-panel-toggle {
+  display: none;
+}
+
 .panel-head h2 {
   margin: 0.3rem 0 0.35rem;
   font-size: clamp(2rem, 1.4rem + 2vw, 3.25rem);
@@ -39,7 +43,8 @@
 .field span,
 .primary,
 .ghost,
-.terminal-block {
+.terminal-block,
+.mobile-panel-toggle {
   font-family: 'IBM Plex Mono', monospace;
 }
 
@@ -72,7 +77,8 @@
 .mode-strip button.active,
 .mode-strip button:hover,
 .primary:hover,
-.ghost:hover {
+.ghost:hover,
+.mobile-panel-toggle:hover {
   border-color: var(--line-strong);
   background: rgba(255, 255, 255, 0.05);
   transform: translateY(-1px);
@@ -156,6 +162,27 @@
 @media (max-width: 1080px) {
   .auth-grid {
     grid-template-columns: 1fr;
+  }
+
+  .mobile-panel-toggle {
+    display: inline-flex;
+    justify-content: center;
+    padding: 0.78rem 0.9rem;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--text);
+    transition:
+      background-color 160ms ease,
+      border-color 160ms ease,
+      transform 160ms ease;
+  }
+
+  .status-panel {
+    display: none;
+  }
+
+  .status-panel.mobile-open {
+    display: grid;
   }
 }
 

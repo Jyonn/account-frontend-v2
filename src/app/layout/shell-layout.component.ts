@@ -1,4 +1,4 @@
-import { Component, OnInit, computed, inject } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { SessionService } from '../core/services/session.service';
 
@@ -10,6 +10,7 @@ import { SessionService } from '../core/services/session.service';
 })
 export class ShellLayoutComponent implements OnInit {
   protected readonly session = inject(SessionService);
+  protected readonly mobileNavOpen = signal(false);
   protected readonly shouldShowLoginNav = computed(() => !this.session.isLoggedIn());
   protected readonly sessionStatusText = computed(() => {
     switch (this.session.status()) {
@@ -27,5 +28,13 @@ export class ShellLayoutComponent implements OnInit {
 
   ngOnInit() {
     void this.session.bootstrap();
+  }
+
+  protected toggleMobileNav() {
+    this.mobileNavOpen.update((value) => !value);
+  }
+
+  protected closeMobileNav() {
+    this.mobileNavOpen.set(false);
   }
 }
