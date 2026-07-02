@@ -106,6 +106,16 @@ h2 {
   min-height: 0;
 }
 
+.scope-toggle {
+  display: inline-flex;
+  width: fit-content;
+  gap: 0.55rem;
+  padding: 0.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.95rem;
+  background: rgba(255, 255, 255, 0.025);
+}
+
 .app-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -113,7 +123,6 @@ h2 {
 }
 
 .app-row,
-.owner-chip,
 .ghost,
 .primary {
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -134,13 +143,17 @@ h2 {
 
 .app-row:hover,
 .app-row.selected,
-.owner-chip:hover,
 .ghost:hover,
 .primary:hover,
 .close-detail:hover {
   border-color: rgba(255, 255, 255, 0.22);
   background: rgba(255, 255, 255, 0.06);
   transform: translateY(-1px);
+}
+
+.ghost.active {
+  background: rgba(255, 255, 255, 0.9);
+  color: #111;
 }
 
 .logo,
@@ -188,24 +201,6 @@ h2 {
 
 .desc {
   margin-top: 0.2rem;
-}
-
-.owner-list {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.7rem;
-}
-
-.owner-chip {
-  display: grid;
-  gap: 0.24rem;
-  padding: 0.85rem 0.95rem;
-  text-align: left;
-  transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
-}
-
-.owner-chip small {
-  color: var(--text-faint);
 }
 
 .detail-drawer {
@@ -392,8 +387,7 @@ h2 {
 }
 
 @media (max-width: 960px) {
-  .app-list,
-  .owner-list {
+  .app-list {
     grid-template-columns: 1fr;
   }
 }

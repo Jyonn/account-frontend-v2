@@ -22,14 +22,23 @@
       </div>
       <div class="section-content">
         <div class="section-copy">
-          <p>{{ totalAppsCount() }} 个可访问应用。优先展示名称、简介与入口，不再干扰性展示使用人数。</p>
+          <p>{{ activeScopeTitle() }}。{{ activeScopeDescription() }}</p>
         </div>
+
+        @if (showScopeToggle()) {
+          <div class="scope-toggle">
+            <button type="button" class="ghost" [class.active]="appScope() === 'mine'" (click)="setAppScope('mine')">我的应用</button>
+            <button type="button" class="ghost" [class.active]="appScope() === 'developed'" (click)="setAppScope('developed')">
+              我开发的应用
+            </button>
+          </div>
+        }
 
         @if (loading()) {
           <div class="empty-state">正在读取应用目录...</div>
         } @else {
           <div class="app-list">
-            @for (app of allApps(); track app.app_id) {
+            @for (app of displayedApps(); track app.app_id) {
               <button
                 type="button"
                 class="app-row"
@@ -51,29 +60,6 @@
         }
       </div>
     </section>
-
-    @if (devApps().length) {
-      <section class="drawer-section owner-strip">
-        <div class="section-label">
-          <div class="section-index">02</div>
-          <div class="section-title">管理</div>
-        </div>
-        <div class="section-content">
-          <div class="section-copy">
-            <p>{{ devApps().length }} 个应用可进入管理台。</p>
-          </div>
-
-          <div class="owner-list">
-            @for (app of devApps(); track app.app_id) {
-              <button type="button" class="owner-chip" (click)="manage(app)">
-                <span>{{ app.app_name }}</span>
-                <small>进入管理</small>
-              </button>
-            }
-          </div>
-        </div>
-      </section>
-    }
 
     @if (detailDrawerOpen()) {
       <aside class="detail-drawer">

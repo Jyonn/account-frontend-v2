@@ -22,10 +22,21 @@ export class AppsPageComponent implements OnInit {
   protected readonly error = signal('');
   protected readonly allApps = signal<AccountApp[]>([]);
   protected readonly devApps = signal<AccountApp[]>([]);
+  protected readonly appScope = signal<'mine' | 'developed'>('mine');
   protected readonly selectedAppId = signal('');
   protected readonly selectedApp = signal<AccountApp | null>(null);
   protected readonly detailDrawerOpen = signal(false);
+  protected readonly showScopeToggle = computed(() => !!this.session.user()?.is_dev);
   protected readonly canManageSelectedApp = computed(() => !!this.selectedApp()?.relation?.belong);
+  protected readonly displayedApps = computed(() =>
+    this.appScope() === 'developed' && this.showScopeToggle() ? this.devApps() : this.allApps()
+  );
+  protected readonly activeScopeTitle = computed(() => (this.appScope() === 'developed' ? '我开发的应用' : '我的应用'));
+  protected readonly activeScopeDescription = computed(() =>
+    this.appScope() === 'developed'
+      ? '这里只展示当前账号拥有并可管理的应用。'
+      : '这里只展示当前账号可直接进入或已绑定的应用。'
+  );
   protected readonly totalAppsCount = computed(() => {
     const ids = new Set([...this.allApps(), ...this.devApps()].map((app) => app.app_id));
     return ids.size;
@@ -43,6 +54,14 @@ export class AppsPageComponent implements OnInit {
 
   protected async reload() {
     await this.loadApps();
+  }
+
+  protected setAppScope(scope: 'mine' | 'developed') {
+    if (scope === 'developed' && !this.showScopeToggle()) {
+      return;
+    }
+
+    this.appScope.set(scope);
   }
 
   protected async inspect(appId: string) {
@@ -104,6 +123,10 @@ export class AppsPageComponent implements OnInit {
 
       this.allApps.set(allApps);
       this.devApps.set(devApps);
+
+      if (!this.showScopeToggle()) {
+        this.appScope.set('mine');
+      }
 
       const currentSelectedAppId = this.selectedAppId();
       if (!currentSelectedAppId) {
