@@ -28,20 +28,18 @@ export class ShellLayoutComponent implements OnInit {
         return '等待本地会话';
     }
   });
-  protected readonly sphereSlices = Array.from({ length: 17 }, (_, index) => {
-    const position = index / 16;
-    const normalizedY = position * 2 - 1;
-    const radius = Math.sqrt(Math.max(0, 1 - normalizedY * normalizedY));
-    return {
-      index,
-      offset: `${normalizedY * 7.2}rem`,
-      depth: `${-Math.abs(normalizedY) * 0.28}rem`,
-      scale: `${0.18 + radius * 0.82}`,
-      blur: `${Math.abs(normalizedY) * 0.045}rem`,
-      brightness: `${0.68 + radius * 0.16 - normalizedY * 0.04}`,
-      opacity: `${0.16 + radius * 0.68}`
-    };
-  });
+  protected readonly sphereSlices = [
+    { index: 0, offset: '-7.9rem', scale: '0.62', opacity: '0.88', tone: '0.8', blur: '0.03rem', zIndex: '100' },
+    { index: 1, offset: '-6.1rem', scale: '0.88', opacity: '0.9', tone: '0.74', blur: '0.026rem', zIndex: '99' },
+    { index: 2, offset: '-4.3rem', scale: '1.04', opacity: '0.92', tone: '0.68', blur: '0.022rem', zIndex: '98' },
+    { index: 3, offset: '-2.2rem', scale: '1.14', opacity: '0.93', tone: '0.61', blur: '0.018rem', zIndex: '97' },
+    { index: 4, offset: '0rem', scale: '1.18', opacity: '0.92', tone: '0.54', blur: '0.012rem', zIndex: '96' },
+    { index: 5, offset: '2.2rem', scale: '1.12', opacity: '0.9', tone: '0.47', blur: '0.014rem', zIndex: '95' },
+    { index: 6, offset: '4.4rem', scale: '0.98', opacity: '0.88', tone: '0.39', blur: '0.018rem', zIndex: '94' },
+    { index: 7, offset: '6.3rem', scale: '0.82', opacity: '0.84', tone: '0.31', blur: '0.022rem', zIndex: '93' },
+    { index: 8, offset: '7.9rem', scale: '0.68', opacity: '0.8', tone: '0.24', blur: '0.028rem', zIndex: '92' },
+    { index: 9, offset: '9rem', scale: '0.56', opacity: '0.72', tone: '0.19', blur: '0.034rem', zIndex: '91' }
+  ];
   protected readonly currentSectionLabel = computed(() => {
     const path = this.currentPath();
     if (path.startsWith('/settings')) {
