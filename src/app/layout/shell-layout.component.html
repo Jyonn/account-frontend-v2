@@ -26,24 +26,11 @@
   </header>
 
   <section class="stage">
-    <div class="sphere-stage" (mousemove)="updateSphereTilt($event)" (mouseleave)="resetSphereTilt()">
+    <div class="sphere-stage">
       <div class="sphere-glow"></div>
       <div class="sphere-shadow"></div>
-      <div class="sphere-gyro" [style.--tilt-x]="tiltX() + 'deg'" [style.--tilt-y]="tiltY() + 'deg'">
-        <div class="slice-sphere" aria-hidden="true">
-          @for (slice of sphereSlices; track slice) {
-            <span
-              class="slice"
-              [style.--offset]="slice.offset"
-              [style.--x-offset]="slice.xOffset"
-              [style.--scale]="slice.scale"
-              [style.--tone]="slice.tone"
-              [style.--blur]="slice.blur"
-              [style.opacity]="slice.opacity"
-              [style.z-index]="slice.zIndex"
-            ></span>
-          }
-        </div>
+      <div class="sphere-gyro">
+        <app-shell-sphere />
       </div>
       <div class="stage-caption">
         <div class="caption-line">Qitian Account Surface</div>
