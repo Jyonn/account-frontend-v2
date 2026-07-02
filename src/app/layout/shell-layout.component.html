@@ -1,80 +1,63 @@
-<div class="workspace" [class.drawer-open]="mobileNavOpen()">
-  @if (mobileNavOpen()) {
-    <button type="button" class="drawer-backdrop" (click)="closeMobileNav()" aria-label="关闭导航抽屉"></button>
-  }
+<div class="shell">
+  <header class="topbar">
+    <div class="nav-cluster">
+      <button type="button" class="nav-trigger" (click)="toggleNav()">
+        <span class="nav-brand">QT.</span>
+        <span class="nav-current">{{ currentSectionLabel() }}</span>
+        <span class="nav-caret">{{ navOpen() ? '−' : '▾' }}</span>
+      </button>
 
-  <aside class="sidebar" [class.mobile-open]="mobileNavOpen()">
-    <div class="mobile-sidebar-bar">
-      <div class="card-label">工作台导航</div>
-      <button type="button" class="icon-btn" (click)="closeMobileNav()">关闭</button>
+      @if (navOpen()) {
+        <nav class="nav-flyout">
+          @if (shouldShowLoginNav()) {
+            <a routerLink="/login" routerLinkActive="active" (click)="closeNav()">登录 / 注册</a>
+          }
+          <a routerLink="/apps" routerLinkActive="active" (click)="closeNav()">应用中心</a>
+          <a routerLink="/settings" routerLinkActive="active" (click)="closeNav()">用户设置</a>
+        </nav>
+      }
     </div>
 
-    <div class="brand">
-      <div class="brand-mark">account://qt</div>
-      <h1>齐天账户控制台</h1>
-      <p>统一处理登录、应用访问与账户设置。</p>
+    <div class="topbar-status">
+      <span class="status-user">{{ session.user()?.nickname || session.user()?.qitian || '访客' }}</span>
+      <span class="status-separator">/</span>
+      <span>{{ sessionStatusText() }}</span>
     </div>
+  </header>
 
-    <nav class="nav">
-      @if (shouldShowLoginNav()) {
-        <a routerLink="/login" routerLinkActive="active" (click)="closeMobileNav()">
-          <span class="nav-label">登录与验证</span>
-          <span class="nav-note">使用齐天号或手机号进入控制台</span>
-        </a>
-      }
-      <a routerLink="/apps" routerLinkActive="active" (click)="closeMobileNav()">
-        <span class="nav-label">应用中心</span>
-        <span class="nav-note">查看可访问应用，以及你创建的应用</span>
-      </a>
-      <a routerLink="/settings" routerLinkActive="active" (click)="closeMobileNav()">
-        <span class="nav-label">账户设置</span>
-        <span class="nav-note">维护头像、昵称、齐天号与认证资料</span>
-      </a>
-    </nav>
-
-    <section class="session-card">
-      <div class="card-label">当前会话</div>
-      @if (session.user(); as user) {
-        <div class="session-main">
-          <div class="session-name">{{ user.nickname || user.qitian || '当前账户' }}</div>
-          <div class="session-meta">当前已登录，可直接进入应用中心和账户设置。</div>
+  <section class="stage">
+    <div class="sphere-stage" (mousemove)="updateSphereTilt($event)" (mouseleave)="resetSphereTilt()">
+      <div class="sphere-glow"></div>
+      <div class="sphere-shadow"></div>
+      <div class="sphere-gyro" [style.--tilt-x]="tiltX() + 'deg'" [style.--tilt-y]="tiltY() + 'deg'">
+        <div class="slice-sphere" aria-hidden="true">
+          @for (slice of sphereSlices; track slice) {
+            <span
+              class="slice"
+              [style.--offset]="slice.offset"
+              [style.--scale]="slice.scale"
+              [style.--blur]="slice.blur"
+              [style.--brightness]="slice.brightness"
+              [style.opacity]="slice.opacity"
+            ></span>
+          }
         </div>
-        <div class="session-detail">
-          <div class="session-row">
-            <span>齐天号</span>
-            <strong>{{ qitianStatusText() }}</strong>
-          </div>
-          <div class="session-row">
-            <span>开发者权限</span>
-            <strong>{{ developerStatusText() }}</strong>
-          </div>
-        </div>
-      } @else {
-        <div class="session-main">
-          <div class="session-name">未登录</div>
-          <div class="session-meta">完成登录后即可访问应用中心和账户设置。</div>
-        </div>
-      }
-      @if (session.error()) {
-        <div class="status error">{{ session.error() }}</div>
-      } @else {
-        <div class="status">{{ sessionStatusText() }}</div>
-      }
-      @if (session.isLoggedIn()) {
-        <button class="ghost-btn" type="button" (click)="session.logout()">退出当前登录</button>
-      }
-    </section>
-  </aside>
-
-  <main class="main">
-    <div class="mobile-topbar">
-      <button type="button" class="mobile-menu-btn" (click)="toggleMobileNav()">导航菜单</button>
-      <div class="mobile-topbar-copy">
-        <strong>齐天账户控制台</strong>
-        <span>登录、应用访问与账户设置</span>
+      </div>
+      <div class="stage-caption">
+        <div class="caption-line">Qitian Account Surface</div>
+        <div class="caption-line dim">验证、应用与资料在同一层里切换</div>
       </div>
     </div>
 
-    <router-outlet />
-  </main>
+    <section class="content-drawer">
+      <div class="drawer-shell">
+        <div class="drawer-pin pin-left"></div>
+        <div class="drawer-pin pin-right"></div>
+        <div class="drawer-blur"></div>
+        <div class="drawer-scroll">
+          <router-outlet />
+        </div>
+      </div>
+    </section>
+  </section>
 </div>

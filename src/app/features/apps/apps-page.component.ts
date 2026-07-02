@@ -18,13 +18,16 @@ export class AppsPageComponent implements OnInit {
 
   protected readonly loading = signal(true);
   protected readonly detailLoading = signal(false);
-  protected readonly detailDrawerOpen = signal(false);
   protected readonly launchingAppId = signal('');
   protected readonly error = signal('');
   protected readonly allApps = signal<AccountApp[]>([]);
   protected readonly devApps = signal<AccountApp[]>([]);
   protected readonly selectedApp = signal<AccountApp | null>(null);
   protected readonly canManageSelectedApp = computed(() => !!this.selectedApp()?.relation?.belong);
+  protected readonly totalAppsCount = computed(() => {
+    const ids = new Set([...this.allApps(), ...this.devApps()].map((app) => app.app_id));
+    return ids.size;
+  });
 
   async ngOnInit() {
     await this.session.bootstrap();
@@ -38,11 +41,6 @@ export class AppsPageComponent implements OnInit {
 
   protected async reload() {
     await this.loadApps();
-  }
-
-  protected async preview(appId: string) {
-    this.detailDrawerOpen.set(true);
-    await this.inspect(appId);
   }
 
   protected async inspect(appId: string) {
@@ -74,16 +72,6 @@ export class AppsPageComponent implements OnInit {
 
   protected async manage(app: AccountApp) {
     await this.router.navigate(['/apps', app.app_id, 'manage']);
-  }
-
-  protected openDetailDrawer() {
-    if (this.selectedApp()) {
-      this.detailDrawerOpen.set(true);
-    }
-  }
-
-  protected closeDetailDrawer() {
-    this.detailDrawerOpen.set(false);
   }
 
   protected formatTime(timestamp?: number) {

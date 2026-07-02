@@ -1,106 +1,97 @@
-<section class="apps-grid">
-  <div class="list-pane">
-    <div class="pane-head">
+<section class="drawer-page apps-page">
+  <header class="drawer-head">
+    <div class="drawer-kicker">Application Registry</div>
+    <div class="head-row">
       <div>
-        <div class="eyebrow">应用中心</div>
-        <h2>应用总览</h2>
+        <h1>应用中心</h1>
+        <p>抽屉只展示你当前选中的应用，避免同时摊开过多信息。</p>
       </div>
-      <div class="pane-actions">
-        @if (selectedApp()) {
-          <button type="button" class="ghost mobile-only" (click)="openDetailDrawer()">查看详情</button>
-        }
-        <button type="button" class="ghost" (click)="reload()" [disabled]="loading()">重新加载</button>
-      </div>
+      <button type="button" class="ghost" (click)="reload()" [disabled]="loading()">刷新</button>
     </div>
+  </header>
 
-    @if (error()) {
-      <div class="feedback error">{{ error() }}</div>
-    }
-
-    @if (loading()) {
-      <div class="empty-state">正在读取应用列表...</div>
-    } @else {
-      <section class="bucket">
-        <div class="bucket-title">可访问应用</div>
-        <div class="rows">
-          @for (app of allApps(); track app.app_id) {
-            <button
-              type="button"
-              class="app-row"
-              [class.selected]="selectedApp()?.app_id === app.app_id"
-              (click)="preview(app.app_id)"
-            >
-              <div class="logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
-                @if (!app.logo) {
-                  <span>{{ app.app_name.slice(0, 1) }}</span>
-                }
-              </div>
-              <div class="content">
-                <div class="name">{{ app.app_name }}</div>
-                <div class="desc">{{ app.app_desc || '暂无简介' }}</div>
-              </div>
-              <div class="meta">{{ app.user_num || 0 }}</div>
-            </button>
-          } @empty {
-            <div class="empty-state">当前没有可访问的应用。</div>
-          }
-        </div>
-      </section>
-
-      @if (devApps().length) {
-        <section class="bucket">
-          <div class="bucket-title">我创建的应用</div>
-          <div class="rows">
-            @for (app of devApps(); track app.app_id) {
-              <button
-                type="button"
-                class="app-row"
-                [class.selected]="selectedApp()?.app_id === app.app_id"
-                (click)="preview(app.app_id)"
-              >
-                <div class="logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
-                  @if (!app.logo) {
-                    <span>{{ app.app_name.slice(0, 1) }}</span>
-                  }
-                </div>
-                <div class="content">
-                  <div class="name">{{ app.app_name }}</div>
-                  <div class="desc">{{ app.app_desc || '你创建的应用' }}</div>
-                </div>
-                <div class="meta">自有</div>
-              </button>
-            }
-          </div>
-        </section>
-      }
-    }
-  </div>
-
-  @if (detailDrawerOpen()) {
-    <button type="button" class="detail-backdrop" (click)="closeDetailDrawer()" aria-label="关闭应用详情"></button>
+  @if (error()) {
+    <div class="feedback error">{{ error() }}</div>
   }
 
-  <div class="detail-pane" [class.mobile-open]="detailDrawerOpen()">
-    <div class="pane-head">
-      <div>
-        <div class="eyebrow">应用详情</div>
-        <h2>{{ selectedApp()?.app_name || '选择一个应用' }}</h2>
-      </div>
-      <button type="button" class="ghost mobile-only" (click)="closeDetailDrawer()">收起详情</button>
+  <section class="drawer-block">
+    <div class="block-head">
+      <span>可访问应用</span>
+      <small>{{ totalAppsCount() }} 个</small>
     </div>
 
-    @if (detailLoading()) {
-      <div class="empty-state">正在读取应用详情...</div>
-    } @else if (selectedApp(); as app) {
-      <div class="hero">
+    @if (loading()) {
+      <div class="empty-state">正在读取应用目录...</div>
+    } @else {
+      <div class="app-list">
+        @for (app of allApps(); track app.app_id) {
+          <button
+            type="button"
+            class="app-row"
+            [class.selected]="selectedApp()?.app_id === app.app_id"
+            (click)="inspect(app.app_id)"
+          >
+            <div class="logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
+              @if (!app.logo) {
+                <span>{{ app.app_name.slice(0, 1) }}</span>
+              }
+            </div>
+            <div class="content">
+              <div class="name">{{ app.app_name }}</div>
+              <div class="desc">{{ app.app_desc || '暂无简介' }}</div>
+            </div>
+            <div class="meta">{{ app.user_num || 0 }}</div>
+          </button>
+        }
+      </div>
+    }
+  </section>
+
+  @if (devApps().length) {
+    <section class="drawer-block owner-strip">
+      <div class="block-head">
+        <span>我的应用</span>
+        <small>{{ devApps().length }} 个可管理</small>
+      </div>
+
+      <div class="owner-list">
+        @for (app of devApps(); track app.app_id) {
+          <button type="button" class="owner-chip" (click)="manage(app)">
+            <span>{{ app.app_name }}</span>
+            <small>进入管理</small>
+          </button>
+        }
+      </div>
+    </section>
+  }
+
+  @if (selectedApp(); as app) {
+    <section class="drawer-block detail-block">
+      <div class="detail-hero">
         <div class="hero-logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
           @if (!app.logo) {
             <span>{{ app.app_name.slice(0, 1) }}</span>
           }
         </div>
         <div class="hero-copy">
-          <div class="hero-name">{{ app.app_name }}</div>
-          <div class="hero-desc">{{ app.app_desc || '暂无简介' }}</div>
+          <div class="drawer-kicker">Selected</div>
+          <h2>{{ app.app_name }}</h2>
+          <p>{{ app.app_desc || '暂无简介' }}</p>
+        </div>
+      </div>
+
+      <div class="detail-meta">
+        <div class="meta-card">
+          <span>使用人数</span>
+          <strong>{{ app.user_num || 0 }}</strong>
+        </div>
+        <div class="meta-card">
+          <span>上线时间</span>
+          <strong>{{ formatTime(app.create_time) }}</strong>
+        </div>
+        <div class="meta-card">
+          <span>访问关系</span>
+          <strong>{{ app.relation?.belong ? '应用所有者' : app.relation?.bind ? '已绑定账户' : '公开可访问' }}</strong>
         </div>
       </div>
 
@@ -113,27 +104,12 @@
         }
       </div>
 
-      <div class="detail-grid">
-        <div class="detail-item">
-          <span>用户数</span>
-          <strong>{{ app.user_num || 0 }}</strong>
+      <div class="markdown-pane">
+        <div class="block-head">
+          <span>应用介绍</span>
         </div>
-        <div class="detail-item">
-          <span>创建时间</span>
-          <strong>{{ formatTime(app.create_time) }}</strong>
-        </div>
-        <div class="detail-item">
-          <span>当前关系</span>
-          <strong>{{ app.relation?.belong ? '应用所有者' : app.relation?.bind ? '已绑定账户' : '公开可访问' }}</strong>
-        </div>
-      </div>
-
-      <section class="markdown-pane">
-        <div class="bucket-title">应用介绍</div>
         <div class="markdown-content" [innerHTML]="(app.app_info || app.app_desc) | markdown"></div>
-      </section>
-    } @else {
-      <div class="empty-state">没有可展示的应用。</div>
-    }
-  </div>
+      </div>
+    </section>
+  }
 </section>

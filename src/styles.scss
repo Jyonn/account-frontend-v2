@@ -1,15 +1,15 @@
 :root {
   color-scheme: dark;
-  font-family: 'Instrument Sans', 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
-  --bg: oklch(9.5% 0.005 260);
-  --bg-soft: oklch(13% 0.006 260);
-  --panel: color-mix(in oklch, oklch(15% 0.007 260) 88%, rgba(255, 255, 255, 0.03));
-  --panel-strong: color-mix(in oklch, oklch(18% 0.008 260) 92%, rgba(255, 255, 255, 0.05));
-  --line: rgba(255, 255, 255, 0.11);
-  --line-strong: rgba(255, 255, 255, 0.22);
-  --text: oklch(94% 0.01 75);
-  --text-dim: oklch(74% 0.012 75);
-  --text-faint: oklch(59% 0.01 75);
+  font-family: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+  --bg: oklch(10% 0.004 260);
+  --bg-soft: oklch(13.5% 0.005 260);
+  --panel: color-mix(in oklch, oklch(15% 0.006 260) 88%, rgba(255, 255, 255, 0.028));
+  --panel-strong: color-mix(in oklch, oklch(18% 0.007 260) 92%, rgba(255, 255, 255, 0.05));
+  --line: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.2);
+  --text: oklch(93% 0.008 80);
+  --text-dim: oklch(75% 0.01 80);
+  --text-faint: oklch(58% 0.008 80);
   --accent: oklch(96% 0.004 90);
   --accent-soft: rgba(255, 255, 255, 0.56);
   --danger: oklch(70% 0.15 24);
@@ -31,9 +31,9 @@ body {
   margin: 0;
   min-height: 100dvh;
   background:
-    radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.09), transparent 18rem),
-    radial-gradient(circle at 78% -4%, rgba(255, 255, 255, 0.05), transparent 24rem),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.018), transparent 22%),
+    radial-gradient(circle at 14% 14%, rgba(255, 255, 255, 0.06), transparent 20rem),
+    radial-gradient(circle at 84% 8%, rgba(255, 255, 255, 0.035), transparent 24rem),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.012), transparent 20%),
     var(--bg);
   color: var(--text);
 }
@@ -41,7 +41,7 @@ body {
 body {
   position: relative;
   overflow-x: hidden;
-  font-family: 'Instrument Sans', 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -57,24 +57,18 @@ body::after {
 }
 
 body::before {
-  top: 5rem;
-  left: min(12vw, 8rem);
-  width: min(44vw, 34rem);
-  aspect-ratio: 1;
-  border-radius: 50%;
+  inset: 0;
   background:
-    radial-gradient(circle at 36% 34%, rgba(255, 255, 255, 0.92), rgba(217, 217, 217, 0.56) 22%, rgba(120, 120, 120, 0.12) 54%, transparent 72%),
-    radial-gradient(circle at 58% 62%, rgba(255, 255, 255, 0.18), transparent 60%);
-  filter: blur(3px);
-  opacity: 0.2;
-  transform: translate3d(0, 0, 0);
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  mix-blend-mode: screen;
 }
 
 body::after {
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.38)),
-    radial-gradient(circle at top, transparent 0, rgba(0, 0, 0, 0.38) 76%);
+    linear-gradient(180deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.42)),
+    radial-gradient(circle at center, transparent 0, rgba(0, 0, 0, 0.46) 78%);
 }
 
 app-root {

@@ -19,7 +19,6 @@ export class SettingsPageComponent implements OnInit {
   protected readonly saving = signal(false);
   protected readonly applyingDev = signal(false);
   protected readonly editMode = signal(false);
-  protected readonly mobileSideOpen = signal(false);
   protected readonly message = signal('');
   protected readonly error = signal('');
   protected draft = {
@@ -81,7 +80,7 @@ export class SettingsPageComponent implements OnInit {
       });
       this.session.user.set(user);
       this.editMode.set(false);
-      this.message.set('profile updated');
+      this.message.set('资料已保存');
       this.syncDraft();
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : '资料更新失败');
@@ -113,7 +112,7 @@ export class SettingsPageComponent implements OnInit {
         ...current,
         ...(uploaded as Record<string, unknown>)
       } as typeof current);
-      this.message.set('avatar uploaded');
+      this.message.set('头像已更新');
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : '头像上传失败');
     } finally {
@@ -134,16 +133,12 @@ export class SettingsPageComponent implements OnInit {
     try {
       const user = await this.api.applyDev();
       this.session.user.set(user);
-      this.message.set('developer access granted');
+      this.message.set('开发者权限已开通');
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : '开发者申请失败');
     } finally {
       this.applyingDev.set(false);
     }
-  }
-
-  protected toggleMobileSide() {
-    this.mobileSideOpen.update((value) => !value);
   }
 
   protected get avatarUrl() {

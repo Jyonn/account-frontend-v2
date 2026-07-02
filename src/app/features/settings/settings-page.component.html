@@ -1,52 +1,57 @@
-<section class="settings-grid">
-  <div class="main-pane">
-    <div class="pane-head">
+<section class="drawer-page settings-page">
+  <header class="drawer-head">
+    <div class="drawer-kicker">Profile Surface</div>
+    <div class="head-row">
       <div>
-        <div class="eyebrow">账户设置</div>
-        <h2>账户与个人资料</h2>
+        <h1>账户设置</h1>
+        <p>只保留真正会影响当前账户状态的资料、权限与入口。</p>
       </div>
       @if (!editMode()) {
-        <button type="button" class="ghost" (click)="beginEdit()">编辑资料</button>
+        <button type="button" class="ghost" (click)="beginEdit()">编辑</button>
       } @else {
         <div class="action-row">
           <button type="button" class="ghost" (click)="cancelEdit()" [disabled]="saving()">取消</button>
           <button type="button" class="primary" (click)="saveProfile()" [disabled]="saving()">
-            {{ saving() ? '保存中...' : '保存修改' }}
+            {{ saving() ? '保存中...' : '保存' }}
           </button>
         </div>
       }
     </div>
+  </header>
 
-    @if (message()) {
-      <div class="feedback info">{{ message() }}</div>
-    }
-    @if (error()) {
-      <div class="feedback error">{{ error() }}</div>
-    }
+  @if (message()) {
+    <div class="feedback info">{{ message() }}</div>
+  }
+  @if (error()) {
+    <div class="feedback error">{{ error() }}</div>
+  }
 
-    @if (loading()) {
-      <div class="empty-state">正在读取账户资料...</div>
-    } @else {
-      <section class="profile-hero">
-        <div class="avatar" [style.background-image]="avatarUrl ? 'url(' + avatarUrl + ')' : ''">
-          @if (!avatarUrl) {
-            <span>{{ (session.user()?.nickname || session.user()?.qitian || 'U').slice(0, 1) }}</span>
-          }
-        </div>
-        <div class="hero-copy">
-          <div class="hero-name">{{ session.user()?.nickname || '未命名用户' }}</div>
-          <div class="hero-meta">齐天号：{{ session.user()?.qitian || '未设置' }}</div>
-          <div class="hero-meta">认证状态：{{ verifyStatusText }}</div>
-          @if (editMode()) {
-            <label class="upload-line">
-              <input type="file" accept="image/*" (change)="uploadAvatar($event)" />
-              <span>上传头像</span>
-            </label>
-          }
-        </div>
-      </section>
+  @if (loading()) {
+    <div class="empty-state">正在读取账户资料...</div>
+  } @else {
+    <section class="drawer-block hero-block">
+      <div class="avatar" [style.background-image]="avatarUrl ? 'url(' + avatarUrl + ')' : ''">
+        @if (!avatarUrl) {
+          <span>{{ (session.user()?.nickname || session.user()?.qitian || 'U').slice(0, 1) }}</span>
+        }
+      </div>
+      <div class="hero-copy">
+        <div class="drawer-kicker">Current Session</div>
+        <h2>{{ session.user()?.nickname || '未命名用户' }}</h2>
+        <p>账户标识：{{ session.user()?.qitian ? '已设置' : '未设置' }}</p>
+        <p>实名认证：{{ verifyStatusText }}</p>
+        <p>开发者权限：{{ session.user()?.is_dev ? '已开通' : '未开通' }}</p>
+        @if (editMode()) {
+          <label class="upload-line">
+            <input type="file" accept="image/*" (change)="uploadAvatar($event)" />
+            <span>上传头像</span>
+          </label>
+        }
+      </div>
+    </section>
 
-      <section class="form-pane">
+    <section class="drawer-block">
+      <div class="form-grid">
         <label class="field">
           <span>昵称</span>
           <input [(ngModel)]="draft.nickname" [readonly]="!editMode()" />
@@ -60,42 +65,35 @@
           <input
             [(ngModel)]="draft.qitian"
             [readonly]="!editMode() || session.user()?.allow_qitian_modify === false"
-            placeholder="只能设置一次"
+            placeholder="通常只允许设置一次"
           />
         </label>
         <label class="field">
           <span>生日</span>
           <input type="date" [(ngModel)]="draft.birthday" [readonly]="!editMode()" />
         </label>
-      </section>
-    }
-  </div>
-
-  <button type="button" class="mobile-panel-toggle" (click)="toggleMobileSide()">
-    {{ mobileSideOpen() ? '收起账户补充信息' : '展开账户补充信息' }}
-  </button>
-
-  <div class="side-pane" [class.mobile-open]="mobileSideOpen()">
-    <section class="stack">
-      <div class="eyebrow">账户状态</div>
-      <div class="meta-line">认证状态：{{ verifyStatusText }}</div>
-      <div class="meta-line">开发者权限：{{ session.user()?.is_dev ? '已开通' : '未开通' }}</div>
-      @if (!session.user()?.is_dev) {
-        <button type="button" class="ghost full" (click)="applyDev()" [disabled]="!canApplyDev() || applyingDev()">
-          {{ applyingDev() ? '申请中...' : canApplyDev() ? '申请开发者权限' : '完成认证后可申请' }}
-        </button>
-      }
+      </div>
     </section>
 
-    <section class="stack">
-      <div class="eyebrow">快捷入口</div>
-      <a routerLink="/apps" class="inline-link">进入应用中心</a>
-      <a routerLink="/apps" class="inline-link">查看自己创建的应用</a>
+    <section class="drawer-block info-grid">
+      <div class="info-card">
+        <span>应用入口</span>
+        <a routerLink="/apps">打开应用中心</a>
+      </div>
+      <div class="info-card">
+        <span>开发者状态</span>
+        @if (!session.user()?.is_dev) {
+          <button type="button" class="ghost full" (click)="applyDev()" [disabled]="!canApplyDev() || applyingDev()">
+            {{ applyingDev() ? '申请中...' : canApplyDev() ? '申请开发者权限' : '完成认证后可申请' }}
+          </button>
+        } @else {
+          <strong>当前账号已具备开发者权限</strong>
+        }
+      </div>
+      <div class="info-card">
+        <span>登录状态</span>
+        <button type="button" class="ghost full" (click)="session.logout()">退出登录</button>
+      </div>
     </section>
-
-    <section class="stack">
-      <div class="eyebrow">登录操作</div>
-      <button type="button" class="danger full" (click)="session.logout()">退出登录</button>
-    </section>
-  </div>
+  }
 </section>

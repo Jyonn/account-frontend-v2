@@ -7,7 +7,8 @@
   gap: 1rem;
   padding: 1rem;
   border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.015);
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .panel-head {
@@ -33,6 +34,7 @@
 h3 {
   margin: 0.3rem 0 0;
   font-size: 1rem;
+  letter-spacing: -0.03em;
 }
 
 .terminal-line {
@@ -47,6 +49,7 @@ h3 {
 .ghost {
   padding: 0.5rem 0.7rem;
   border: 1px solid var(--line);
-  background: transparent;
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.02);
   color: var(--text-dim);
 }

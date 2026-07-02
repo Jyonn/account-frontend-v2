@@ -1,20 +1,21 @@
-<section class="auth-grid">
-  <div class="auth-panel">
-    <div class="panel-head">
-      <div class="eyebrow">登录</div>
-      <h2>进入齐天账户</h2>
-      <p>先验证身份，再进入应用中心。</p>
-    </div>
+<section class="drawer-page auth-page">
+  <header class="drawer-head">
+    <div class="drawer-kicker">Access</div>
+    <h1>登录 / 注册</h1>
+    <p>只展示当前需要的一步。验证通过后，再进入应用与账户面板。</p>
+  </header>
 
+  <section class="drawer-block">
+    <div class="block-title">选择登录方式</div>
     <div class="mode-strip">
       <button type="button" [class.active]="mode === 'qitian-password'" (click)="switchMode('qitian-password')">
-        齐天号 + 密码
+        齐天号密码
       </button>
       <button type="button" [class.active]="mode === 'phone-password'" (click)="switchMode('phone-password')">
-        手机号 + 密码
+        手机号密码
       </button>
       <button type="button" [class.active]="mode === 'phone-code'" (click)="switchMode('phone-code')">
-        手机号 + 验证码
+        手机号验证码
       </button>
     </div>
 
@@ -22,7 +23,7 @@
       @if (mode === 'qitian-password') {
         <label class="field">
           <span>齐天号</span>
-          <input [(ngModel)]="qitianId" autocomplete="username" />
+          <input [(ngModel)]="qitianId" autocomplete="username" placeholder="输入你的齐天号" />
         </label>
       } @else {
         <div class="phone-row">
@@ -32,7 +33,7 @@
           </label>
           <label class="field">
             <span>手机号</span>
-            <input [(ngModel)]="phoneNumber" autocomplete="tel" />
+            <input [(ngModel)]="phoneNumber" autocomplete="tel" placeholder="输入手机号" />
           </label>
         </div>
       }
@@ -41,19 +42,19 @@
         @if (mode !== 'phone-code') {
           <label class="field">
             <span>密码</span>
-            <input [(ngModel)]="password" type="password" autocomplete="current-password" />
+            <input [(ngModel)]="password" type="password" autocomplete="current-password" placeholder="输入密码" />
           </label>
         }
       } @else {
         <div class="verify-grid">
           <label class="field">
-            <span>6位验证码</span>
-            <input [(ngModel)]="verificationCode" maxlength="6" inputmode="numeric" />
+            <span>6 位验证码</span>
+            <input [(ngModel)]="verificationCode" maxlength="6" inputmode="numeric" placeholder="输入验证码" />
           </label>
           @if (needsPasswordForCodeStep) {
             <label class="field">
               <span>{{ codeStepLabel }}</span>
-              <input [(ngModel)]="password" type="password" autocomplete="new-password" />
+              <input [(ngModel)]="password" type="password" autocomplete="new-password" placeholder="输入新的密码" />
             </label>
           }
         </div>
@@ -61,43 +62,36 @@
 
       <div class="action-row">
         <button type="button" class="primary" (click)="submit()" [disabled]="busy">
-          {{ verificationMode === null ? '继续验证' : '提交登录' }}
+          {{ verificationMode === null ? '下一步' : '完成登录' }}
         </button>
         @if (verificationMode !== null) {
           <button type="button" class="ghost" (click)="resetVerification()" [disabled]="busy">
-            重新开始
+            重置流程
           </button>
         }
       </div>
     </div>
+  </section>
 
-    @if (message) {
-      <div class="feedback info">{{ message }}</div>
-    }
-    @if (error) {
-      <div class="feedback error">{{ error }}</div>
-    }
+  @if (message) {
+    <div class="feedback info">{{ message }}</div>
+  }
+  @if (error) {
+    <div class="feedback error">{{ error }}</div>
+  }
 
-    <app-recaptcha-panel
-      [visible]="captchaVisible"
-      [busy]="busy"
-      (resolved)="onCaptchaResolved($event)"
-      (cancelled)="cancelCaptcha()"
-      (failed)="onCaptchaFailed($event)"
-    />
-  </div>
+  <section class="drawer-block note-block">
+    <div class="block-title">使用建议</div>
+    <div class="note-line">记得齐天号时，优先使用齐天号密码登录。</div>
+    <div class="note-line">手机号验证码适合首次登录、忘记密码或临时进入。</div>
+    <div class="note-line">安全验证只会在需要时弹出，不需要额外刷新。</div>
+  </section>
 
-  <button type="button" class="mobile-panel-toggle" (click)="toggleMobileStatus()">
-    {{ mobileStatusOpen() ? '收起登录帮助' : '展开登录帮助' }}
-  </button>
-
-  <div class="status-panel" [class.mobile-open]="mobileStatusOpen()">
-    <div class="eyebrow">登录帮助</div>
-    <div class="hint-list">
-      <div>如果记得齐天号和密码，直接使用“齐天号 + 密码”即可。</div>
-      <div>如果只记得手机号，也可以切换到验证码登录。</div>
-      <div>部分账号在验证码验证后，系统会提示设置或重设密码。</div>
-      <div>登录遇到提示时，按页面步骤继续即可，不需要手动刷新。</div>
-    </div>
-  </div>
+  <app-recaptcha-panel
+    [visible]="captchaVisible"
+    [busy]="busy"
+    (resolved)="onCaptchaResolved($event)"
+    (cancelled)="cancelCaptcha()"
+    (failed)="onCaptchaFailed($event)"
+  />
 </section>

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
@@ -30,7 +30,6 @@ export class AuthPageComponent implements OnInit {
   protected error = '';
   protected captchaVisible = false;
   protected busy = false;
-  protected readonly mobileStatusOpen = signal(false);
 
   ngOnInit() {
     if (this.session.isLoggedIn()) {
@@ -141,10 +140,6 @@ export class AuthPageComponent implements OnInit {
 
   protected get wholePhoneNumber() {
     return `${this.regionCode}${this.phoneNumber}`;
-  }
-
-  protected toggleMobileStatus() {
-    this.mobileStatusOpen.update((value) => !value);
   }
 
   private async submitVerificationCode() {
