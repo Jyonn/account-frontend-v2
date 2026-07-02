@@ -119,7 +119,7 @@
 .sphere-glow {
   position: absolute;
   top: 46%;
-  right: clamp(7rem, 12vw, 12rem);
+  left: 50%;
   width: min(34vw, 22rem);
   height: min(38vw, 24rem);
   border-radius: 50%;
@@ -128,12 +128,12 @@
     radial-gradient(circle, rgba(255, 255, 255, 0.045), transparent 70%);
   filter: blur(42px);
   opacity: 0.7;
-  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
 }
 
 .sphere-shadow {
   position: absolute;
-  right: clamp(3rem, 8vw, 8rem);
+  left: 50%;
   bottom: clamp(3rem, 8vh, 5.4rem);
   width: min(26vw, 18rem);
   height: 2.4rem;
@@ -141,15 +141,16 @@
   background: radial-gradient(circle, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03) 40%, transparent 72%);
   filter: blur(22px);
   opacity: 0.22;
+  transform: translateX(-50%);
 }
 
 .sphere-gyro {
   position: absolute;
   top: 52%;
-  right: clamp(-8rem, -5vw, -1rem);
+  left: 50%;
   width: min(48vw, 38rem);
   height: min(56vw, 44rem);
-  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
   pointer-events: none;
 }
 

@@ -103,6 +103,9 @@ h2,
   color: var(--accent);
   font-family: 'IBM Plex Mono', monospace;
   font-size: 2rem;
+  filter: none;
+  opacity: 1;
+  mix-blend-mode: normal;
 }
 
 .hero-meta,
