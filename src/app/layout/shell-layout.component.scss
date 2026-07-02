@@ -20,11 +20,13 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 0.8rem;
+  min-height: 2.8rem;
+  margin-bottom: 0.4rem;
 }
 
 .nav-cluster {
   position: relative;
+  width: fit-content;
 }
 
 .nav-trigger,
@@ -54,15 +56,19 @@
 }
 
 .nav-flyout {
-  margin-top: clamp(1rem, 1.8vw, 1.5rem);
+  position: absolute;
+  top: calc(100% + 0.8rem);
+  left: 0;
   display: grid;
-  gap: 0.85rem;
-  padding-left: clamp(3.2rem, 4.8vw, 5rem);
+  gap: 0.7rem;
+  min-width: 14rem;
+  padding: 0.15rem 0 0 0.1rem;
 }
 
 .nav-flyout a {
-  font-size: clamp(1.8rem, 1.45rem + 1.1vw, 3.05rem);
-  line-height: 0.98;
+  width: fit-content;
+  font-size: clamp(1.55rem, 1.2rem + 0.95vw, 2.55rem);
+  line-height: 0.96;
   letter-spacing: -0.05em;
   color: var(--text-dim);
   transition: color 160ms ease, transform 160ms ease;
@@ -173,7 +179,7 @@
   display: grid;
   align-items: stretch;
   min-height: 0;
-  padding: 0.2rem 0;
+  padding: 0.1rem 0 0;
 }
 
 .drawer-shell {
@@ -181,11 +187,11 @@
   min-height: 0;
   height: 100%;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 2rem;
+  border-radius: 1.3rem;
   background:
-    linear-gradient(180deg, rgba(41, 41, 41, 0.82), rgba(22, 22, 22, 0.88));
-  box-shadow: 0 22px 72px rgba(0, 0, 0, 0.42);
-  backdrop-filter: blur(28px) saturate(120%);
+    linear-gradient(180deg, rgba(34, 34, 34, 0.92), rgba(20, 20, 20, 0.95));
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(22px) saturate(112%);
   overflow: hidden;
 }
 
@@ -194,39 +200,39 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.04), transparent 22%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent 12%, transparent 88%, rgba(255, 255, 255, 0.02));
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03), transparent 18%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent 16%, transparent 88%, rgba(255, 255, 255, 0.015));
   pointer-events: none;
 }
 
 .drawer-pin {
   position: absolute;
-  top: 1.35rem;
-  width: 0.55rem;
-  height: 0.55rem;
+  top: 1.05rem;
+  width: 0.42rem;
+  height: 0.42rem;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.78);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
   z-index: 2;
 }
 
 .pin-left {
-  left: 1.35rem;
+  left: 1rem;
 }
 
 .pin-right {
-  right: 1.35rem;
+  right: 1rem;
 }
 
 .drawer-blur {
   position: absolute;
   inset: 0 auto 0 0;
-  width: 32%;
+  width: 24%;
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.08), transparent 74%),
-    radial-gradient(circle at 10% 26%, rgba(255, 255, 255, 0.16), transparent 24%);
-  filter: blur(24px);
-  opacity: 0.68;
+    linear-gradient(90deg, rgba(255, 255, 255, 0.055), transparent 74%),
+    radial-gradient(circle at 12% 24%, rgba(255, 255, 255, 0.11), transparent 22%);
+  filter: blur(20px);
+  opacity: 0.42;
   pointer-events: none;
 }
 
@@ -235,7 +241,7 @@
   z-index: 1;
   height: 100%;
   min-height: 0;
-  padding: 4.85rem 1.35rem 1.35rem;
+  padding: 3.85rem 1.1rem 1.1rem;
   overflow: auto;
 }
 
@@ -297,8 +303,8 @@
   }
 
   .nav-flyout {
+    top: calc(100% + 0.7rem);
     padding-left: 0;
-    margin-top: 1rem;
   }
 
   .nav-flyout a {
@@ -323,11 +329,11 @@
   }
 
   .drawer-shell {
-    border-radius: 1.5rem;
+    border-radius: 1rem;
   }
 
   .drawer-scroll {
-    padding-top: 4.2rem;
-    padding-inline: 1rem;
+    padding-top: 3.35rem;
+    padding-inline: 0.95rem;
   }
 }

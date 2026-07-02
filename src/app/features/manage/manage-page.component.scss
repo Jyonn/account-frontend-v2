@@ -4,8 +4,8 @@
 
 .manage-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 24rem);
-  gap: clamp(1rem, 2vw, 2rem);
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 
 .editor-pane,
@@ -22,14 +22,13 @@
 
 .editor-pane,
 .stack {
-  padding: clamp(1.2rem, 2vw, 1.8rem);
+  padding: 1rem 0;
   border: 1px solid var(--line);
-  border-radius: var(--radius-xl);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.016) 24%, transparent),
-    var(--panel);
-  box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(18px);
+  border-width: 1px 0 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 .pane-head {
@@ -64,10 +63,10 @@ h2,
 .primary,
 .ghost,
 .mobile-panel-toggle {
-  padding: 0.9rem 1rem;
+  padding: 0.74rem 0.9rem;
   border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.026);
+  border-radius: 0.72rem;
+  background: rgba(255, 255, 255, 0.018);
   color: var(--text);
   font-weight: 500;
 }
@@ -97,13 +96,14 @@ h2,
   display: grid;
   place-items: center;
   border: 1px solid var(--line);
-  border-radius: 1.3rem;
-  background-color: rgba(255, 255, 255, 0.035);
+  border-radius: 0.8rem;
+  background-color: rgba(255, 255, 255, 0.03);
   background-position: center;
   background-size: cover;
   color: var(--accent);
   font-family: 'IBM Plex Mono', monospace;
   font-size: 2rem;
+  filter: grayscale(1) saturate(0) contrast(1.18) brightness(0.98);
 }
 
 .hero-meta,
@@ -139,7 +139,7 @@ h2,
 }
 
 .choice-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: 1fr;
 }
 
 .choice-pane,
@@ -151,10 +151,10 @@ h2,
 .choice-item {
   display: grid;
   gap: 0.35rem;
-  padding: 0.85rem;
+  padding: 0.72rem 0.8rem;
   border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.022);
+  border-radius: 0.72rem;
+  background: rgba(255, 255, 255, 0.018);
   color: var(--text);
   text-align: left;
 }
@@ -180,10 +180,10 @@ h2,
 .field input,
 .field textarea {
   min-width: 0;
-  padding: 1rem 1rem;
+  padding: 0.92rem 0.95rem;
   border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.022);
+  border-radius: 0.72rem;
+  background: rgba(255, 255, 255, 0.015);
   color: var(--text);
   outline: none;
   resize: vertical;
@@ -214,10 +214,10 @@ h2,
 }
 
 .feedback {
-  padding: 0.85rem 1rem;
+  padding: 0.8rem 0.9rem;
   border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0.72rem;
+  background: rgba(255, 255, 255, 0.018);
 }
 
 .feedback.error {
@@ -225,9 +225,9 @@ h2,
 }
 
 .empty-state {
-  padding: 1rem;
+  padding: 0.9rem;
   border: 1px dashed var(--line-strong);
-  border-radius: var(--radius-md);
+  border-radius: 0.72rem;
   background: rgba(255, 255, 255, 0.014);
 }
 

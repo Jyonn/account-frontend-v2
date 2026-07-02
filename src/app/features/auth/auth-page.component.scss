@@ -4,7 +4,7 @@
 
 .drawer-page {
   display: grid;
-  gap: 1rem;
+  gap: 0.8rem;
 }
 
 .drawer-head {
@@ -42,10 +42,11 @@ h1 {
 .drawer-block {
   display: grid;
   gap: 1rem;
-  padding: 1rem 1.05rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1.1rem;
-  background: rgba(255, 255, 255, 0.022);
+  padding: 0.95rem 0;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0;
+  background: transparent;
 }
 
 .block-title {
@@ -58,16 +59,16 @@ h1 {
 .mode-strip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.65rem;
+  gap: 0.5rem;
 }
 
 .mode-strip button,
 .primary,
 .ghost {
-  padding: 0.88rem 1rem;
+  padding: 0.78rem 0.9rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.95rem;
-  background: rgba(255, 255, 255, 0.024);
+  border-radius: 0.72rem;
+  background: rgba(255, 255, 255, 0.018);
   color: var(--text);
   font-weight: 500;
   transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
@@ -111,10 +112,10 @@ h1 {
 
 .field input {
   min-width: 0;
-  padding: 1rem 1rem;
+  padding: 0.92rem 0.95rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.95rem;
-  background: rgba(255, 255, 255, 0.018);
+  border-radius: 0.72rem;
+  background: rgba(255, 255, 255, 0.015);
   color: var(--text);
   outline: none;
 }
@@ -131,10 +132,10 @@ h1 {
 }
 
 .feedback {
-  padding: 0.9rem 1rem;
+  padding: 0.8rem 0.9rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.95rem;
-  background: rgba(255, 255, 255, 0.028);
+  border-radius: 0.72rem;
+  background: rgba(255, 255, 255, 0.018);
   color: var(--text-dim);
 }
 

@@ -4,7 +4,7 @@
 
 .drawer-page {
   display: grid;
-  gap: 1rem;
+  gap: 0.8rem;
 }
 
 .apps-shell {
@@ -64,10 +64,11 @@ h2 {
 .markdown-pane {
   display: grid;
   gap: 1rem;
-  padding: 1rem 1.05rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1.1rem;
-  background: rgba(255, 255, 255, 0.022);
+  padding: 0.95rem 0;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0;
+  background: transparent;
 }
 
 .block-head {
@@ -101,14 +102,14 @@ h2 {
   min-height: 100%;
   display: grid;
   align-content: start;
-  gap: 1rem;
-  padding: 1.15rem;
+  gap: 0.9rem;
+  padding: 1rem 0.95rem 1.1rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1.35rem;
+  border-radius: 1rem;
   background:
-    linear-gradient(180deg, rgba(34, 34, 34, 0.92), rgba(18, 18, 18, 0.96));
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
-  backdrop-filter: blur(24px);
+    linear-gradient(180deg, rgba(30, 30, 30, 0.94), rgba(16, 16, 16, 0.97));
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(18px);
 }
 
 .detail-shell-head {
@@ -119,10 +120,10 @@ h2 {
 }
 
 .close-detail {
-  padding: 0.55rem 0.85rem;
+  padding: 0.48rem 0.72rem;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 0.85rem;
-  background: rgba(255, 255, 255, 0.024);
+  border-radius: 0.68rem;
+  background: rgba(255, 255, 255, 0.018);
   color: var(--text-dim);
   transition: border-color 160ms ease, color 160ms ease, background-color 160ms ease;
 }
@@ -154,10 +155,10 @@ h2 {
   display: grid;
   gap: 0.2rem;
   min-width: 10rem;
-  padding: 0.85rem 0.95rem;
+  padding: 0.72rem 0.84rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.95rem;
-  background: rgba(255, 255, 255, 0.024);
+  border-radius: 0.72rem;
+  background: rgba(255, 255, 255, 0.018);
   color: var(--text);
   text-align: left;
   transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
@@ -178,8 +179,8 @@ h2 {
 .ghost,
 .primary {
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.95rem;
-  background: rgba(255, 255, 255, 0.024);
+  border-radius: 0.72rem;
+  background: rgba(255, 255, 255, 0.018);
   color: var(--text);
 }
 
@@ -188,7 +189,7 @@ h2 {
   grid-template-columns: 3.2rem minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.9rem;
-  padding: 0.85rem;
+  padding: 0.72rem 0.78rem;
   text-align: left;
   transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
 }
@@ -208,11 +209,12 @@ h2 {
   display: grid;
   place-items: center;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.95rem;
-  background: rgba(255, 255, 255, 0.035);
+  border-radius: 0.72rem;
+  background: rgba(255, 255, 255, 0.03);
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  filter: grayscale(1) saturate(0) contrast(1.18) brightness(0.98);
 }
 
 .logo {
@@ -248,24 +250,25 @@ h2 {
 
 .detail-hero {
   display: grid;
-  grid-template-columns: 5rem minmax(0, 1fr);
-  gap: 1rem;
-  align-items: center;
+  gap: 0.85rem;
+  justify-items: start;
 }
 
 .detail-meta {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: 1fr;
+  gap: 0.45rem;
 }
 
 .meta-card {
   display: grid;
-  gap: 0.35rem;
-  padding: 0.85rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.95rem;
-  background: rgba(255, 255, 255, 0.02);
+  grid-template-columns: 5.2rem minmax(0, 1fr);
+  gap: 0.8rem;
+  padding: 0.55rem 0;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 0;
+  background: transparent;
 }
 
 .meta-card span {
@@ -285,7 +288,7 @@ h2 {
 
 .ghost,
 .primary {
-  padding: 0.88rem 1rem;
+  padding: 0.72rem 0.9rem;
   font-weight: 500;
 }
 
@@ -341,7 +344,7 @@ h2 {
 .markdown-content pre {
   overflow-x: auto;
   padding: 0.85rem;
-  border-radius: 0.85rem;
+  border-radius: 0.72rem;
   background: rgba(255, 255, 255, 0.04);
 }
 
@@ -350,16 +353,16 @@ h2 {
 }
 
 .feedback {
-  padding: 0.9rem 1rem;
+  padding: 0.8rem 0.9rem;
   border: 1px solid color-mix(in oklch, var(--danger) 44%, rgba(255, 255, 255, 0.08));
-  border-radius: 0.95rem;
-  background: rgba(255, 255, 255, 0.03);
+  border-radius: 0.72rem;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .empty-state {
-  padding: 1rem;
+  padding: 0.9rem;
   border: 1px dashed rgba(255, 255, 255, 0.16);
-  border-radius: 0.95rem;
+  border-radius: 0.72rem;
 }
 
 @keyframes detail-drawer-in {
@@ -380,12 +383,11 @@ h2 {
   }
 
   .detail-shell {
-    border-radius: 1.1rem;
+    border-radius: 0.9rem;
   }
 
-  .head-row,
   .detail-hero {
-    grid-template-columns: 1fr;
+    justify-items: stretch;
   }
 
   .detail-meta {
