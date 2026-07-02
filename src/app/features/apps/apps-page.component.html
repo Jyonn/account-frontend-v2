@@ -4,7 +4,7 @@
     <div class="head-row">
       <div>
         <h1>应用中心</h1>
-        <p>抽屉只展示你当前选中的应用，避免同时摊开过多信息。</p>
+        <p>在同一层里浏览应用，选中后再展开更深一层的详情。</p>
       </div>
       <button type="button" class="ghost" (click)="reload()" [disabled]="loading()">刷新</button>
     </div>
@@ -15,43 +15,52 @@
   }
 
   <div class="apps-shell">
-    <section class="drawer-block registry-drawer">
-      <div class="block-head">
-        <span>可访问应用</span>
-        <small>{{ totalAppsCount() }} 个</small>
+    <section class="drawer-section registry-drawer">
+      <div class="section-label">
+        <div class="section-index">01</div>
+        <div class="section-title">目录</div>
       </div>
-
-      @if (loading()) {
-        <div class="empty-state">正在读取应用目录...</div>
-      } @else {
-        <div class="app-list">
-          @for (app of allApps(); track app.app_id) {
-            <button
-              type="button"
-              class="app-row"
-              [class.selected]="selectedAppId() === app.app_id && detailDrawerOpen()"
-              (click)="inspect(app.app_id)"
-            >
-              <div class="logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
-                @if (!app.logo) {
-                  <span>{{ app.app_name.slice(0, 1) }}</span>
-                }
-              </div>
-              <div class="content">
-                <div class="name">{{ app.app_name }}</div>
-                <div class="desc">{{ app.app_desc || '暂无简介' }}</div>
-              </div>
-              <div class="meta">{{ app.user_num || 0 }}</div>
-            </button>
-          }
+      <div class="section-content">
+        <div class="section-copy">
+          <p>{{ totalAppsCount() }} 个可访问应用。优先展示名称、简介与入口，不再干扰性展示使用人数。</p>
         </div>
-      }
 
-      @if (devApps().length) {
-        <section class="drawer-block owner-strip">
-          <div class="block-head">
-            <span>我的应用</span>
-            <small>{{ devApps().length }} 个可管理</small>
+        @if (loading()) {
+          <div class="empty-state">正在读取应用目录...</div>
+        } @else {
+          <div class="app-list">
+            @for (app of allApps(); track app.app_id) {
+              <button
+                type="button"
+                class="app-row"
+                [class.selected]="selectedAppId() === app.app_id && detailDrawerOpen()"
+                (click)="inspect(app.app_id)"
+              >
+                <div class="logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
+                  @if (!app.logo) {
+                    <span>{{ app.app_name.slice(0, 1) }}</span>
+                  }
+                </div>
+                <div class="content">
+                  <div class="name">{{ app.app_name }}</div>
+                  <div class="desc">{{ app.app_desc || '暂无简介' }}</div>
+                </div>
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </section>
+
+    @if (devApps().length) {
+      <section class="drawer-section owner-strip">
+        <div class="section-label">
+          <div class="section-index">02</div>
+          <div class="section-title">管理</div>
+        </div>
+        <div class="section-content">
+          <div class="section-copy">
+            <p>{{ devApps().length }} 个应用可进入管理台。</p>
           </div>
 
           <div class="owner-list">
@@ -62,9 +71,9 @@
               </button>
             }
           </div>
-        </section>
-      }
-    </section>
+        </div>
+      </section>
+    }
 
     @if (detailDrawerOpen()) {
       <aside class="detail-drawer">
@@ -78,48 +87,73 @@
             <div class="empty-state detail-empty">正在读取应用详情...</div>
           } @else if (selectedApp(); as app) {
             <section class="detail-block">
-              <div class="detail-hero">
-                <div class="hero-logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
-                  @if (!app.logo) {
-                    <span>{{ app.app_name.slice(0, 1) }}</span>
-                  }
+              <div class="detail-section">
+                <div class="section-label detail-label">
+                  <div class="section-index">01</div>
+                  <div class="section-title">概览</div>
                 </div>
-                <div class="hero-copy">
-                  <div class="drawer-kicker">Selected</div>
-                  <h2>{{ app.app_name }}</h2>
-                  <p>{{ app.app_desc || '暂无简介' }}</p>
-                </div>
-              </div>
-
-              <div class="detail-meta">
-                <div class="meta-card">
-                  <span>使用人数</span>
-                  <strong>{{ app.user_num || 0 }}</strong>
-                </div>
-                <div class="meta-card">
-                  <span>上线时间</span>
-                  <strong>{{ formatTime(app.create_time) }}</strong>
-                </div>
-                <div class="meta-card">
-                  <span>访问关系</span>
-                  <strong>{{ app.relation?.belong ? '应用所有者' : app.relation?.bind ? '已绑定账户' : '公开可访问' }}</strong>
+                <div class="section-content">
+                  <div class="detail-hero">
+                    <div class="hero-logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
+                      @if (!app.logo) {
+                        <span>{{ app.app_name.slice(0, 1) }}</span>
+                      }
+                    </div>
+                    <div class="hero-copy">
+                      <div class="drawer-kicker">Selected</div>
+                      <h2>{{ app.app_name }}</h2>
+                      <p>{{ app.app_desc || '暂无简介' }}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div class="action-row">
-                <button type="button" class="primary" (click)="enter(app)" [disabled]="launchingAppId() === app.app_id">
-                  {{ launchingAppId() === app.app_id ? '正在进入...' : '进入应用' }}
-                </button>
-                @if (canManageSelectedApp()) {
-                  <button type="button" class="ghost" (click)="manage(app)">管理应用</button>
-                }
+              <div class="detail-section">
+                <div class="section-label detail-label">
+                  <div class="section-index">02</div>
+                  <div class="section-title">信息</div>
+                </div>
+                <div class="section-content">
+                  <div class="detail-meta">
+                    <div class="meta-card">
+                      <span>上线时间</span>
+                      <strong>{{ formatTime(app.create_time) }}</strong>
+                    </div>
+                    <div class="meta-card">
+                      <span>访问关系</span>
+                      <strong>{{ app.relation?.belong ? '应用所有者' : app.relation?.bind ? '已绑定账户' : '公开可访问' }}</strong>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div class="markdown-pane">
-                <div class="block-head">
-                  <span>应用介绍</span>
+              <div class="detail-section">
+                <div class="section-label detail-label">
+                  <div class="section-index">03</div>
+                  <div class="section-title">操作</div>
                 </div>
-                <div class="markdown-content" [innerHTML]="(app.app_info || app.app_desc) | markdown"></div>
+                <div class="section-content">
+                  <div class="action-row">
+                    <button type="button" class="primary" (click)="enter(app)" [disabled]="launchingAppId() === app.app_id">
+                      {{ launchingAppId() === app.app_id ? '正在进入...' : '进入应用' }}
+                    </button>
+                    @if (canManageSelectedApp()) {
+                      <button type="button" class="ghost" (click)="manage(app)">管理应用</button>
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <div class="detail-section">
+                <div class="section-label detail-label">
+                  <div class="section-index">04</div>
+                  <div class="section-title">介绍</div>
+                </div>
+                <div class="section-content">
+                  <div class="markdown-pane">
+                    <div class="markdown-content" [innerHTML]="(app.app_info || app.app_desc) | markdown"></div>
+                  </div>
+                </div>
               </div>
             </section>
           }

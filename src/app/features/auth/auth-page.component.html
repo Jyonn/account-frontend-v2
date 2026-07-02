@@ -2,73 +2,86 @@
   <header class="drawer-head">
     <div class="drawer-kicker">Access</div>
     <h1>登录 / 注册</h1>
-    <p>只展示当前需要的一步。验证通过后，再进入应用与账户面板。</p>
+    <p>让当前步骤单独显形，把不必要的信息留在后面。</p>
   </header>
 
-  <section class="drawer-block">
-    <div class="block-title">选择登录方式</div>
-    <div class="mode-strip">
-      <button type="button" [class.active]="mode === 'qitian-password'" (click)="switchMode('qitian-password')">
-        齐天号密码
-      </button>
-      <button type="button" [class.active]="mode === 'phone-password'" (click)="switchMode('phone-password')">
-        手机号密码
-      </button>
-      <button type="button" [class.active]="mode === 'phone-code'" (click)="switchMode('phone-code')">
-        手机号验证码
-      </button>
+  <section class="drawer-section">
+    <div class="section-label">
+      <div class="section-index">01</div>
+      <div class="section-title">方式</div>
     </div>
+    <div class="section-content">
+      <div class="mode-strip">
+        <button type="button" [class.active]="mode === 'qitian-password'" (click)="switchMode('qitian-password')">
+          齐天号密码
+        </button>
+        <button type="button" [class.active]="mode === 'phone-password'" (click)="switchMode('phone-password')">
+          手机号密码
+        </button>
+        <button type="button" [class.active]="mode === 'phone-code'" (click)="switchMode('phone-code')">
+          手机号验证码
+        </button>
+      </div>
+    </div>
+  </section>
 
-    <div class="form-grid">
-      @if (mode === 'qitian-password') {
-        <label class="field">
-          <span>齐天号</span>
-          <input [(ngModel)]="qitianId" autocomplete="username" placeholder="输入你的齐天号" />
-        </label>
-      } @else {
-        <div class="phone-row">
-          <label class="field region-field">
-            <span>区号</span>
-            <input [(ngModel)]="regionCode" />
-          </label>
+  <section class="drawer-section">
+    <div class="section-label">
+      <div class="section-index">02</div>
+      <div class="section-title">{{ verificationMode === null ? '验证' : '确认' }}</div>
+    </div>
+    <div class="section-content">
+      <div class="form-grid">
+        @if (mode === 'qitian-password') {
           <label class="field">
-            <span>手机号</span>
-            <input [(ngModel)]="phoneNumber" autocomplete="tel" placeholder="输入手机号" />
+            <span>齐天号</span>
+            <input [(ngModel)]="qitianId" autocomplete="username" placeholder="输入你的齐天号" />
           </label>
-        </div>
-      }
-
-      @if (verificationMode === null) {
-        @if (mode !== 'phone-code') {
-          <label class="field">
-            <span>密码</span>
-            <input [(ngModel)]="password" type="password" autocomplete="current-password" placeholder="输入密码" />
-          </label>
-        }
-      } @else {
-        <div class="verify-grid">
-          <label class="field">
-            <span>6 位验证码</span>
-            <input [(ngModel)]="verificationCode" maxlength="6" inputmode="numeric" placeholder="输入验证码" />
-          </label>
-          @if (needsPasswordForCodeStep) {
+        } @else {
+          <div class="phone-row">
+            <label class="field region-field">
+              <span>区号</span>
+              <input [(ngModel)]="regionCode" />
+            </label>
             <label class="field">
-              <span>{{ codeStepLabel }}</span>
-              <input [(ngModel)]="password" type="password" autocomplete="new-password" placeholder="输入新的密码" />
+              <span>手机号</span>
+              <input [(ngModel)]="phoneNumber" autocomplete="tel" placeholder="输入手机号" />
+            </label>
+          </div>
+        }
+
+        @if (verificationMode === null) {
+          @if (mode !== 'phone-code') {
+            <label class="field">
+              <span>密码</span>
+              <input [(ngModel)]="password" type="password" autocomplete="current-password" placeholder="输入密码" />
             </label>
           }
-        </div>
-      }
-
-      <div class="action-row">
-        <button type="button" class="primary" (click)="submit()" [disabled]="busy">
-          {{ verificationMode === null ? '下一步' : '完成登录' }}
-        </button>
-        @if (verificationMode !== null) {
-          <button type="button" class="ghost" (click)="resetVerification()" [disabled]="busy">
-            重置流程
-          </button>
+        } @else {
+          <div class="verify-grid">
+            <label class="field">
+              <span>6 位验证码</span>
+              <input [(ngModel)]="verificationCode" maxlength="6" inputmode="numeric" placeholder="输入验证码" />
+            </label>
+            @if (needsPasswordForCodeStep) {
+              <label class="field">
+                <span>{{ codeStepLabel }}</span>
+                <input [(ngModel)]="password" type="password" autocomplete="new-password" placeholder="输入新的密码" />
+              </label>
+            }
+          </div>
         }
+
+        <div class="action-row">
+          <button type="button" class="primary" (click)="submit()" [disabled]="busy">
+            {{ verificationMode === null ? '下一步' : '完成登录' }}
+          </button>
+          @if (verificationMode !== null) {
+            <button type="button" class="ghost" (click)="resetVerification()" [disabled]="busy">
+              重置流程
+            </button>
+          }
+        </div>
       </div>
     </div>
   </section>
@@ -80,11 +93,16 @@
     <div class="feedback error">{{ error }}</div>
   }
 
-  <section class="drawer-block note-block">
-    <div class="block-title">使用建议</div>
-    <div class="note-line">记得齐天号时，优先使用齐天号密码登录。</div>
-    <div class="note-line">手机号验证码适合首次登录、忘记密码或临时进入。</div>
-    <div class="note-line">安全验证只会在需要时弹出，不需要额外刷新。</div>
+  <section class="drawer-section note-block">
+    <div class="section-label">
+      <div class="section-index">03</div>
+      <div class="section-title">说明</div>
+    </div>
+    <div class="section-content">
+      <div class="note-line">记得齐天号时，优先使用齐天号密码登录。</div>
+      <div class="note-line">手机号验证码适合首次登录、忘记密码或临时进入。</div>
+      <div class="note-line">安全验证只会在需要时弹出，不需要额外刷新。</div>
+    </div>
   </section>
 
   <app-recaptcha-panel

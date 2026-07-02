@@ -4,7 +4,7 @@
     <div class="head-row">
       <div>
         <h1>账户设置</h1>
-        <p>只保留真正会影响当前账户状态的资料、权限与入口。</p>
+        <p>把真正影响账户状态的资料、权限与退出入口留在同一张抽屉里。</p>
       </div>
       @if (!editMode()) {
         <button type="button" class="ghost" (click)="beginEdit()">编辑</button>
@@ -29,70 +29,92 @@
   @if (loading()) {
     <div class="empty-state">正在读取账户资料...</div>
   } @else {
-    <section class="drawer-block hero-block">
-      <div class="avatar" [style.background-image]="avatarUrl ? 'url(' + avatarUrl + ')' : ''">
-        @if (!avatarUrl) {
-          <span>{{ (session.user()?.nickname || session.user()?.qitian || 'U').slice(0, 1) }}</span>
-        }
+    <section class="drawer-section hero-block">
+      <div class="section-label">
+        <div class="section-index">01</div>
+        <div class="section-title">会话</div>
       </div>
-      <div class="hero-copy">
-        <div class="drawer-kicker">Current Session</div>
-        <h2>{{ session.user()?.nickname || '未命名用户' }}</h2>
-        <p>账户标识：{{ session.user()?.qitian ? '已设置' : '未设置' }}</p>
-        <p>实名认证：{{ verifyStatusText }}</p>
-        <p>开发者权限：{{ session.user()?.is_dev ? '已开通' : '未开通' }}</p>
-        @if (editMode()) {
-          <label class="upload-line">
-            <input type="file" accept="image/*" (change)="uploadAvatar($event)" />
-            <span>上传头像</span>
+      <div class="section-content">
+        <div class="hero-panel">
+          <div class="avatar" [style.background-image]="avatarUrl ? 'url(' + avatarUrl + ')' : ''">
+            @if (!avatarUrl) {
+              <span>{{ (session.user()?.nickname || session.user()?.qitian || 'U').slice(0, 1) }}</span>
+            }
+          </div>
+          <div class="hero-copy">
+            <div class="drawer-kicker">Current Session</div>
+            <h2>{{ session.user()?.nickname || '未命名用户' }}</h2>
+            <p>齐天号：{{ session.user()?.qitian || '尚未设置' }}</p>
+            <p>实名认证：{{ verifyStatusText }}</p>
+            <p>开发者权限：{{ session.user()?.is_dev ? '已开通' : '未开通' }}</p>
+            @if (editMode()) {
+              <label class="upload-line">
+                <input type="file" accept="image/*" (change)="uploadAvatar($event)" />
+                <span>上传头像</span>
+              </label>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="drawer-section">
+      <div class="section-label">
+        <div class="section-index">02</div>
+        <div class="section-title">资料</div>
+      </div>
+      <div class="section-content">
+        <div class="form-grid">
+          <label class="field">
+            <span>昵称</span>
+            <input [(ngModel)]="draft.nickname" [readonly]="!editMode()" />
           </label>
-        }
+          <label class="field full-span">
+            <span>个性签名</span>
+            <textarea rows="4" [(ngModel)]="draft.description" [readonly]="!editMode()"></textarea>
+          </label>
+          <label class="field">
+            <span>齐天号</span>
+            <input
+              [(ngModel)]="draft.qitian"
+              [readonly]="!editMode() || session.user()?.allow_qitian_modify === false"
+              placeholder="通常只允许设置一次"
+            />
+          </label>
+          <label class="field">
+            <span>生日</span>
+            <input type="date" [(ngModel)]="draft.birthday" [readonly]="!editMode()" />
+          </label>
+        </div>
       </div>
     </section>
 
-    <section class="drawer-block">
-      <div class="form-grid">
-        <label class="field">
-          <span>昵称</span>
-          <input [(ngModel)]="draft.nickname" [readonly]="!editMode()" />
-        </label>
-        <label class="field">
-          <span>个性签名</span>
-          <textarea rows="3" [(ngModel)]="draft.description" [readonly]="!editMode()"></textarea>
-        </label>
-        <label class="field">
-          <span>齐天号</span>
-          <input
-            [(ngModel)]="draft.qitian"
-            [readonly]="!editMode() || session.user()?.allow_qitian_modify === false"
-            placeholder="通常只允许设置一次"
-          />
-        </label>
-        <label class="field">
-          <span>生日</span>
-          <input type="date" [(ngModel)]="draft.birthday" [readonly]="!editMode()" />
-        </label>
+    <section class="drawer-section">
+      <div class="section-label">
+        <div class="section-index">03</div>
+        <div class="section-title">入口</div>
       </div>
-    </section>
-
-    <section class="drawer-block info-grid">
-      <div class="info-card">
-        <span>应用入口</span>
-        <a routerLink="/apps">打开应用中心</a>
-      </div>
-      <div class="info-card">
-        <span>开发者状态</span>
-        @if (!session.user()?.is_dev) {
-          <button type="button" class="ghost full" (click)="applyDev()" [disabled]="!canApplyDev() || applyingDev()">
-            {{ applyingDev() ? '申请中...' : canApplyDev() ? '申请开发者权限' : '完成认证后可申请' }}
-          </button>
-        } @else {
-          <strong>当前账号已具备开发者权限</strong>
-        }
-      </div>
-      <div class="info-card">
-        <span>登录状态</span>
-        <button type="button" class="ghost full" (click)="session.logout()">退出登录</button>
+      <div class="section-content">
+        <div class="info-grid">
+          <div class="info-card">
+            <span>应用入口</span>
+            <a routerLink="/apps">打开应用中心</a>
+          </div>
+          <div class="info-card">
+            <span>开发者状态</span>
+            @if (!session.user()?.is_dev) {
+              <button type="button" class="ghost full" (click)="applyDev()" [disabled]="!canApplyDev() || applyingDev()">
+                {{ applyingDev() ? '申请中...' : canApplyDev() ? '申请开发者权限' : '完成认证后可申请' }}
+              </button>
+            } @else {
+              <strong>当前账号已具备开发者权限</strong>
+            }
+          </div>
+          <div class="info-card">
+            <span>登录状态</span>
+            <button type="button" class="ghost full" (click)="session.logout()">退出登录</button>
+          </div>
+        </div>
       </div>
     </section>
   }
