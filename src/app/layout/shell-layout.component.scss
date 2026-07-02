@@ -91,7 +91,7 @@
 .stage {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) clamp(24rem, 31vw, 39rem);
+  grid-template-columns: minmax(0, 1fr) minmax(32rem, 40vw);
   align-items: stretch;
   gap: clamp(0.75rem, 1vw, 1.1rem);
   min-height: calc(100dvh - 5.1rem);
@@ -133,14 +133,14 @@
 .sphere-gyro {
   position: absolute;
   top: 52%;
-  right: clamp(-8rem, -6vw, -2rem);
-  width: min(44vw, 34rem);
+  right: clamp(-10rem, -7vw, -2rem);
+  width: min(42vw, 32rem);
   aspect-ratio: 1;
   transform:
     translateY(-50%)
     perspective(1600px)
-    rotateX(calc(70deg + var(--tilt-x, 0deg)))
-    rotateZ(calc(-10deg + var(--tilt-y, 0deg)));
+    rotateX(calc(72deg + var(--tilt-x, 0deg)))
+    rotateZ(calc(-9deg + var(--tilt-y, 0deg)));
   transform-style: preserve-3d;
   transition: transform 220ms ease-out;
   pointer-events: none;
@@ -158,25 +158,27 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 62%;
-  height: 9.8%;
-  margin-left: -31%;
-  margin-top: -4.9%;
-  border-radius: 999px;
+  width: 44%;
+  height: 44%;
+  margin-left: -22%;
+  margin-top: -22%;
+  border-radius: 50%;
   background:
-    radial-gradient(circle at 34% 34%, rgba(255, 255, 255, 0.36), transparent 40%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(0, 0, 0, 0.22)),
+    radial-gradient(circle at 36% 34%, rgba(255, 255, 255, 0.42), transparent 34%),
+    radial-gradient(circle at 62% 64%, rgba(255, 255, 255, 0.1), transparent 52%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(0, 0, 0, 0.28)),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.15' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.95'/%3E%3C/svg%3E");
   background-size: cover;
   background-color: rgba(196, 196, 196, 0.62);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    inset 0 -12px 24px rgba(0, 0, 0, 0.22),
+    inset 0 -18px 30px rgba(0, 0, 0, 0.24),
     0 0 0 1px rgba(255, 255, 255, 0.06);
   transform:
     translate(-50%, -50%)
     translateY(var(--offset))
-    scaleX(var(--scale));
+    translateZ(var(--depth))
+    scale(var(--scale));
   filter: blur(var(--blur)) brightness(var(--brightness));
 }
 
@@ -185,7 +187,9 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.16), transparent 26%, transparent 76%, rgba(255, 255, 255, 0.05));
+  background:
+    radial-gradient(circle at 42% 36%, rgba(255, 255, 255, 0.14), transparent 34%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.14), transparent 28%, transparent 74%, rgba(255, 255, 255, 0.05));
 }
 
 .stage-caption {
@@ -330,7 +334,7 @@
     transform:
       translate(-50%, -50%)
       perspective(1200px)
-      rotateX(calc(70deg + var(--tilt-x, 0deg)))
+      rotateX(calc(72deg + var(--tilt-x, 0deg)))
       rotateZ(calc(-8deg + var(--tilt-y, 0deg)));
   }
 

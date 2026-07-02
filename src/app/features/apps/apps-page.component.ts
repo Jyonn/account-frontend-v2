@@ -22,7 +22,9 @@ export class AppsPageComponent implements OnInit {
   protected readonly error = signal('');
   protected readonly allApps = signal<AccountApp[]>([]);
   protected readonly devApps = signal<AccountApp[]>([]);
+  protected readonly selectedAppId = signal('');
   protected readonly selectedApp = signal<AccountApp | null>(null);
+  protected readonly detailDrawerOpen = signal(false);
   protected readonly canManageSelectedApp = computed(() => !!this.selectedApp()?.relation?.belong);
   protected readonly totalAppsCount = computed(() => {
     const ids = new Set([...this.allApps(), ...this.devApps()].map((app) => app.app_id));
@@ -45,6 +47,8 @@ export class AppsPageComponent implements OnInit {
 
   protected async inspect(appId: string) {
     this.error.set('');
+    this.selectedAppId.set(appId);
+    this.detailDrawerOpen.set(true);
     this.detailLoading.set(true);
 
     try {
@@ -54,6 +58,13 @@ export class AppsPageComponent implements OnInit {
     } finally {
       this.detailLoading.set(false);
     }
+  }
+
+  protected closeDetailDrawer() {
+    this.detailDrawerOpen.set(false);
+    this.selectedAppId.set('');
+    this.selectedApp.set(null);
+    this.detailLoading.set(false);
   }
 
   protected async enter(app: AccountApp) {
@@ -94,16 +105,18 @@ export class AppsPageComponent implements OnInit {
       this.allApps.set(allApps);
       this.devApps.set(devApps);
 
-      const currentSelectedApp = this.selectedApp();
-      const first = currentSelectedApp
-        ? [...devApps, ...allApps].find((item) => item.app_id === currentSelectedApp.app_id)
-        : devApps[0] || allApps[0];
-
-      if (first) {
-        this.selectedApp.set(first);
-        void this.inspect(first.app_id);
-      } else {
+      const currentSelectedAppId = this.selectedAppId();
+      if (!currentSelectedAppId) {
         this.selectedApp.set(null);
+        this.detailDrawerOpen.set(false);
+        return;
+      }
+
+      const nextSelected = [...devApps, ...allApps].find((item) => item.app_id === currentSelectedAppId);
+      if (nextSelected && this.detailDrawerOpen()) {
+        void this.inspect(nextSelected.app_id);
+      } else {
+        this.closeDetailDrawer();
       }
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : '应用中心加载失败');

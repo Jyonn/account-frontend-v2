@@ -14,102 +14,117 @@
     <div class="feedback error">{{ error() }}</div>
   }
 
-  <section class="drawer-block">
-    <div class="block-head">
-      <span>可访问应用</span>
-      <small>{{ totalAppsCount() }} 个</small>
-    </div>
-
-    @if (loading()) {
-      <div class="empty-state">正在读取应用目录...</div>
-    } @else {
-      <div class="app-list">
-        @for (app of allApps(); track app.app_id) {
-          <button
-            type="button"
-            class="app-row"
-            [class.selected]="selectedApp()?.app_id === app.app_id"
-            (click)="inspect(app.app_id)"
-          >
-            <div class="logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
-              @if (!app.logo) {
-                <span>{{ app.app_name.slice(0, 1) }}</span>
-              }
-            </div>
-            <div class="content">
-              <div class="name">{{ app.app_name }}</div>
-              <div class="desc">{{ app.app_desc || '暂无简介' }}</div>
-            </div>
-            <div class="meta">{{ app.user_num || 0 }}</div>
-          </button>
-        }
-      </div>
-    }
-  </section>
-
-  @if (devApps().length) {
-    <section class="drawer-block owner-strip">
+  <div class="apps-shell">
+    <section class="drawer-block registry-drawer">
       <div class="block-head">
-        <span>我的应用</span>
-        <small>{{ devApps().length }} 个可管理</small>
+        <span>可访问应用</span>
+        <small>{{ totalAppsCount() }} 个</small>
       </div>
 
-      <div class="owner-list">
-        @for (app of devApps(); track app.app_id) {
-          <button type="button" class="owner-chip" (click)="manage(app)">
-            <span>{{ app.app_name }}</span>
-            <small>进入管理</small>
-          </button>
-        }
-      </div>
-    </section>
-  }
-
-  @if (selectedApp(); as app) {
-    <section class="drawer-block detail-block">
-      <div class="detail-hero">
-        <div class="hero-logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
-          @if (!app.logo) {
-            <span>{{ app.app_name.slice(0, 1) }}</span>
+      @if (loading()) {
+        <div class="empty-state">正在读取应用目录...</div>
+      } @else {
+        <div class="app-list">
+          @for (app of allApps(); track app.app_id) {
+            <button
+              type="button"
+              class="app-row"
+              [class.selected]="selectedAppId() === app.app_id && detailDrawerOpen()"
+              (click)="inspect(app.app_id)"
+            >
+              <div class="logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
+                @if (!app.logo) {
+                  <span>{{ app.app_name.slice(0, 1) }}</span>
+                }
+              </div>
+              <div class="content">
+                <div class="name">{{ app.app_name }}</div>
+                <div class="desc">{{ app.app_desc || '暂无简介' }}</div>
+              </div>
+              <div class="meta">{{ app.user_num || 0 }}</div>
+            </button>
           }
         </div>
-        <div class="hero-copy">
-          <div class="drawer-kicker">Selected</div>
-          <h2>{{ app.app_name }}</h2>
-          <p>{{ app.app_desc || '暂无简介' }}</p>
-        </div>
-      </div>
+      }
 
-      <div class="detail-meta">
-        <div class="meta-card">
-          <span>使用人数</span>
-          <strong>{{ app.user_num || 0 }}</strong>
-        </div>
-        <div class="meta-card">
-          <span>上线时间</span>
-          <strong>{{ formatTime(app.create_time) }}</strong>
-        </div>
-        <div class="meta-card">
-          <span>访问关系</span>
-          <strong>{{ app.relation?.belong ? '应用所有者' : app.relation?.bind ? '已绑定账户' : '公开可访问' }}</strong>
-        </div>
-      </div>
+      @if (devApps().length) {
+        <section class="drawer-block owner-strip">
+          <div class="block-head">
+            <span>我的应用</span>
+            <small>{{ devApps().length }} 个可管理</small>
+          </div>
 
-      <div class="action-row">
-        <button type="button" class="primary" (click)="enter(app)" [disabled]="launchingAppId() === app.app_id">
-          {{ launchingAppId() === app.app_id ? '正在进入...' : '进入应用' }}
-        </button>
-        @if (canManageSelectedApp()) {
-          <button type="button" class="ghost" (click)="manage(app)">管理应用</button>
-        }
-      </div>
-
-      <div class="markdown-pane">
-        <div class="block-head">
-          <span>应用介绍</span>
-        </div>
-        <div class="markdown-content" [innerHTML]="(app.app_info || app.app_desc) | markdown"></div>
-      </div>
+          <div class="owner-list">
+            @for (app of devApps(); track app.app_id) {
+              <button type="button" class="owner-chip" (click)="manage(app)">
+                <span>{{ app.app_name }}</span>
+                <small>进入管理</small>
+              </button>
+            }
+          </div>
+        </section>
+      }
     </section>
-  }
+
+    @if (detailDrawerOpen()) {
+      <aside class="detail-drawer">
+        <div class="detail-shell">
+          <div class="detail-shell-head">
+            <div class="drawer-kicker">App Detail</div>
+            <button type="button" class="close-detail" (click)="closeDetailDrawer()">关闭</button>
+          </div>
+
+          @if (detailLoading()) {
+            <div class="empty-state detail-empty">正在读取应用详情...</div>
+          } @else if (selectedApp(); as app) {
+            <section class="detail-block">
+              <div class="detail-hero">
+                <div class="hero-logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
+                  @if (!app.logo) {
+                    <span>{{ app.app_name.slice(0, 1) }}</span>
+                  }
+                </div>
+                <div class="hero-copy">
+                  <div class="drawer-kicker">Selected</div>
+                  <h2>{{ app.app_name }}</h2>
+                  <p>{{ app.app_desc || '暂无简介' }}</p>
+                </div>
+              </div>
+
+              <div class="detail-meta">
+                <div class="meta-card">
+                  <span>使用人数</span>
+                  <strong>{{ app.user_num || 0 }}</strong>
+                </div>
+                <div class="meta-card">
+                  <span>上线时间</span>
+                  <strong>{{ formatTime(app.create_time) }}</strong>
+                </div>
+                <div class="meta-card">
+                  <span>访问关系</span>
+                  <strong>{{ app.relation?.belong ? '应用所有者' : app.relation?.bind ? '已绑定账户' : '公开可访问' }}</strong>
+                </div>
+              </div>
+
+              <div class="action-row">
+                <button type="button" class="primary" (click)="enter(app)" [disabled]="launchingAppId() === app.app_id">
+                  {{ launchingAppId() === app.app_id ? '正在进入...' : '进入应用' }}
+                </button>
+                @if (canManageSelectedApp()) {
+                  <button type="button" class="ghost" (click)="manage(app)">管理应用</button>
+                }
+              </div>
+
+              <div class="markdown-pane">
+                <div class="block-head">
+                  <span>应用介绍</span>
+                </div>
+                <div class="markdown-content" [innerHTML]="(app.app_info || app.app_desc) | markdown"></div>
+              </div>
+            </section>
+          }
+        </div>
+      </aside>
+    }
+  </div>
 </section>

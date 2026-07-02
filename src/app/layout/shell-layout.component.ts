@@ -34,11 +34,12 @@ export class ShellLayoutComponent implements OnInit {
     const radius = Math.cos(theta);
     return {
       index,
-      offset: `${Math.sin(theta) * 11.5}rem`,
-      scale: `${0.18 + radius * 0.92}`,
-      blur: `${(1 - radius) * 0.1}rem`,
-      brightness: `${0.72 + radius * 0.26}`,
-      opacity: `${0.24 + radius * 0.68}`
+      offset: `${Math.sin(theta) * 8.5}rem`,
+      depth: `${radius * 2.2}rem`,
+      scale: `${0.28 + radius * 0.78}`,
+      blur: `${(1 - radius) * 0.08}rem`,
+      brightness: `${0.76 + radius * 0.22}`,
+      opacity: `${0.22 + radius * 0.7}`
     };
   });
   protected readonly currentSectionLabel = computed(() => {
