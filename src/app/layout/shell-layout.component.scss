@@ -112,6 +112,7 @@
 }
 
 .sphere-stage {
+  grid-column: 1 / -1;
   position: fixed;
   inset: 0 auto auto 50%;
   width: 100vw;
@@ -181,10 +182,13 @@
 }
 
 .content-drawer {
+  grid-column: 2;
   position: relative;
   z-index: 4;
   display: grid;
   align-items: stretch;
+  justify-self: end;
+  width: 100%;
   min-height: 0;
   padding: 0.1rem 0 0;
 }
@@ -293,7 +297,9 @@
   }
 
   .content-drawer {
+    grid-column: 1;
     min-height: 0;
+    justify-self: stretch;
   }
 
   .stage-caption {
