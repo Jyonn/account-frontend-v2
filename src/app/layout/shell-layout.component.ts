@@ -28,18 +28,18 @@ export class ShellLayoutComponent implements OnInit {
         return '等待本地会话';
     }
   });
-  protected readonly sphereSlices = Array.from({ length: 13 }, (_, index) => {
-    const position = index / 12;
-    const theta = (position - 0.5) * Math.PI;
-    const radius = Math.cos(theta);
+  protected readonly sphereSlices = Array.from({ length: 17 }, (_, index) => {
+    const position = index / 16;
+    const normalizedY = position * 2 - 1;
+    const radius = Math.sqrt(Math.max(0, 1 - normalizedY * normalizedY));
     return {
       index,
-      offset: `${Math.sin(theta) * 8.5}rem`,
-      depth: `${radius * 2.2}rem`,
-      scale: `${0.28 + radius * 0.78}`,
-      blur: `${(1 - radius) * 0.08}rem`,
-      brightness: `${0.76 + radius * 0.22}`,
-      opacity: `${0.22 + radius * 0.7}`
+      offset: `${normalizedY * 7.2}rem`,
+      depth: `${-Math.abs(normalizedY) * 0.28}rem`,
+      scale: `${0.18 + radius * 0.82}`,
+      blur: `${Math.abs(normalizedY) * 0.045}rem`,
+      brightness: `${0.68 + radius * 0.16 - normalizedY * 0.04}`,
+      opacity: `${0.16 + radius * 0.68}`
     };
   });
   protected readonly currentSectionLabel = computed(() => {
