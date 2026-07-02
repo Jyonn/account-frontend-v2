@@ -29,6 +29,7 @@
 html,
 body {
   margin: 0;
+  height: 100dvh;
   min-height: 100dvh;
   background:
     radial-gradient(circle at 14% 14%, rgba(255, 255, 255, 0.06), transparent 20rem),
@@ -40,7 +41,7 @@ body {
 
 body {
   position: relative;
-  overflow-x: hidden;
+  overflow: hidden;
   font-family: 'IBM Plex Sans', 'Helvetica Neue', sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -75,6 +76,8 @@ app-root {
   position: relative;
   z-index: 1;
   display: block;
+  height: 100%;
+  overflow: hidden;
 }
 
 button,

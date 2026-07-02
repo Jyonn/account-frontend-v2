@@ -11,6 +11,7 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
 
   private readonly hostRef = inject(ElementRef<HTMLElement>);
   private readonly zone = inject(NgZone);
+  private readonly baseRotation = new THREE.Euler(-0.84, -0.1, -0.34);
 
   private renderer?: THREE.WebGLRenderer;
   private scene?: THREE.Scene;
@@ -18,12 +19,17 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
   private sphere?: THREE.Group<THREE.Object3DEventMap>;
   private material?: THREE.MeshStandardMaterial;
   private resizeObserver?: ResizeObserver;
+  private animationFrame?: number;
+  private animationStart = 0;
 
   ngAfterViewInit() {
     this.zone.runOutsideAngular(() => this.initializeScene());
   }
 
   ngOnDestroy() {
+    if (this.animationFrame) {
+      cancelAnimationFrame(this.animationFrame);
+    }
     this.resizeObserver?.disconnect();
     this.sphere?.traverse((child: THREE.Object3D) => {
       if (child instanceof THREE.Mesh) {
@@ -58,15 +64,13 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
 
     const material = this.createMaterial();
     const sphere = this.createCrossSectionSphere(material, {
-      radius: 1.36,
-      count: 12,
+      radius: 1.44,
+      count: 13,
       zLimitRatio: 0.93,
       thickness: 0.018
     });
 
-    sphere.rotation.x = -0.84;
-    sphere.rotation.y = -0.1;
-    sphere.rotation.z = -0.34;
+    sphere.rotation.copy(this.baseRotation);
 
     scene.add(sphere);
     this.addLights(scene);
@@ -80,10 +84,11 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
     this.resizeObserver = new ResizeObserver(() => this.resizeAndRender());
     this.resizeObserver.observe(this.hostRef.nativeElement);
     this.resizeAndRender();
+    this.startAnimation();
   }
 
   private resizeAndRender() {
-    if (!this.renderer || !this.camera) {
+    if (!this.renderer || !this.camera || !this.scene) {
       return;
     }
 
@@ -91,7 +96,7 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
     const width = Math.max(host.clientWidth, 1);
     const height = Math.max(host.clientHeight, 1);
     const aspect = width / height;
-    const viewSize = 2.35;
+    const viewSize = 1.9;
 
     this.camera.left = -viewSize * aspect;
     this.camera.right = viewSize * aspect;
@@ -101,7 +106,29 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
 
     this.renderer.setSize(width, height, false);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.render(this.scene!, this.camera);
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  private startAnimation() {
+    const renderFrame = (timestamp: number) => {
+      if (!this.renderer || !this.camera || !this.scene || !this.sphere) {
+        return;
+      }
+
+      if (this.animationStart === 0) {
+        this.animationStart = timestamp;
+      }
+
+      const elapsed = (timestamp - this.animationStart) / 1000;
+      this.sphere.rotation.x = this.baseRotation.x + Math.sin(elapsed * 0.42) * 0.03;
+      this.sphere.rotation.y = this.baseRotation.y + elapsed * 0.2;
+      this.sphere.rotation.z = this.baseRotation.z + Math.cos(elapsed * 0.3) * 0.015;
+
+      this.renderer.render(this.scene, this.camera);
+      this.animationFrame = requestAnimationFrame(renderFrame);
+    };
+
+    this.animationFrame = requestAnimationFrame(renderFrame);
   }
 
   private addLights(scene: THREE.Scene) {

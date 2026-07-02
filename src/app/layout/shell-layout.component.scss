@@ -1,11 +1,16 @@
 :host {
   display: block;
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 .shell {
-  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100dvh;
+  max-height: 100dvh;
   padding: clamp(1rem, 1.4vw, 1.6rem);
+  overflow: hidden;
 }
 
 .topbar {
@@ -94,12 +99,14 @@
   grid-template-columns: minmax(0, 1fr) minmax(32rem, 40vw);
   align-items: stretch;
   gap: clamp(0.75rem, 1vw, 1.1rem);
-  min-height: calc(100dvh - 5.1rem);
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 .sphere-stage {
   position: relative;
-  min-height: 100%;
+  min-height: 0;
   overflow: visible;
 }
 
@@ -132,10 +139,10 @@
 
 .sphere-gyro {
   position: absolute;
-  top: 51%;
-  right: clamp(-7rem, -4vw, 0rem);
-  width: min(40vw, 30rem);
-  height: min(46vw, 36rem);
+  top: 52%;
+  right: clamp(-8rem, -5vw, -1rem);
+  width: min(48vw, 38rem);
+  height: min(56vw, 44rem);
   transform: translateY(-50%);
   pointer-events: none;
 }
@@ -165,12 +172,14 @@
   z-index: 4;
   display: grid;
   align-items: stretch;
+  min-height: 0;
   padding: 0.2rem 0;
 }
 
 .drawer-shell {
   position: relative;
-  min-height: 100%;
+  min-height: 0;
+  height: 100%;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 2rem;
   background:
@@ -225,6 +234,7 @@
   position: relative;
   z-index: 1;
   height: 100%;
+  min-height: 0;
   padding: 4.85rem 1.35rem 1.35rem;
   overflow: auto;
 }
@@ -238,11 +248,11 @@
 @media (max-width: 1100px) {
   .stage {
     grid-template-columns: 1fr;
-    min-height: auto;
+    grid-template-rows: 18rem minmax(0, 1fr);
   }
 
   .sphere-stage {
-    min-height: 18rem;
+    min-height: 0;
   }
 
   .sphere-glow {
@@ -264,13 +274,13 @@
     left: 50%;
     right: auto;
     top: 50%;
-    width: min(84vw, 28rem);
-    height: min(90vw, 32rem);
+    width: min(92vw, 34rem);
+    height: min(98vw, 38rem);
     transform: translate(-50%, -50%);
   }
 
   .content-drawer {
-    min-height: calc(100dvh - 22rem);
+    min-height: 0;
   }
 
   .stage-caption {
@@ -304,12 +314,12 @@
     gap: 0.75rem;
   }
 
-  .sphere-stage {
-    min-height: 16rem;
+  .stage {
+    grid-template-rows: 15.5rem minmax(0, 1fr);
   }
 
   .content-drawer {
-    min-height: calc(100dvh - 17rem);
+    min-height: 0;
   }
 
   .drawer-shell {
