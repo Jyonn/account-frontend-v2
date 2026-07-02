@@ -108,56 +108,62 @@
   min-height: 0;
   height: 100%;
   overflow: hidden;
+  z-index: 1;
 }
 
 .sphere-stage {
-  position: relative;
-  min-height: 0;
-  overflow: visible;
+  position: fixed;
+  inset: 0 auto auto 50%;
+  width: 100vw;
+  height: 100dvh;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
 }
 
 .sphere-glow {
   position: absolute;
-  top: 46%;
   left: 50%;
-  width: min(34vw, 22rem);
-  height: min(38vw, 24rem);
+  bottom: clamp(8rem, 10vh, 10rem);
+  width: min(46vw, 30rem);
+  height: min(44vw, 28rem);
   border-radius: 50%;
   background:
     radial-gradient(circle at 26% 36%, rgba(255, 255, 255, 0.08), transparent 34%),
     radial-gradient(circle, rgba(255, 255, 255, 0.045), transparent 70%);
-  filter: blur(42px);
-  opacity: 0.7;
-  transform: translate(-50%, -50%);
+  filter: blur(56px);
+  opacity: 0.82;
+  transform: translateX(-50%);
 }
 
 .sphere-shadow {
   position: absolute;
   left: 50%;
-  bottom: clamp(3rem, 8vh, 5.4rem);
-  width: min(26vw, 18rem);
-  height: 2.4rem;
+  bottom: clamp(3rem, 4vh, 4.4rem);
+  width: min(34vw, 24rem);
+  height: 2.8rem;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03) 40%, transparent 72%);
-  filter: blur(22px);
-  opacity: 0.22;
+  filter: blur(26px);
+  opacity: 0.3;
   transform: translateX(-50%);
 }
 
 .sphere-gyro {
   position: absolute;
-  top: 52%;
   left: 50%;
-  width: min(48vw, 38rem);
-  height: min(56vw, 44rem);
-  transform: translate(-50%, -50%);
+  bottom: clamp(-10rem, -12vh, -6rem);
+  width: min(62vw, 48rem);
+  height: min(72vw, 56rem);
+  transform: translateX(-50%);
   pointer-events: none;
 }
 
 .stage-caption {
-  position: absolute;
-  left: 0;
-  bottom: 0.3rem;
+  position: fixed;
+  left: clamp(1rem, 1.6vw, 1.6rem);
+  bottom: clamp(1rem, 1.6vw, 1.35rem);
   display: grid;
   gap: 0.28rem;
   font-family: 'IBM Plex Mono', monospace;
@@ -259,19 +265,20 @@
   }
 
   .sphere-stage {
-    min-height: 0;
+    inset: 0;
+    width: 100vw;
+    transform: none;
   }
 
   .sphere-glow {
     left: 50%;
-    right: auto;
+    bottom: 7rem;
     width: min(72vw, 24rem);
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
   }
 
   .sphere-shadow {
     left: 50%;
-    right: auto;
     width: min(72vw, 18rem);
     bottom: 2rem;
     transform: translateX(-50%);
@@ -279,11 +286,10 @@
 
   .sphere-gyro {
     left: 50%;
-    right: auto;
-    top: 50%;
+    bottom: -5rem;
     width: min(92vw, 34rem);
     height: min(98vw, 38rem);
-    transform: translate(-50%, -50%);
+    transform: translateX(-50%);
   }
 
   .content-drawer {
@@ -291,9 +297,9 @@
   }
 
   .stage-caption {
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%);
+    left: 1rem;
+    bottom: 1rem;
+    transform: none;
     text-align: center;
   }
 }
