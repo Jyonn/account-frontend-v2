@@ -115,7 +115,7 @@ export class AppsPageComponent implements OnInit {
 
     try {
       const [allApps, devApps] = await Promise.all([
-        this.api.getAppList({ relation: '', frequent: false, count: AppsPageComponent.APP_LIST_FETCH_COUNT }),
+        this.api.getAppList({ relation: 'none', frequent: false, count: AppsPageComponent.APP_LIST_FETCH_COUNT }),
         this.api.getAppList({ relation: 'owner', count: AppsPageComponent.APP_LIST_FETCH_COUNT })
       ]);
 
