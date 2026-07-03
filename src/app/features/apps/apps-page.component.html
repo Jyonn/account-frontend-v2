@@ -1,37 +1,20 @@
 <section class="drawer-page apps-page">
-  <header class="drawer-head">
-    <div class="drawer-kicker">Application Registry</div>
-    <div class="head-row">
-      <div>
-        <h1>应用中心</h1>
-        <p>在同一层里浏览应用，选中后再展开更深一层的详情。</p>
-      </div>
-      <button type="button" class="ghost" (click)="reload()" [disabled]="loading()">刷新</button>
-    </div>
-  </header>
-
-  @if (error()) {
-    <div class="feedback error">{{ error() }}</div>
-  }
-
   <div class="apps-shell">
     <section class="drawer-section registry-drawer">
       <div class="section-label">
-        <div class="section-index">01</div>
-        <div class="section-title">目录</div>
+        <div class="section-kicker">{{ activeScopeKicker() }}</div>
+        <div class="section-title-row">
+          <div class="section-title">{{ activeScopeTitle() }}</div>
+          @if (showScopeToggle()) {
+            <button type="button" class="scope-switch" (click)="toggleScope()" [attr.aria-label]="appScope() === 'developed' ? '切换到我在用' : '切换到我在开发'">
+              <span aria-hidden="true">⇄</span>
+            </button>
+          }
+        </div>
       </div>
       <div class="section-content">
-        <div class="section-copy">
-          <p>{{ activeScopeTitle() }}。{{ activeScopeDescription() }}</p>
-        </div>
-
-        @if (showScopeToggle()) {
-          <div class="scope-toggle">
-            <button type="button" class="ghost" [class.active]="appScope() === 'mine'" (click)="setAppScope('mine')">我的应用</button>
-            <button type="button" class="ghost" [class.active]="appScope() === 'developed'" (click)="setAppScope('developed')">
-              我开发的应用
-            </button>
-          </div>
+        @if (error()) {
+          <div class="feedback error">{{ error() }}</div>
         }
 
         @if (loading()) {

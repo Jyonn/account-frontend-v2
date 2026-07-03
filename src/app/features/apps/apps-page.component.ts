@@ -31,16 +31,8 @@ export class AppsPageComponent implements OnInit {
   protected readonly displayedApps = computed(() =>
     this.appScope() === 'developed' && this.showScopeToggle() ? this.devApps() : this.allApps()
   );
-  protected readonly activeScopeTitle = computed(() => (this.appScope() === 'developed' ? '我开发的应用' : '我的应用'));
-  protected readonly activeScopeDescription = computed(() =>
-    this.appScope() === 'developed'
-      ? '这里只展示当前账号拥有并可管理的应用。'
-      : '这里只展示当前账号可直接进入或已绑定的应用。'
-  );
-  protected readonly totalAppsCount = computed(() => {
-    const ids = new Set([...this.allApps(), ...this.devApps()].map((app) => app.app_id));
-    return ids.size;
-  });
+  protected readonly activeScopeTitle = computed(() => (this.appScope() === 'developed' ? '我在开发' : '我在用'));
+  protected readonly activeScopeKicker = computed(() => (this.appScope() === 'developed' ? 'BUILDING' : 'IN USE'));
 
   async ngOnInit() {
     await this.session.bootstrap();
@@ -52,16 +44,20 @@ export class AppsPageComponent implements OnInit {
     await this.loadApps();
   }
 
-  protected async reload() {
-    await this.loadApps();
-  }
-
   protected setAppScope(scope: 'mine' | 'developed') {
     if (scope === 'developed' && !this.showScopeToggle()) {
       return;
     }
 
     this.appScope.set(scope);
+  }
+
+  protected toggleScope() {
+    if (!this.showScopeToggle()) {
+      return;
+    }
+
+    this.appScope.update((scope) => (scope === 'mine' ? 'developed' : 'mine'));
   }
 
   protected async inspect(appId: string) {

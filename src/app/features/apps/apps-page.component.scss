@@ -3,8 +3,8 @@
 }
 
 .drawer-page {
-  display: grid;
-  gap: 1.15rem;
+  display: block;
+  min-height: 100%;
 }
 
 .apps-shell,
@@ -16,31 +16,20 @@
   gap: 1rem;
 }
 
-.drawer-head {
-  display: grid;
-  gap: 0.55rem;
-}
-
 .drawer-kicker,
-.section-index,
+.section-kicker,
 .section-title,
 .meta-card span,
 .close-detail {
   font-family: 'IBM Plex Mono', monospace;
 }
 
-.drawer-kicker {
+.drawer-kicker,
+.section-kicker {
   color: var(--text-faint);
   font-size: 0.72rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-}
-
-.head-row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 1rem;
 }
 
 h1,
@@ -59,8 +48,6 @@ h2 {
   line-height: 0.96;
 }
 
-.drawer-head p,
-.section-copy p,
 .hero-copy p,
 .markdown-content {
   margin: 0;
@@ -80,40 +67,45 @@ h2 {
 .section-label {
   display: grid;
   align-content: start;
-  gap: 0.35rem;
+  gap: 0.55rem;
   color: var(--text-faint);
 }
 
-.section-index {
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
-  opacity: 0.7;
+.section-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 2.6rem;
 }
 
 .section-title {
-  font-size: 1.3rem;
+  font-size: clamp(1.35rem, 1.1rem + 0.45vw, 1.9rem);
   font-weight: 400;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.06em;
   color: color-mix(in oklch, var(--text) 84%, transparent);
 }
 
-.section-copy {
-  max-width: 34rem;
+.scope-switch {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-dim);
+  font-size: 1rem;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.scope-switch:hover {
+  color: var(--text);
+  transform: translateX(1px);
 }
 
 .registry-drawer,
 .owner-strip {
   min-height: 0;
-}
-
-.scope-toggle {
-  display: inline-flex;
-  width: fit-content;
-  gap: 0.55rem;
-  padding: 0.2rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.95rem;
-  background: rgba(255, 255, 255, 0.025);
 }
 
 .app-list {
@@ -149,11 +141,6 @@ h2 {
   border-color: rgba(255, 255, 255, 0.22);
   background: rgba(255, 255, 255, 0.06);
   transform: translateY(-1px);
-}
-
-.ghost.active {
-  background: rgba(255, 255, 255, 0.9);
-  color: #111;
 }
 
 .logo,
@@ -406,9 +393,5 @@ h2 {
 
   .detail-shell {
     border-radius: 0.9rem;
-  }
-
-  .head-row {
-    flex-direction: column;
   }
 }
