@@ -8,6 +8,7 @@ import {
   ChoiceItem,
   LegacyEnvelope,
   OAuthPayload,
+  QitianCheckPayload,
   UploadTokenPayload,
   UserProfile
 } from '../models/account.models';
@@ -23,6 +24,12 @@ export class ApiService {
   async getProfile() {
     const profile = await this.request<UserProfile>('GET', '/user/');
     return this.normalizeUser(profile);
+  }
+
+  async checkQitian(qitian: string) {
+    return this.request<QitianCheckPayload>('GET', '/user/qitian', {
+      params: { qitian }
+    });
   }
 
   async getAppList(params: Record<string, string | number | boolean | null | undefined>) {

@@ -49,6 +49,11 @@ export interface AuthPayload {
   user: UserProfile;
 }
 
+export interface QitianCheckPayload {
+  exists: boolean;
+  qitian: string;
+}
+
 export interface OAuthPayload {
   auth_code: string;
   redirect_uri: string;

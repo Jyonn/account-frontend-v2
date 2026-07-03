@@ -81,6 +81,10 @@ export class AuthPageComponent implements OnInit {
   }
 
   protected async submit() {
+    if (this.busy) {
+      return;
+    }
+
     this.error = '';
     this.message = '';
 
@@ -93,6 +97,21 @@ export class AuthPageComponent implements OnInit {
       const validationMessage = this.validateIdentityStep();
       if (validationMessage) {
         this.error = validationMessage;
+        return;
+      }
+
+      if (this.identityMode === 'qitian') {
+        this.busy = true;
+
+        try {
+          await this.api.checkQitian(this.qitianId.trim());
+          this.authStage = 'credential';
+        } catch (error) {
+          this.error = error instanceof Error ? error.message : '齐天号校验失败';
+        } finally {
+          this.busy = false;
+        }
+
         return;
       }
 
@@ -204,6 +223,9 @@ export class AuthPageComponent implements OnInit {
   }
 
   protected get primaryActionLabel() {
+    if (this.busy && this.authStage === 'identity' && this.identityMode === 'qitian') {
+      return '检查中...';
+    }
     if (this.authStage === 'identity') {
       return '下一步';
     }
