@@ -12,6 +12,8 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
   private readonly hostRef = inject(ElementRef<HTMLElement>);
   private readonly zone = inject(NgZone);
   private readonly baseRotation = new THREE.Euler(-0.84, -0.1, -0.34);
+  private readonly targetPixelRatio = Math.min(window.devicePixelRatio, 1.25);
+  private readonly targetFrameInterval = 1000 / 30;
 
   private renderer?: THREE.WebGLRenderer;
   private scene?: THREE.Scene;
@@ -20,17 +22,29 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
   private material?: THREE.MeshStandardMaterial;
   private resizeObserver?: ResizeObserver;
   private animationFrame?: number;
-  private animationStart = 0;
+  private animationElapsed = 0;
+  private previousFrameTimestamp = 0;
+  private isPageActive = true;
+  private readonly handleVisibilityChange = () => this.syncAnimationState();
+  private readonly handleWindowBlur = () => {
+    this.isPageActive = false;
+    this.stopAnimation();
+  };
+  private readonly handleWindowFocus = () => {
+    this.isPageActive = !document.hidden;
+    this.syncAnimationState();
+  };
 
   ngAfterViewInit() {
     this.zone.runOutsideAngular(() => this.initializeScene());
   }
 
   ngOnDestroy() {
-    if (this.animationFrame) {
-      cancelAnimationFrame(this.animationFrame);
-    }
+    this.stopAnimation();
     this.resizeObserver?.disconnect();
+    document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    window.removeEventListener('blur', this.handleWindowBlur);
+    window.removeEventListener('focus', this.handleWindowFocus);
     this.sphere?.traverse((child: THREE.Object3D) => {
       if (child instanceof THREE.Mesh) {
         child.geometry.dispose();
@@ -48,7 +62,7 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
       alpha: true
     });
 
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(this.targetPixelRatio);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 0.78;
@@ -65,7 +79,7 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
     const material = this.createMaterial();
     const sphere = this.createCrossSectionSphere(material, {
       radius: 1.44,
-      count: 13,
+      count: 11,
       zLimitRatio: 0.93,
       thickness: 0.018
     });
@@ -83,8 +97,11 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
 
     this.resizeObserver = new ResizeObserver(() => this.resizeAndRender());
     this.resizeObserver.observe(this.hostRef.nativeElement);
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    window.addEventListener('blur', this.handleWindowBlur);
+    window.addEventListener('focus', this.handleWindowFocus);
     this.resizeAndRender();
-    this.startAnimation();
+    this.syncAnimationState();
   }
 
   private resizeAndRender() {
@@ -105,21 +122,39 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
     this.camera.updateProjectionMatrix();
 
     this.renderer.setSize(width, height, false);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.setPixelRatio(this.targetPixelRatio);
     this.renderer.render(this.scene, this.camera);
   }
 
   private startAnimation() {
+    if (this.animationFrame || !this.isPageActive) {
+      return;
+    }
+
     const renderFrame = (timestamp: number) => {
       if (!this.renderer || !this.camera || !this.scene || !this.sphere) {
         return;
       }
 
-      if (this.animationStart === 0) {
-        this.animationStart = timestamp;
+      if (!this.isPageActive) {
+        this.animationFrame = undefined;
+        return;
       }
 
-      const elapsed = (timestamp - this.animationStart) / 1000;
+      if (this.previousFrameTimestamp === 0) {
+        this.previousFrameTimestamp = timestamp;
+      }
+
+      const delta = timestamp - this.previousFrameTimestamp;
+      if (delta < this.targetFrameInterval) {
+        this.animationFrame = requestAnimationFrame(renderFrame);
+        return;
+      }
+
+      this.previousFrameTimestamp = timestamp;
+      this.animationElapsed += Math.min(delta, 64) / 1000;
+
+      const elapsed = this.animationElapsed;
       this.sphere.rotation.order = 'YXZ';
       this.sphere.rotation.x = this.baseRotation.x + Math.sin(elapsed * 0.42) * 0.2;
       this.sphere.rotation.y = this.baseRotation.y + elapsed * 0.42 + Math.cos(elapsed * 0.18) * 0.1;
@@ -130,6 +165,26 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
     };
 
     this.animationFrame = requestAnimationFrame(renderFrame);
+  }
+
+  private stopAnimation() {
+    if (this.animationFrame) {
+      cancelAnimationFrame(this.animationFrame);
+      this.animationFrame = undefined;
+    }
+
+    this.previousFrameTimestamp = 0;
+  }
+
+  private syncAnimationState() {
+    this.isPageActive = !document.hidden && document.hasFocus();
+
+    if (this.isPageActive) {
+      this.startAnimation();
+      return;
+    }
+
+    this.stopAnimation();
   }
 
   private addLights(scene: THREE.Scene) {
@@ -143,16 +198,16 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
     keyLight.position.copy(topLightDir).multiplyScalar(lightDistance);
     keyLight.target.position.set(0, 0, 0);
     keyLight.castShadow = true;
-    keyLight.shadow.mapSize.width = 4096;
-    keyLight.shadow.mapSize.height = 4096;
+    keyLight.shadow.mapSize.width = 1024;
+    keyLight.shadow.mapSize.height = 1024;
     keyLight.shadow.camera.near = 1;
     keyLight.shadow.camera.far = 80;
     keyLight.shadow.camera.left = -3.2;
     keyLight.shadow.camera.right = 3.2;
     keyLight.shadow.camera.top = 3.2;
     keyLight.shadow.camera.bottom = -3.2;
-    keyLight.shadow.radius = 9;
-    keyLight.shadow.blurSamples = 32;
+    keyLight.shadow.radius = 4;
+    keyLight.shadow.blurSamples = 8;
     keyLight.shadow.intensity = 0.62;
     keyLight.shadow.bias = -0.00018;
     keyLight.shadow.normalBias = 0.028;
@@ -357,8 +412,8 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
         sectionZ,
         diskRadius,
         thickness: config.thickness,
-        radialSegments: 192,
-        rings: 36
+        radialSegments: 112,
+        rings: 20
       });
 
       const mesh = new THREE.Mesh(geometry, material);
