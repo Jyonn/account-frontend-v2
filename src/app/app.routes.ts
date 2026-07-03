@@ -18,22 +18,22 @@ export const routes: Routes = [
       {
         path: 'login',
         component: AuthPageComponent,
-        title: '齐天账户控制台 | 登录'
+        title: '齐天簿 | 登录'
       },
       {
         path: 'apps',
         component: AppsPageComponent,
-        title: '齐天账户控制台 | 应用中心'
+        title: '齐天簿 | 应用中心'
       },
       {
         path: 'apps/:appId/manage',
         component: ManagePageComponent,
-        title: '齐天账户控制台 | 应用管理'
+        title: '齐天簿 | 应用管理'
       },
       {
         path: 'settings',
         component: SettingsPageComponent,
-        title: '齐天账户控制台 | 账户设置'
+        title: '齐天簿 | 账户设置'
       }
     ]
   },

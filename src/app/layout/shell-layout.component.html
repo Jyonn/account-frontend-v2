@@ -2,7 +2,10 @@
   <header class="topbar">
     <div class="nav-cluster">
       <button type="button" class="nav-trigger" (click)="toggleNav()">
-        <span class="nav-brand">QT.</span>
+        <span class="nav-brand">
+          <img class="nav-mark" src="brand/qitianbu-mark-32.png" alt="齐天簿标志">
+          <span>齐天簿</span>
+        </span>
         <span class="nav-current">{{ currentSectionLabel() }}</span>
         <span class="nav-caret">{{ navOpen() ? '−' : '▾' }}</span>
       </button>
@@ -33,8 +36,8 @@
         <app-shell-sphere />
       </div>
       <div class="stage-caption">
-        <div class="caption-line">Qitian Account Surface</div>
-        <div class="caption-line dim">验证、应用与资料在同一层里切换</div>
+        <div class="caption-line">Qitianbu Surface</div>
+        <div class="caption-line dim">齐天簿将登录、应用与账户资料收束在同一界面层</div>
       </div>
     </div>
 

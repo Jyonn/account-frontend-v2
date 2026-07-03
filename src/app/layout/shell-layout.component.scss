@@ -46,7 +46,19 @@
 }
 
 .nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.52rem;
   font-weight: 700;
+}
+
+.nav-mark {
+  width: 1.24em;
+  height: 1.24em;
+  display: block;
+  border-radius: 0.36em;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 .nav-current,
