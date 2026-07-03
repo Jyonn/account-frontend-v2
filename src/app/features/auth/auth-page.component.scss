@@ -56,10 +56,11 @@ h1 {
 }
 
 .section-index {
-  font-size: 0.76rem;
-  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
   color: var(--text-faint);
-  opacity: 0.74;
+  opacity: 0.8;
+  text-transform: uppercase;
 }
 
 .section-title {
@@ -95,12 +96,44 @@ h1 {
   display: grid;
   gap: 1.1rem;
   max-width: 27rem;
+  min-height: 22rem;
+  align-content: start;
 }
 
 .form-grid,
 .verify-shell {
   display: grid;
   gap: 1rem;
+}
+
+.stage-toolbar {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.back-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.15rem 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-faint);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.back-action:hover {
+  color: var(--text);
+  transform: translateX(-1px);
+}
+
+.back-glyph {
+  font-size: 1rem;
+  line-height: 1;
 }
 
 .phone-row {
@@ -175,12 +208,9 @@ h1 {
 
 .action-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.7rem;
-}
-
-.action-row.centered {
-  justify-content: center;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 1.1rem;
 }
 
 .primary,
@@ -239,6 +269,7 @@ h1 {
   .verify-password {
     max-width: 100%;
     width: 100%;
+    min-height: auto;
   }
 
   .verify-grid {

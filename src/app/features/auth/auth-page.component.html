@@ -7,25 +7,24 @@
 
   <section class="drawer-section">
     <div class="section-label">
-      <div class="section-index">
-        @if (authStage === 'identity') {
-          01
-        } @else if (authStage === 'credential') {
-          02
-        } @else {
-          03
-        }
-      </div>
+      <div class="section-index">{{ sectionEyebrow }}</div>
       <div class="section-title">{{ drawerTitle }}</div>
-      <button
-        type="button"
-        class="section-link"
-        (click)="handleSectionLink()"
-      >
-        {{ drawerMeta }}
-      </button>
+      @if (showMethodSwitch) {
+        <button type="button" class="section-link" (click)="handleSectionLink()">
+          {{ drawerMeta }}
+        </button>
+      }
     </div>
     <div class="section-content">
+      @if (showBackAction) {
+        <div class="stage-toolbar">
+          <button type="button" class="back-action" (click)="handleBackAction()">
+            <span class="back-glyph">‹</span>
+            <span>{{ authStage === 'verification' ? '返回上一步' : '返回身份选择' }}</span>
+          </button>
+        </div>
+      }
+
       @if (authStage === 'identity') {
         <div class="form-grid">
           @if (identityMode === 'phone') {
@@ -91,15 +90,10 @@
         </div>
       }
 
-      <div class="action-row" [class.centered]="authStage === 'verification'">
+      <div class="action-row">
         <button type="button" class="primary" (click)="submit()" [disabled]="busy">
           {{ primaryActionLabel }}
         </button>
-        @if (authStage === 'verification') {
-          <button type="button" class="ghost" (click)="resetVerification()" [disabled]="busy">
-            返回上一步
-          </button>
-        }
       </div>
     </div>
   </section>

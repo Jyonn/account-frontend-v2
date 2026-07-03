@@ -183,6 +183,16 @@ export class AuthPageComponent implements OnInit {
     return '验证码';
   }
 
+  protected get sectionEyebrow() {
+    if (this.authStage === 'identity') {
+      return 'Identity';
+    }
+    if (this.authStage === 'credential') {
+      return this.identityMode === 'phone' && this.phoneCredentialMode === 'code' ? 'Request' : 'Credential';
+    }
+    return 'Verify';
+  }
+
   protected get drawerMeta() {
     if (this.authStage === 'identity') {
       return this.identityMode === 'phone' ? '齐天号登录' : '手机号登录';
@@ -190,10 +200,7 @@ export class AuthPageComponent implements OnInit {
     if (this.authStage === 'credential' && this.identityMode === 'phone') {
       return this.phoneCredentialMode === 'password' ? '验证码登录' : '密码登录';
     }
-    if (this.authStage === 'credential') {
-      return '返回上一步';
-    }
-    return '返回上一步';
+    return '';
   }
 
   protected get primaryActionLabel() {
@@ -201,9 +208,33 @@ export class AuthPageComponent implements OnInit {
       return '下一步';
     }
     if (this.authStage === 'credential') {
-      return this.identityMode === 'phone' && this.phoneCredentialMode === 'code' ? '获取验证码' : '下一步';
+      return this.identityMode === 'phone' && this.phoneCredentialMode === 'code' ? '获取验证码' : '登录';
     }
     return '验证';
+  }
+
+  protected get showMethodSwitch() {
+    return this.authStage === 'identity' || (this.authStage === 'credential' && this.identityMode === 'phone');
+  }
+
+  protected get showBackAction() {
+    return this.authStage === 'credential' || this.authStage === 'verification';
+  }
+
+  protected handleBackAction() {
+    this.error = '';
+    this.message = '';
+
+    if (this.authStage === 'verification') {
+      this.resetVerification();
+      return;
+    }
+
+    this.authStage = 'identity';
+    if (this.identityMode === 'phone') {
+      this.phoneCredentialMode = 'password';
+    }
+    this.password = '';
   }
 
   protected get wholePhoneNumber() {
