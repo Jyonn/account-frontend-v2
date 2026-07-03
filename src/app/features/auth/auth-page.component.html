@@ -5,6 +5,20 @@
     <p>未注册用户将自动注册。</p>
   </header>
 
+  @if (showBackAction) {
+    <section class="drawer-section drawer-section--utility">
+      <div class="section-label section-label--empty"></div>
+      <div class="section-content section-content--utility">
+        <div class="stage-toolbar">
+          <button type="button" class="back-action" (click)="handleBackAction()">
+            <span class="back-glyph">‹</span>
+            <span>{{ authStage === 'verification' ? '返回上一步' : '返回身份选择' }}</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  }
+
   <section class="drawer-section">
     <div class="section-label">
       <div class="section-index">{{ sectionEyebrow }}</div>
@@ -16,15 +30,6 @@
       }
     </div>
     <div class="section-content">
-      @if (showBackAction) {
-        <div class="stage-toolbar">
-          <button type="button" class="back-action" (click)="handleBackAction()">
-            <span class="back-glyph">‹</span>
-            <span>{{ authStage === 'verification' ? '返回上一步' : '返回身份选择' }}</span>
-          </button>
-        </div>
-      }
-
       @if (authStage === 'identity') {
         <div class="form-grid">
           @if (identityMode === 'phone') {

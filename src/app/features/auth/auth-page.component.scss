@@ -49,10 +49,18 @@ h1 {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.drawer-section--utility {
+  padding-top: 0.7rem;
+}
+
 .section-label {
   display: grid;
   align-content: start;
   gap: 0.35rem;
+}
+
+.section-label--empty {
+  min-height: 1px;
 }
 
 .section-index {
@@ -98,6 +106,11 @@ h1 {
   max-width: 27rem;
   min-height: 22rem;
   align-content: start;
+}
+
+.section-content--utility {
+  min-height: auto;
+  gap: 0;
 }
 
 .form-grid,
@@ -266,6 +279,7 @@ h1 {
   }
 
   .section-content,
+  .section-content--utility,
   .verify-password {
     max-width: 100%;
     width: 100%;
