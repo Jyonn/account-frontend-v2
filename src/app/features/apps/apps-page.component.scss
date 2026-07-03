@@ -134,7 +134,7 @@ h2 {
 
 .app-card-head {
   display: grid;
-  grid-template-columns: 3.15rem minmax(0, 1fr);
+  grid-template-columns: 2.65rem minmax(0, 1fr);
   align-items: center;
   gap: 0.85rem;
 }
@@ -166,8 +166,8 @@ h2 {
 }
 
 .logo {
-  width: 3.15rem;
-  height: 3.15rem;
+  width: 2.65rem;
+  height: 2.65rem;
 }
 
 .hero-logo {
@@ -182,7 +182,7 @@ h2 {
 }
 
 .name {
-  font-size: 1rem;
+  font-size: 1.12rem;
   font-weight: 600;
   line-height: 1.15;
 }
@@ -194,6 +194,7 @@ h2 {
 }
 
 .desc {
+  font-size: 0.9rem;
   line-height: 1.5;
 }
 
