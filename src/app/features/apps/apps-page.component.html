@@ -28,15 +28,15 @@
                 [class.selected]="selectedAppId() === app.app_id && detailDrawerOpen()"
                 (click)="inspect(app.app_id)"
               >
-                <div class="logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
-                  @if (!app.logo) {
-                    <span>{{ app.app_name.slice(0, 1) }}</span>
-                  }
-                </div>
-                <div class="content">
+                <div class="app-card-head">
+                  <div class="logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
+                    @if (!app.logo) {
+                      <span>{{ app.app_name.slice(0, 1) }}</span>
+                    }
+                  </div>
                   <div class="name">{{ app.app_name }}</div>
-                  <div class="desc">{{ app.app_desc || '暂无简介' }}</div>
                 </div>
+                <div class="desc">{{ app.app_desc || '暂无简介' }}</div>
               </button>
             }
           </div>

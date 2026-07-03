@@ -58,7 +58,7 @@ h2 {
 .drawer-section,
 .detail-section {
   display: grid;
-  grid-template-columns: 6.4rem minmax(0, 1fr);
+  grid-template-columns: 8.6rem minmax(0, 1fr);
   gap: 1.15rem;
   padding-top: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -125,12 +125,18 @@ h2 {
 
 .app-row {
   display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  padding: 1rem 1rem 0.95rem;
+  text-align: left;
+  transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+
+.app-card-head {
+  display: grid;
   grid-template-columns: 3.15rem minmax(0, 1fr);
   align-items: center;
   gap: 0.85rem;
-  padding: 0.9rem;
-  text-align: left;
-  transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
 }
 
 .app-row:hover,
@@ -178,6 +184,7 @@ h2 {
 .name {
   font-size: 1rem;
   font-weight: 600;
+  line-height: 1.15;
 }
 
 .desc,
@@ -187,7 +194,7 @@ h2 {
 }
 
 .desc {
-  margin-top: 0.2rem;
+  line-height: 1.5;
 }
 
 .detail-drawer {
