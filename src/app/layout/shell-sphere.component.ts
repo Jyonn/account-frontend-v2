@@ -13,7 +13,6 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
   private readonly zone = inject(NgZone);
   private readonly baseRotation = new THREE.Euler(-0.84, -0.1, -0.34);
   private readonly targetPixelRatio = Math.min(window.devicePixelRatio, 1.25);
-  private readonly targetFrameInterval = 1000 / 30;
 
   private renderer?: THREE.WebGLRenderer;
   private scene?: THREE.Scene;
@@ -146,11 +145,6 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
       }
 
       const delta = timestamp - this.previousFrameTimestamp;
-      if (delta < this.targetFrameInterval) {
-        this.animationFrame = requestAnimationFrame(renderFrame);
-        return;
-      }
-
       this.previousFrameTimestamp = timestamp;
       this.animationElapsed += Math.min(delta, 64) / 1000;
 
