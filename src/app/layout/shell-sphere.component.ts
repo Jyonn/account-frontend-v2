@@ -120,9 +120,10 @@ export class ShellSphereComponent implements AfterViewInit, OnDestroy {
       }
 
       const elapsed = (timestamp - this.animationStart) / 1000;
-      this.sphere.rotation.x = this.baseRotation.x + Math.sin(elapsed * 0.16) * 0.055;
-      this.sphere.rotation.y = this.baseRotation.y + Math.cos(elapsed * 0.13) * 0.035;
-      this.sphere.rotation.z = this.baseRotation.z + elapsed * 0.065 + Math.sin(elapsed * 0.11) * 0.08;
+      this.sphere.rotation.order = 'YXZ';
+      this.sphere.rotation.x = this.baseRotation.x + Math.sin(elapsed * 0.42) * 0.2;
+      this.sphere.rotation.y = this.baseRotation.y + elapsed * 0.42 + Math.cos(elapsed * 0.18) * 0.1;
+      this.sphere.rotation.z = this.baseRotation.z + elapsed * 0.28 + Math.sin(elapsed * 0.24) * 0.22;
 
       this.renderer.render(this.scene, this.camera);
       this.animationFrame = requestAnimationFrame(renderFrame);
