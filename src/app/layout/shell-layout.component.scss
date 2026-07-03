@@ -128,7 +128,7 @@
 .stage {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(32rem, 40vw);
+  grid-template-columns: minmax(0, 1fr) minmax(36rem, 50vw);
   align-items: stretch;
   gap: clamp(0.75rem, 1vw, 1.1rem);
   min-height: 0;
@@ -151,7 +151,7 @@
 
 .sphere-glow {
   position: absolute;
-  left: 50%;
+  left: 43%;
   bottom: clamp(12rem, 15vh, 14rem);
   width: min(32vw, 21rem);
   height: min(31vw, 19.5rem);
@@ -170,7 +170,7 @@
 
 .sphere-shadow {
   position: absolute;
-  left: 50%;
+  left: 43%;
   bottom: clamp(7rem, 9vh, 8.6rem);
   width: min(24vw, 16.8rem);
   height: 2.8rem;
@@ -187,7 +187,7 @@
 
 .sphere-gyro {
   position: absolute;
-  left: 50%;
+  left: 43%;
   bottom: clamp(-2rem, 2vh, 2rem);
   width: min(43.4vw, 33.6rem);
   height: min(50.4vw, 39.2rem);
