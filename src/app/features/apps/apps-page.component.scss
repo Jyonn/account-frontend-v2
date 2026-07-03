@@ -3,8 +3,14 @@
 }
 
 .drawer-page {
-  display: block;
+  display: grid;
+  gap: 1rem;
   min-height: 100%;
+}
+
+.page-header {
+  display: grid;
+  gap: 0.28rem;
 }
 
 .apps-shell,
@@ -18,6 +24,7 @@
 
 .drawer-kicker,
 .section-kicker,
+.page-kicker,
 .section-title,
 .meta-card span,
 .close-detail {
@@ -26,6 +33,13 @@
 
 .drawer-kicker,
 .section-kicker {
+  color: var(--text-faint);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.page-kicker {
   color: var(--text-faint);
   font-size: 0.72rem;
   letter-spacing: 0.14em;

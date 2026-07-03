@@ -12,6 +12,8 @@ import { MarkdownPipe } from '../../shared/markdown.pipe';
   styleUrl: './apps-page.component.scss'
 })
 export class AppsPageComponent implements OnInit {
+  private static readonly APP_LIST_FETCH_COUNT = 100;
+
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);
   protected readonly session = inject(SessionService);
@@ -113,8 +115,8 @@ export class AppsPageComponent implements OnInit {
 
     try {
       const [allApps, devApps] = await Promise.all([
-        this.api.getAppList({ relation: '', frequent: false, count: 12 }),
-        this.api.getAppList({ relation: 'owner' })
+        this.api.getAppList({ relation: '', frequent: false, count: AppsPageComponent.APP_LIST_FETCH_COUNT }),
+        this.api.getAppList({ relation: 'owner', count: AppsPageComponent.APP_LIST_FETCH_COUNT })
       ]);
 
       this.allApps.set(allApps);
