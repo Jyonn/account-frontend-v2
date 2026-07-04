@@ -135,6 +135,15 @@ export class AuthPageComponent implements OnInit {
       this.authFlowToken = payload.flow_token;
       this.authPurpose = payload.purpose;
       this.allowedMethods = payload.allowed_methods;
+
+      if (this.shouldAutoSendCodeAfterCaptcha) {
+        this.phoneCredentialMode = 'code';
+        this.authStage = 'credential';
+        this.password = '';
+        await this.sendVerificationCode();
+        return;
+      }
+
       this.authStage = 'credential';
       this.password = '';
     } catch (error) {
@@ -498,6 +507,15 @@ export class AuthPageComponent implements OnInit {
 
   private get usesPasswordCredential() {
     return this.identityMode === 'qitian' || this.phoneCredentialMode === 'password';
+  }
+
+  private get shouldAutoSendCodeAfterCaptcha() {
+    return (
+      this.identityMode === 'phone' &&
+      !this.passwordSetupPending &&
+      this.allowedMethods.length === 1 &&
+      this.allowedMethods[0] === 'code'
+    );
   }
 
   private isAuthPayload(payload: AuthPayload | AuthV2CodeVerifyNextPayload): payload is AuthPayload {
