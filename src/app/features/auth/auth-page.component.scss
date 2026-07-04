@@ -7,6 +7,9 @@
   gap: 1.35rem;
   position: relative;
   isolation: isolate;
+  min-height: calc(100% + 5.3rem);
+  margin: -3.95rem -1.55rem -1.35rem;
+  padding: 3.95rem 1.55rem 1.35rem;
 }
 
 .drawer-head {
@@ -280,6 +283,11 @@ h1 {
 }
 
 @media (max-width: 720px) {
+  .drawer-page {
+    margin: -3.95rem -1.1rem -1.35rem;
+    padding: 3.95rem 1.1rem 1.35rem;
+  }
+
   .drawer-section,
   .phone-row {
     grid-template-columns: 1fr;

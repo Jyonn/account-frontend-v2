@@ -5,6 +5,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnDestroy,
   Output,
   SimpleChanges,
   ViewChild,
@@ -32,12 +33,18 @@ export class RecaptchaPanelComponent implements AfterViewInit, OnChanges {
   private readonly recaptcha = inject(RecaptchaService);
   private viewReady = false;
   private widgetId: number | null = null;
+  private retryTimerId: number | null = null;
   protected state: 'idle' | 'loading' | 'ready' | 'error' = 'idle';
   protected errorMessage = '';
+  protected retryCooldown = 0;
 
   ngAfterViewInit() {
     this.viewReady = true;
     this.maybeRender();
+  }
+
+  ngOnDestroy() {
+    this.clearRetryCooldown();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -45,6 +52,10 @@ export class RecaptchaPanelComponent implements AfterViewInit, OnChanges {
       if (!this.visible) {
         this.state = 'idle';
         this.errorMessage = '';
+        this.retryCooldown = 0;
+        this.clearRetryCooldown();
+      } else {
+        this.startRetryCooldown();
       }
       this.maybeRender();
     }
@@ -55,8 +66,17 @@ export class RecaptchaPanelComponent implements AfterViewInit, OnChanges {
   }
 
   protected retry() {
+    if (this.busy || this.retryCooldown > 0) {
+      return;
+    }
+
     this.errorMessage = '';
+    this.startRetryCooldown();
     this.maybeRenderInternal();
+  }
+
+  protected get retryLabel() {
+    return this.retryCooldown > 0 ? `${this.retryCooldown}s 后可重新加载` : '点击此处重新加载';
   }
 
   private maybeRender() {
@@ -104,5 +124,24 @@ export class RecaptchaPanelComponent implements AfterViewInit, OnChanges {
     });
 
     this.state = 'ready';
+  }
+
+  private startRetryCooldown() {
+    this.retryCooldown = 5;
+    this.clearRetryCooldown();
+    this.retryTimerId = window.setInterval(() => {
+      this.retryCooldown -= 1;
+      if (this.retryCooldown <= 0) {
+        this.retryCooldown = 0;
+        this.clearRetryCooldown();
+      }
+    }, 1000);
+  }
+
+  private clearRetryCooldown() {
+    if (this.retryTimerId !== null) {
+      window.clearInterval(this.retryTimerId);
+      this.retryTimerId = null;
+    }
   }
 }
