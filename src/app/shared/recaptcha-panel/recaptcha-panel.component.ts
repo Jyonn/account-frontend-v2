@@ -16,6 +16,7 @@ declare const grecaptcha: Window['grecaptcha'];
 
 @Component({
   selector: 'app-recaptcha-panel',
+  standalone: true,
   templateUrl: './recaptcha-panel.component.html',
   styleUrl: './recaptcha-panel.component.scss'
 })
