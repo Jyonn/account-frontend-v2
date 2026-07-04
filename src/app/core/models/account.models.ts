@@ -54,6 +54,11 @@ export interface QitianCheckPayload {
   qitian: string;
 }
 
+export interface PhoneStatusPayload {
+  registered: boolean;
+  phone: string;
+}
+
 export interface OAuthPayload {
   auth_code: string;
   redirect_uri: string;

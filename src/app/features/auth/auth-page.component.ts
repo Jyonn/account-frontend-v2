@@ -25,6 +25,7 @@ export class AuthPageComponent implements OnInit {
   protected authStage: AuthStage = 'identity';
   protected identityMode: IdentityMode = 'phone';
   protected phoneCredentialMode: PhoneCredentialMode = 'password';
+  protected phoneRegistered: boolean | null = null;
   protected regionCode = '+86';
   protected phoneNumber = '';
   protected qitianId = '';
@@ -45,12 +46,13 @@ export class AuthPageComponent implements OnInit {
   protected switchIdentityMode(mode: IdentityMode) {
     this.identityMode = mode;
     this.phoneCredentialMode = 'password';
+    this.phoneRegistered = null;
     this.authStage = 'identity';
     this.resetFlowState();
   }
 
   protected togglePhoneCredentialMode() {
-    if (this.identityMode !== 'phone' || this.authStage !== 'credential') {
+    if (this.identityMode !== 'phone' || this.authStage !== 'credential' || this.phoneRegistered === false) {
       return;
     }
 
@@ -115,7 +117,19 @@ export class AuthPageComponent implements OnInit {
         return;
       }
 
-      this.authStage = 'credential';
+      this.busy = true;
+
+      try {
+        const payload = await this.api.getPhoneStatus(this.wholePhoneNumber);
+        this.phoneRegistered = payload.registered;
+        this.phoneCredentialMode = payload.registered ? this.phoneCredentialMode : 'code';
+        this.authStage = 'credential';
+      } catch (error) {
+        this.error = error instanceof Error ? error.message : '手机号校验失败';
+      } finally {
+        this.busy = false;
+      }
+
       return;
     }
 
@@ -217,6 +231,9 @@ export class AuthPageComponent implements OnInit {
       return this.identityMode === 'phone' ? '齐天号登录' : '手机号登录';
     }
     if (this.authStage === 'credential' && this.identityMode === 'phone') {
+      if (this.phoneRegistered === false) {
+        return '';
+      }
       return this.phoneCredentialMode === 'password' ? '验证码登录' : '密码登录';
     }
     return '';
@@ -226,17 +243,23 @@ export class AuthPageComponent implements OnInit {
     if (this.busy && this.authStage === 'identity' && this.identityMode === 'qitian') {
       return '检查中...';
     }
+    if (this.busy && this.authStage === 'identity' && this.identityMode === 'phone') {
+      return '检查中...';
+    }
     if (this.authStage === 'identity') {
       return '下一步';
     }
     if (this.authStage === 'credential') {
       return this.identityMode === 'phone' && this.phoneCredentialMode === 'code' ? '获取验证码' : '登录';
     }
+    if (this.verificationMode === 6) {
+      return '注册';
+    }
     return '验证';
   }
 
   protected get showMethodSwitch() {
-    return this.authStage === 'identity' || (this.authStage === 'credential' && this.identityMode === 'phone');
+    return this.authStage === 'identity' || (this.authStage === 'credential' && this.identityMode === 'phone' && this.phoneRegistered !== false);
   }
 
   protected get showBackAction() {
@@ -255,6 +278,7 @@ export class AuthPageComponent implements OnInit {
     this.authStage = 'identity';
     if (this.identityMode === 'phone') {
       this.phoneCredentialMode = 'password';
+      this.phoneRegistered = null;
     }
     this.password = '';
   }

@@ -8,6 +8,7 @@ import {
   ChoiceItem,
   LegacyEnvelope,
   OAuthPayload,
+  PhoneStatusPayload,
   QitianCheckPayload,
   UploadTokenPayload,
   UserProfile
@@ -29,6 +30,12 @@ export class ApiService {
   async checkQitian(qitian: string) {
     return this.request<QitianCheckPayload>('GET', '/user/qitian', {
       params: { qitian }
+    });
+  }
+
+  async getPhoneStatus(phone: string) {
+    return this.request<PhoneStatusPayload>('GET', '/user/phone-status', {
+      params: { phone }
     });
   }
 
