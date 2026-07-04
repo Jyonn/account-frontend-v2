@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from '../../core/services/api.service';
@@ -19,6 +19,7 @@ type PhoneCredentialMode = 'password' | 'code';
 export class AuthPageComponent implements OnInit {
   private readonly api = inject(ApiService);
   private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
   protected readonly session = inject(SessionService);
   @ViewChildren('codeDigitInput') private readonly codeDigitInputs?: QueryList<ElementRef<HTMLInputElement>>;
 
@@ -112,6 +113,7 @@ export class AuthPageComponent implements OnInit {
           this.error = error instanceof Error ? error.message : '齐天号校验失败';
         } finally {
           this.busy = false;
+          this.flushView();
         }
 
         return;
@@ -128,6 +130,7 @@ export class AuthPageComponent implements OnInit {
         this.error = error instanceof Error ? error.message : '手机号校验失败';
       } finally {
         this.busy = false;
+        this.flushView();
       }
 
       return;
@@ -182,6 +185,7 @@ export class AuthPageComponent implements OnInit {
     } finally {
       this.captchaVisible = false;
       this.busy = false;
+      this.flushView();
     }
   }
 
@@ -352,6 +356,7 @@ export class AuthPageComponent implements OnInit {
       this.error = error instanceof Error ? error.message : '验证码提交失败';
     } finally {
       this.busy = false;
+      this.flushView();
     }
   }
 
@@ -390,6 +395,10 @@ export class AuthPageComponent implements OnInit {
   private async finishLogin(payload: AuthPayload) {
     this.session.acceptLogin(payload);
     await this.router.navigateByUrl('/apps');
+  }
+
+  private flushView() {
+    this.cdr.detectChanges();
   }
 
   private focusCodeDigit(index: number) {
