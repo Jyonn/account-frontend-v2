@@ -1,23 +1,17 @@
 <section class="overlay" [class.visible]="visible" (click)="cancel()">
   <div class="overlay-surface" (click)="$event.stopPropagation()">
-    <div class="captcha-shell" [class.is-hidden]="state !== 'ready'">
+    <div class="captcha-shell">
       <div class="captcha-slot" #captchaSlot></div>
+      <div class="captcha-info" aria-live="polite">
+        @if (state === 'loading') {
+          <span class="info-copy">正在加载人机验证...</span>
+        } @else if (state === 'error') {
+          <span class="info-copy">{{ errorMessage || '人机验证组件加载失败。' }}</span>
+        } @else {
+          <span class="info-copy">没看到人机认证组件？</span>
+        }
+        <button type="button" class="retry-action" (click)="retry()" [disabled]="busy">点击此处重新加载</button>
+      </div>
     </div>
-
-    @if (state === 'loading') {
-      <div class="state-layer" aria-live="polite">
-        <div class="loading-state">
-          <span class="loading-ring"></span>
-          <span class="loading-copy">加载人机验证...</span>
-        </div>
-      </div>
-    } @else if (state === 'error') {
-      <div class="state-layer" aria-live="polite">
-        <div class="error-state">
-          <div class="error-copy">{{ errorMessage || 'reCAPTCHA 加载失败' }}</div>
-          <button type="button" class="retry-action" (click)="retry()" [disabled]="busy">重新加载</button>
-        </div>
-      </div>
-    }
   </div>
 </section>
