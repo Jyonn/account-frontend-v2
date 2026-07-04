@@ -59,6 +59,35 @@ export interface PhoneStatusPayload {
   phone: string;
 }
 
+export type AuthV2IdentityType = 'phone' | 'qitian';
+export type AuthV2Intent = 'login' | 'recover';
+export type AuthV2Purpose = 'login' | 'register' | 'reset';
+export type AuthV2Method = 'password' | 'code';
+
+export interface AuthV2SessionPayload {
+  flow_token: string;
+  identity_type: AuthV2IdentityType;
+  user_state: 'existing' | 'new';
+  purpose: AuthV2Purpose;
+  allowed_methods: AuthV2Method[];
+}
+
+export interface AuthV2CaptchaPayload {
+  flow_token: string;
+  purpose: AuthV2Purpose;
+  allowed_methods: AuthV2Method[];
+}
+
+export interface AuthV2CodeSendPayload {
+  flow_token: string;
+  sent: boolean;
+}
+
+export interface AuthV2CodeVerifyNextPayload {
+  flow_token: string;
+  next_step: 'password';
+}
+
 export interface OAuthPayload {
   auth_code: string;
   redirect_uri: string;

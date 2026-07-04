@@ -4,6 +4,12 @@ import { firstValueFrom } from 'rxjs';
 import {
   AccountApp,
   AuthPayload,
+  AuthV2CaptchaPayload,
+  AuthV2CodeSendPayload,
+  AuthV2CodeVerifyNextPayload,
+  AuthV2IdentityType,
+  AuthV2Intent,
+  AuthV2SessionPayload,
   CaptchaFlowResult,
   ChoiceItem,
   LegacyEnvelope,
@@ -25,6 +31,45 @@ export class ApiService {
   async getProfile() {
     const profile = await this.request<UserProfile>('GET', '/user/');
     return this.normalizeUser(profile);
+  }
+
+  async startAuthV2Session(payload: { identity_type: AuthV2IdentityType; intent: AuthV2Intent; phone?: string; qt?: string }) {
+    return this.request<AuthV2SessionPayload>('POST', '/auth/v2/session', { body: payload });
+  }
+
+  async completeAuthV2Captcha(flowToken: string, response: string) {
+    return this.request<AuthV2CaptchaPayload>('POST', '/auth/v2/captcha', {
+      body: {
+        flow_token: flowToken,
+        response
+      }
+    });
+  }
+
+  async submitAuthV2Password(flowToken: string, password: string) {
+    return this.request<AuthPayload>('POST', '/auth/v2/password', {
+      body: {
+        flow_token: flowToken,
+        password
+      }
+    });
+  }
+
+  async sendAuthV2Code(flowToken: string) {
+    return this.request<AuthV2CodeSendPayload>('POST', '/auth/v2/code/send', {
+      body: {
+        flow_token: flowToken
+      }
+    });
+  }
+
+  async verifyAuthV2Code(flowToken: string, code: string) {
+    return this.request<AuthPayload | AuthV2CodeVerifyNextPayload>('POST', '/auth/v2/code/verify', {
+      body: {
+        flow_token: flowToken,
+        code
+      }
+    });
   }
 
   async checkQitian(qitian: string) {

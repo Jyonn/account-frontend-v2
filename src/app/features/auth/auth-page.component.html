@@ -23,7 +23,7 @@
     <div class="section-label">
       <div class="section-index">{{ sectionEyebrow }}</div>
       <div class="section-title">{{ drawerTitle }}</div>
-      @if (showMethodSwitch) {
+      @if (showMethodSwitch && drawerMeta) {
         <button type="button" class="section-link" (click)="handleSectionLink()">
           {{ drawerMeta }}
         </button>
@@ -53,15 +53,15 @@
       } @else if (authStage === 'credential') {
         <div class="form-grid">
           @if (identityMode === 'phone' && phoneCredentialMode === 'code') {
-            <div class="helper-copy">将先进行人机校验，随后发送 6 位短信验证码。</div>
+            <div class="helper-copy">通过短信接收 6 位验证码。</div>
           } @else {
             <label class="field">
-              <span>密码</span>
+              <span>{{ primaryActionLabel === '注册' ? '设置密码' : primaryActionLabel === '重设并登录' ? '新密码' : '密码' }}</span>
               <input
                 [(ngModel)]="password"
                 type="password"
-                [autocomplete]="verificationMode === 6 ? 'new-password' : 'current-password'"
-                placeholder="输入密码"
+                [autocomplete]="primaryActionLabel === '登录' ? 'current-password' : 'new-password'"
+                [placeholder]="primaryActionLabel === '登录' ? '输入密码' : '设置密码'"
               />
             </label>
           }
@@ -81,21 +81,15 @@
               />
             }
           </div>
-          @if (verificationMode === 6) {
-            <div class="helper-copy">这是首次验证，请顺手设置一个登录密码。</div>
-          } @else if (verificationMode === 7) {
-            <div class="helper-copy">验证通过后将立即更新为新密码。</div>
-          }
-          @if (needsPasswordForCodeStep) {
-            <label class="field verify-password">
-              <span>{{ verificationMode === 6 ? '设置密码' : '新密码' }}</span>
-              <input [(ngModel)]="password" type="password" autocomplete="new-password" placeholder="输入密码" />
-            </label>
-          }
         </div>
       }
 
       <div class="action-row">
+        @if (showRecoverAction) {
+          <button type="button" class="ghost-link" (click)="beginRecovery()" [disabled]="busy">
+            忘记密码
+          </button>
+        }
         <button type="button" class="primary" (click)="submit()" [disabled]="busy">
           {{ primaryActionLabel }}
         </button>
