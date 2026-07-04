@@ -51,7 +51,8 @@ h2 {
 }
 
 .drawer-head p,
-.hero-copy p {
+.hero-copy p,
+.status-stack p {
   margin: 0;
   color: var(--text-dim);
   line-height: 1.55;
@@ -87,7 +88,9 @@ h2 {
 
 .section-content,
 .hero-panel,
-.hero-copy {
+.hero-copy,
+.status-stack,
+.verify-editor {
   display: grid;
   gap: 1rem;
 }
@@ -181,6 +184,70 @@ h2 {
   color: var(--text-dim);
 }
 
+.status-stack strong {
+  color: var(--text);
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.card-upload-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  max-width: 36rem;
+}
+
+.upload-card {
+  position: relative;
+  display: grid;
+  gap: 0.8rem;
+  min-height: 11rem;
+  padding: 1rem;
+  border: 1px dashed rgba(255, 255, 255, 0.16);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.025);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
+}
+
+.upload-card:hover:not(.upload-card--disabled) {
+  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-1px);
+}
+
+.upload-card input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload-card--filled {
+  border-style: solid;
+}
+
+.upload-card--disabled {
+  opacity: 0.64;
+  cursor: wait;
+}
+
+.upload-card__preview {
+  min-height: 7.8rem;
+  border-radius: 0.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  background-position: center;
+  background-size: cover;
+}
+
+.upload-card span {
+  color: var(--text-dim);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
 .action-row {
   display: flex;
   flex-wrap: wrap;
@@ -188,7 +255,8 @@ h2 {
 }
 
 .ghost,
-.primary {
+.primary,
+.segment {
   padding: 0.76rem 0.95rem;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 0.8rem;
@@ -198,16 +266,39 @@ h2 {
   transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
 }
 
-.ghost:hover,
-.primary:hover {
+.ghost:hover:not(:disabled),
+.primary:hover:not(:disabled),
+.segment:hover:not(:disabled) {
   border-color: rgba(255, 255, 255, 0.22);
   background: rgba(255, 255, 255, 0.06);
   transform: translateY(-1px);
 }
 
-.primary {
+.primary,
+.segment--active {
   background: rgba(255, 255, 255, 0.9);
   color: #111;
+}
+
+.ghost:disabled,
+.primary:disabled,
+.segment:disabled {
+  opacity: 0.64;
+  cursor: wait;
+}
+
+.segmented-control {
+  display: inline-flex;
+  width: fit-content;
+  gap: 0.55rem;
+}
+
+.segment {
+  min-width: 4rem;
+}
+
+.verify-editor {
+  padding-top: 0.25rem;
 }
 
 .feedback,
@@ -230,6 +321,10 @@ h2 {
 .empty-state {
   border: 1px dashed rgba(255, 255, 255, 0.16);
   color: var(--text-dim);
+}
+
+.compact-state {
+  max-width: 34rem;
 }
 
 .info-grid {
@@ -271,7 +366,8 @@ h2 {
   .drawer-section,
   .hero-panel,
   .info-card,
-  .form-grid {
+  .form-grid,
+  .card-upload-grid {
     grid-template-columns: 1fr;
   }
 

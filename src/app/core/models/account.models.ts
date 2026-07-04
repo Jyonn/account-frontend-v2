@@ -105,3 +105,24 @@ export interface UploadTokenPayload {
   key: string;
   upload_token: string;
 }
+
+export interface IDCardVerifyPayload {
+  name?: string;
+  male?: boolean;
+  idcard?: string;
+  birthday?: string;
+  valid_start?: string;
+  valid_end?: string;
+  token?: string;
+  ctime?: number;
+  expire?: number;
+}
+
+export interface ConfirmVerifyPayload {
+  name?: string;
+  birthday?: string;
+  idcard?: string;
+  male?: boolean;
+  token?: string;
+  auto?: boolean;
+}

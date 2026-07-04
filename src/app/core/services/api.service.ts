@@ -3,11 +3,13 @@ import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import {
   AccountApp,
+  ConfirmVerifyPayload,
   AuthPayload,
   AuthV2CaptchaPayload,
   AuthV2CodeSendPayload,
   AuthV2CodeVerifyNextPayload,
   AuthV2IdentityType,
+  IDCardVerifyPayload,
   AuthV2Intent,
   AuthV2SessionPayload,
   CaptchaFlowResult,
@@ -154,6 +156,24 @@ export class ApiService {
 
   async applyDev() {
     const profile = await this.request<UserProfile>('POST', '/user/dev', { body: {} });
+    return this.normalizeUser(profile);
+  }
+
+  async getIdCardUploadToken(filename: string, back: boolean) {
+    return this.request<UploadTokenPayload>('GET', '/user/idcard', {
+      params: {
+        filename,
+        back: back ? 1 : 0
+      }
+    });
+  }
+
+  async autoVerify() {
+    return this.request<IDCardVerifyPayload>('GET', '/user/verify');
+  }
+
+  async confirmVerify(payload: ConfirmVerifyPayload) {
+    const profile = await this.request<UserProfile>('POST', '/user/verify', { body: payload });
     return this.normalizeUser(profile);
   }
 

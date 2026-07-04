@@ -4,7 +4,7 @@
     <div class="head-row">
       <div>
         <h1>账户设置</h1>
-        <p>把真正影响账户状态的资料、权限与退出入口留在同一张抽屉里。</p>
+        <p>把真正影响账户状态的资料、认证与开发者权限收进同一张抽屉里。</p>
       </div>
       @if (!editMode()) {
         <button type="button" class="ghost" (click)="beginEdit()">编辑</button>
@@ -46,7 +46,7 @@
             <h2>{{ session.user()?.nickname || '未命名用户' }}</h2>
             <p>齐天号：{{ session.user()?.qitian || '尚未设置' }}</p>
             <p>实名认证：{{ verifyStatusText }}</p>
-            <p>开发者权限：{{ session.user()?.is_dev ? '已开通' : '未开通' }}</p>
+            <p>开发者权限：{{ developerStatusText }}</p>
             @if (editMode()) {
               <label class="upload-line">
                 <input type="file" accept="image/*" (change)="uploadAvatar($event)" />
@@ -92,7 +92,109 @@
     <section class="drawer-section">
       <div class="section-label">
         <div class="section-index">03</div>
-        <div class="section-title">入口</div>
+        <div class="section-title">认证</div>
+      </div>
+      <div class="section-content">
+        <div class="status-stack">
+          <div class="drawer-kicker">Identity Check</div>
+          <strong>{{ verifyStatusText }}</strong>
+          <p>{{ verifyGuideText }}</p>
+        </div>
+
+        @if (session.user()?.verify_status === 0) {
+          <div class="card-upload-grid">
+            <label
+              class="upload-card"
+              [class.upload-card--filled]="!!cardFrontPreview"
+              [class.upload-card--disabled]="uploadingFront() || verificationBusy()"
+            >
+              <input type="file" accept="image/*" [disabled]="uploadingFront() || verificationBusy()" (change)="uploadIdCard($event, false)" />
+              <div class="upload-card__preview" [style.background-image]="cardFrontPreview ? 'url(' + cardFrontPreview + ')' : ''"></div>
+              <span>{{ uploadFrontLabel }}</span>
+            </label>
+
+            <label
+              class="upload-card"
+              [class.upload-card--filled]="!!cardBackPreview"
+              [class.upload-card--disabled]="uploadingBack() || verificationBusy()"
+            >
+              <input type="file" accept="image/*" [disabled]="uploadingBack() || verificationBusy()" (change)="uploadIdCard($event, true)" />
+              <div class="upload-card__preview" [style.background-image]="cardBackPreview ? 'url(' + cardBackPreview + ')' : ''"></div>
+              <span>{{ uploadBackLabel }}</span>
+            </label>
+          </div>
+
+          <div class="action-row">
+            <button type="button" class="ghost" (click)="startManualVerification()" [disabled]="verificationBusy()">
+              人工填写
+            </button>
+            <button type="button" class="primary" (click)="autoVerify()" [disabled]="!canStartVerification || verificationBusy()">
+              {{ verificationBusy() && !showVerifyForm ? '识别中...' : '自动识别证件' }}
+            </button>
+          </div>
+
+          @if (showVerifyForm) {
+            <div class="verify-editor">
+              <div class="form-grid">
+                <label class="field">
+                  <span>真实姓名</span>
+                  <input [(ngModel)]="verifyDraft.name" />
+                </label>
+                <label class="field">
+                  <span>身份证号</span>
+                  <input [(ngModel)]="verifyDraft.idcard" />
+                </label>
+                <label class="field">
+                  <span>性别</span>
+                  <div class="segmented-control">
+                    <button type="button" class="segment" [class.segment--active]="verifyDraft.male" (click)="selectGender(true)">
+                      男
+                    </button>
+                    <button type="button" class="segment" [class.segment--active]="!verifyDraft.male" (click)="selectGender(false)">
+                      女
+                    </button>
+                  </div>
+                </label>
+                <label class="field">
+                  <span>生日</span>
+                  <input type="date" [(ngModel)]="verifyDraft.birthday" />
+                </label>
+                @if (verifyDraft.validStart || verifyDraft.validEnd) {
+                  <label class="field">
+                    <span>有效期起</span>
+                    <input [value]="verifyDraft.validStart" readonly />
+                  </label>
+                  <label class="field">
+                    <span>有效期止</span>
+                    <input [value]="verifyDraft.validEnd" readonly />
+                  </label>
+                }
+              </div>
+
+              <div class="action-row">
+                @if (!manualVerification()) {
+                  <button type="button" class="ghost" (click)="startManualVerification()" [disabled]="verificationBusy()">
+                    转人工审核
+                  </button>
+                }
+                <button type="button" class="primary" (click)="submitVerification()" [disabled]="verificationBusy()">
+                  {{ verifyActionLabel }}
+                </button>
+              </div>
+            </div>
+          }
+        } @else {
+          <div class="empty-state compact-state">
+            {{ verifyStatusText }}
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="drawer-section">
+      <div class="section-label">
+        <div class="section-index">04</div>
+        <div class="section-title">权限</div>
       </div>
       <div class="section-content">
         <div class="info-grid">
@@ -104,7 +206,7 @@
             <span>开发者状态</span>
             @if (!session.user()?.is_dev) {
               <button type="button" class="ghost full" (click)="applyDev()" [disabled]="!canApplyDev() || applyingDev()">
-                {{ applyingDev() ? '申请中...' : canApplyDev() ? '申请开发者权限' : '完成认证后可申请' }}
+                {{ devActionLabel }}
               </button>
             } @else {
               <strong>当前账号已具备开发者权限</strong>
