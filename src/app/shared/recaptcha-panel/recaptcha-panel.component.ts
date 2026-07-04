@@ -55,14 +55,14 @@ export class RecaptchaPanelComponent implements AfterViewInit, OnChanges {
 
   protected retry() {
     this.errorMessage = '';
-    this.maybeRenderInternal(true);
+    this.maybeRenderInternal();
   }
 
   private maybeRender() {
-    this.maybeRenderInternal(false);
+    this.maybeRenderInternal();
   }
 
-  private maybeRenderInternal(force = false) {
+  private maybeRenderInternal() {
     if (!this.visible || !this.viewReady) {
       return;
     }
@@ -73,7 +73,7 @@ export class RecaptchaPanelComponent implements AfterViewInit, OnChanges {
     void this.recaptcha
       .ensureReady()
       .then(() => {
-        window.setTimeout(() => this.renderWidget(force), 40);
+        window.setTimeout(() => this.renderWidget(), 40);
       })
       .catch((error: Error) => {
         this.state = 'error';
@@ -81,19 +81,15 @@ export class RecaptchaPanelComponent implements AfterViewInit, OnChanges {
       });
   }
 
-  private renderWidget(force = false) {
+  private renderWidget() {
     if (!this.visible || !this.captchaSlot || !grecaptcha) {
       return;
     }
 
-    if (this.widgetId !== null && !force) {
+    if (this.widgetId !== null) {
       grecaptcha.reset(this.widgetId);
       this.state = 'ready';
       return;
-    }
-
-    if (this.captchaSlot.nativeElement.childElementCount > 0) {
-      this.captchaSlot.nativeElement.innerHTML = '';
     }
 
     this.widgetId = grecaptcha.render(this.captchaSlot.nativeElement, {
