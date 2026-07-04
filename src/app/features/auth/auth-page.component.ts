@@ -120,6 +120,23 @@ export class AuthPageComponent implements OnInit {
     await this.sendVerificationCode();
   }
 
+  protected async submitPhoneIdentity(mode: PhoneCredentialMode) {
+    if (this.busy || this.authStage !== 'identity' || this.identityMode !== 'phone') {
+      return;
+    }
+
+    this.clearRuntimeFeedback();
+    const validationMessage = this.validatePhoneIdentity();
+    if (validationMessage) {
+      this.error = validationMessage;
+      return;
+    }
+
+    this.phoneCredentialMode = mode;
+    this.authIntent = 'login';
+    await this.startSession('login');
+  }
+
   protected async onCaptchaResolved(response: string) {
     if (!this.authFlowToken) {
       this.captchaVisible = false;
