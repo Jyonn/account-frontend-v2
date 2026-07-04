@@ -1,14 +1,19 @@
-@if (visible) {
-  <section class="panel">
-    <div class="panel-head">
-      <div>
-        <div class="eyebrow">安全验证</div>
-        <h3>验证当前操作</h3>
+<section class="overlay" [class.visible]="visible" (click)="cancel()">
+  <div class="overlay-surface" (click)="$event.stopPropagation()">
+    @if (state === 'loading') {
+      <div class="loading-state" aria-live="polite">
+        <span class="loading-ring"></span>
+        <span class="loading-copy">Loading...</span>
       </div>
-      <button type="button" class="ghost" (click)="cancel()" [disabled]="busy">取消</button>
-    </div>
-
-    <div class="terminal-line">执行前需要通过 reCAPTCHA。</div>
-    <div class="captcha-slot" #captchaSlot></div>
-  </section>
-}
+    } @else if (state === 'error') {
+      <div class="error-state" aria-live="polite">
+        <div class="error-copy">{{ errorMessage || 'reCAPTCHA 加载失败' }}</div>
+        <button type="button" class="retry-action" (click)="retry()" [disabled]="busy">重新加载</button>
+      </div>
+    } @else {
+      <div class="captcha-shell">
+        <div class="captcha-slot" #captchaSlot></div>
+      </div>
+    }
+  </div>
+</section>

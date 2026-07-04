@@ -31,6 +31,8 @@ export class RecaptchaPanelComponent implements AfterViewInit, OnChanges {
   private readonly recaptcha = inject(RecaptchaService);
   private viewReady = false;
   private widgetId: number | null = null;
+  protected state: 'idle' | 'loading' | 'ready' | 'error' = 'idle';
+  protected errorMessage = '';
 
   ngAfterViewInit() {
     this.viewReady = true;
@@ -39,6 +41,10 @@ export class RecaptchaPanelComponent implements AfterViewInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if ('visible' in changes) {
+      if (!this.visible) {
+        this.state = 'idle';
+        this.errorMessage = '';
+      }
       this.maybeRender();
     }
   }
@@ -47,34 +53,59 @@ export class RecaptchaPanelComponent implements AfterViewInit, OnChanges {
     this.cancelled.emit();
   }
 
+  protected retry() {
+    this.errorMessage = '';
+    this.maybeRenderInternal(true);
+  }
+
   private maybeRender() {
+    this.maybeRenderInternal(false);
+  }
+
+  private maybeRenderInternal(force = false) {
     if (!this.visible || !this.viewReady) {
       return;
     }
 
+    this.state = 'loading';
+    this.errorMessage = '';
+
     void this.recaptcha
       .ensureReady()
       .then(() => {
-        window.setTimeout(() => this.renderWidget(), 40);
+        window.setTimeout(() => this.renderWidget(force), 40);
       })
-      .catch((error: Error) => this.failed.emit(error.message));
+      .catch((error: Error) => {
+        this.state = 'error';
+        this.errorMessage = error.message || 'reCAPTCHA 加载失败';
+      });
   }
 
-  private renderWidget() {
+  private renderWidget(force = false) {
     if (!this.visible || !this.captchaSlot || !grecaptcha) {
       return;
     }
 
-    if (this.widgetId !== null) {
+    if (this.widgetId !== null && !force) {
       grecaptcha.reset(this.widgetId);
+      this.state = 'ready';
       return;
+    }
+
+    if (this.captchaSlot.nativeElement.childElementCount > 0) {
+      this.captchaSlot.nativeElement.innerHTML = '';
     }
 
     this.widgetId = grecaptcha.render(this.captchaSlot.nativeElement, {
       sitekey: '6LdL9I4UAAAAANyqEJ8vBeDZJz-hvcafJJnhGaWb',
       theme: 'dark',
       callback: (token: string) => this.resolved.emit(token),
-      'expired-callback': () => this.failed.emit('验证码已过期，请重试。')
+      'expired-callback': () => {
+        this.state = 'error';
+        this.errorMessage = '验证码已过期，请重试。';
+      }
     });
+
+    this.state = 'ready';
   }
 }

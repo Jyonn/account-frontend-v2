@@ -5,6 +5,8 @@
 .drawer-page {
   display: grid;
   gap: 1.35rem;
+  position: relative;
+  isolation: isolate;
 }
 
 .drawer-head {
