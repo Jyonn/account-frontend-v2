@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
@@ -23,7 +23,7 @@ type PhoneCredentialMode = 'password' | 'code';
   templateUrl: './auth-page.component.html',
   styleUrl: './auth-page.component.scss'
 })
-export class AuthPageComponent implements OnInit {
+export class AuthPageComponent implements OnInit, OnDestroy {
   private readonly api = inject(ApiService);
   private readonly appRegistry = inject(AppRegistryService);
   private readonly router = inject(Router);
@@ -45,16 +45,25 @@ export class AuthPageComponent implements OnInit {
   protected captchaVisible = false;
   protected busy = false;
   protected sessionBusy = false;
+  protected finalizingLogin = false;
+  protected resendCooldown = 0;
 
   private authFlowToken = '';
   private authPurpose: AuthV2Purpose | null = null;
   private allowedMethods: AuthV2Method[] = [];
   private passwordSetupPending = false;
+  private pendingCaptchaAction: 'advance' | 'resend_code' = 'advance';
+  private resendAttemptsSinceCaptcha = 0;
+  private resendTimerId: number | null = null;
 
   ngOnInit() {
     if (this.session.isLoggedIn()) {
       void this.router.navigateByUrl('/apps');
     }
+  }
+
+  ngOnDestroy() {
+    this.clearResendCooldown();
   }
 
   protected switchIdentityMode(mode: IdentityMode) {
@@ -151,11 +160,17 @@ export class AuthPageComponent implements OnInit {
       this.authPurpose = payload.purpose;
       this.allowedMethods = payload.allowed_methods;
 
-      if (this.shouldAutoSendCodeAfterCaptcha) {
+      if (this.shouldEnterVerificationAfterCaptcha || this.pendingCaptchaAction === 'resend_code') {
         this.phoneCredentialMode = 'code';
-        this.authStage = 'credential';
+        this.authStage = 'verification';
         this.password = '';
-        await this.sendVerificationCode();
+        this.verificationDigits = Array.from({ length: 6 }, () => '');
+        if (this.pendingCaptchaAction === 'resend_code') {
+          this.resendAttemptsSinceCaptcha = 0;
+        }
+        await this.sendVerificationCode({
+          message: this.pendingCaptchaAction === 'resend_code' ? '验证码已重新发送。' : '验证码已发送。'
+        });
         return;
       }
 
@@ -164,6 +179,7 @@ export class AuthPageComponent implements OnInit {
     } catch (error) {
       this.error = error instanceof Error ? error.message : '人机验证失败';
     } finally {
+      this.pendingCaptchaAction = 'advance';
       this.captchaVisible = false;
       this.busy = false;
       this.flushView();
@@ -172,10 +188,12 @@ export class AuthPageComponent implements OnInit {
 
   protected cancelCaptcha() {
     this.captchaVisible = false;
+    this.pendingCaptchaAction = 'advance';
   }
 
   protected onCaptchaFailed(message: string) {
     this.captchaVisible = false;
+    this.pendingCaptchaAction = 'advance';
     this.error = message;
   }
 
@@ -227,8 +245,25 @@ export class AuthPageComponent implements OnInit {
   }
 
   protected get primaryActionLabel() {
+    if (this.finalizingLogin) {
+      return this.authPurpose === 'register' ? '注册中...' : '登录中...';
+    }
+
     if (this.sessionBusy && this.authStage === 'identity') {
       return '检查中...';
+    }
+
+    if (this.busy) {
+      if (this.authStage === 'verification') {
+        return '验证中...';
+      }
+
+      if (this.authStage === 'credential') {
+        if (this.passwordSetupPending) {
+          return this.authPurpose === 'register' ? '注册中...' : '重设中...';
+        }
+        return this.usesPasswordCredential ? '登录中...' : '发送中...';
+      }
     }
 
     if (this.authStage === 'identity') {
@@ -280,8 +315,11 @@ export class AuthPageComponent implements OnInit {
     this.clearRuntimeFeedback();
 
     if (this.authStage === 'verification') {
-      this.authStage = 'credential';
+      this.authStage = 'identity';
+      this.authIntent = 'login';
+      this.phoneCredentialMode = 'password';
       this.verificationDigits = Array.from({ length: 6 }, () => '');
+      this.clearFlowState();
       this.flushView();
       return;
     }
@@ -315,12 +353,56 @@ export class AuthPageComponent implements OnInit {
     await this.startSession('recover');
   }
 
+  protected async resendVerificationCode() {
+    if (!this.canResendVerificationCode || !this.authFlowToken) {
+      return;
+    }
+
+    this.clearRuntimeFeedback();
+
+    if (this.needsCaptchaForNextResend) {
+      this.pendingCaptchaAction = 'resend_code';
+      this.captchaVisible = true;
+      this.flushView();
+      return;
+    }
+
+    await this.sendVerificationCode({
+      countAsResend: true,
+      message: '验证码已重新发送。'
+    });
+  }
+
   protected get wholePhoneNumber() {
     return `${this.regionCode.trim()}${this.phoneNumber.trim()}`;
   }
 
   protected get verificationCode() {
     return this.verificationDigits.join('');
+  }
+
+  protected get resendCountdownLabel() {
+    const minutes = Math.floor(this.resendCooldown / 60)
+      .toString()
+      .padStart(2, '0');
+    const seconds = (this.resendCooldown % 60).toString().padStart(2, '0');
+    return `${minutes}:${seconds}`;
+  }
+
+  protected get canResendVerificationCode() {
+    return this.authStage === 'verification' && this.resendCooldown === 0 && !this.busy && !this.sessionBusy;
+  }
+
+  protected get needsCaptchaForNextResend() {
+    return this.authStage === 'verification' && (this.resendAttemptsSinceCaptcha + 1) % 3 === 0;
+  }
+
+  protected get resendActionLabel() {
+    if (this.resendCooldown > 0) {
+      return this.resendCountdownLabel;
+    }
+
+    return this.needsCaptchaForNextResend ? '重新验证后发送' : '重新发送验证码';
   }
 
   protected onCodeDigitInput(index: number, value: string) {
@@ -390,6 +472,7 @@ export class AuthPageComponent implements OnInit {
         }
       }
 
+      this.pendingCaptchaAction = 'advance';
       this.captchaVisible = true;
     } catch (error) {
       this.clearFlowState();
@@ -420,20 +503,24 @@ export class AuthPageComponent implements OnInit {
     }
   }
 
-  private async sendVerificationCode() {
+  private async sendVerificationCode(options: { countAsResend?: boolean; message?: string } = {}) {
     if (!this.authFlowToken) {
       this.error = '登录流程无效，请重新开始';
       return;
     }
 
     this.busy = true;
+    this.authStage = 'verification';
 
     try {
       const payload = await this.api.sendAuthV2Code(this.authFlowToken);
       this.authFlowToken = payload.flow_token;
-      this.authStage = 'verification';
       this.verificationDigits = Array.from({ length: 6 }, () => '');
-      this.message = '验证码已发送。';
+      if (options.countAsResend) {
+        this.resendAttemptsSinceCaptcha += 1;
+      }
+      this.startResendCooldown();
+      this.message = options.message || '验证码已发送。';
       this.focusCodeDigit(0);
     } catch (error) {
       this.error = error instanceof Error ? error.message : '验证码发送失败';
@@ -509,6 +596,11 @@ export class AuthPageComponent implements OnInit {
     this.passwordSetupPending = false;
     this.captchaVisible = false;
     this.sessionBusy = false;
+    this.finalizingLogin = false;
+    this.pendingCaptchaAction = 'advance';
+    this.resendAttemptsSinceCaptcha = 0;
+    this.resendCooldown = 0;
+    this.clearResendCooldown();
   }
 
   private resetFlowState() {
@@ -533,13 +625,8 @@ export class AuthPageComponent implements OnInit {
     return this.identityMode === 'qitian' || this.phoneCredentialMode === 'password';
   }
 
-  private get shouldAutoSendCodeAfterCaptcha() {
-    return (
-      this.identityMode === 'phone' &&
-      !this.passwordSetupPending &&
-      this.allowedMethods.length === 1 &&
-      this.allowedMethods[0] === 'code'
-    );
+  private get shouldEnterVerificationAfterCaptcha() {
+    return this.identityMode === 'phone' && !this.passwordSetupPending && this.phoneCredentialMode === 'code';
   }
 
   private isAuthPayload(payload: AuthPayload | AuthV2CodeVerifyNextPayload): payload is AuthPayload {
@@ -548,6 +635,7 @@ export class AuthPageComponent implements OnInit {
 
   private async finishLogin(payload: AuthPayload) {
     this.busy = true;
+    this.finalizingLogin = true;
     this.session.acceptLogin(payload);
 
     try {
@@ -559,6 +647,26 @@ export class AuthPageComponent implements OnInit {
       await this.router.navigateByUrl('/apps');
       this.busy = false;
       this.flushView();
+    }
+  }
+
+  private startResendCooldown() {
+    this.resendCooldown = 180;
+    this.clearResendCooldown();
+    this.resendTimerId = window.setInterval(() => {
+      this.resendCooldown -= 1;
+      if (this.resendCooldown <= 0) {
+        this.resendCooldown = 0;
+        this.clearResendCooldown();
+      }
+      this.flushView();
+    }, 1000);
+  }
+
+  private clearResendCooldown() {
+    if (this.resendTimerId !== null) {
+      window.clearInterval(this.resendTimerId);
+      this.resendTimerId = null;
     }
   }
 

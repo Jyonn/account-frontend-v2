@@ -88,6 +88,12 @@
               />
             }
           </div>
+          <div class="verify-resend">
+            <span class="verify-resend__icon" aria-hidden="true">⏱</span>
+            <button type="button" class="ghost-link verify-resend__action" (click)="resendVerificationCode()" [disabled]="!canResendVerificationCode">
+              {{ resendActionLabel }}
+            </button>
+          </div>
         </div>
       }
 

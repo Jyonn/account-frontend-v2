@@ -242,6 +242,24 @@ h1 {
   font-weight: 500;
 }
 
+.verify-resend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-faint);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+}
+
+.verify-resend__icon {
+  opacity: 0.72;
+  line-height: 1;
+}
+
+.verify-resend__action {
+  font-size: 0.8rem;
+}
+
 .verify-password {
   width: min(100%, 20rem);
 }
