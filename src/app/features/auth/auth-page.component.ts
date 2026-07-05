@@ -42,6 +42,7 @@ export class AuthPageComponent implements OnInit {
   protected error = '';
   protected captchaVisible = false;
   protected busy = false;
+  protected sessionBusy = false;
 
   private authFlowToken = '';
   private authPurpose: AuthV2Purpose | null = null;
@@ -79,7 +80,7 @@ export class AuthPageComponent implements OnInit {
   }
 
   protected async submit() {
-    if (this.busy) {
+    if (this.busy || this.sessionBusy) {
       return;
     }
 
@@ -116,7 +117,7 @@ export class AuthPageComponent implements OnInit {
   }
 
   protected async submitPhoneIdentity(mode: PhoneCredentialMode) {
-    if (this.busy || this.authStage !== 'identity' || this.identityMode !== 'phone') {
+    if (this.busy || this.sessionBusy || this.authStage !== 'identity' || this.identityMode !== 'phone') {
       return;
     }
 
@@ -224,7 +225,7 @@ export class AuthPageComponent implements OnInit {
   }
 
   protected get primaryActionLabel() {
-    if (this.busy && this.authStage === 'identity') {
+    if (this.sessionBusy && this.authStage === 'identity') {
       return '检查中...';
     }
 
@@ -298,7 +299,7 @@ export class AuthPageComponent implements OnInit {
   }
 
   protected async beginRecovery() {
-    if (this.busy || this.identityMode !== 'phone') {
+    if (this.busy || this.sessionBusy || this.identityMode !== 'phone') {
       return;
     }
 
@@ -357,7 +358,7 @@ export class AuthPageComponent implements OnInit {
   }
 
   private async startSession(intent: AuthV2Intent) {
-    this.busy = true;
+    this.sessionBusy = true;
     this.clearRuntimeFeedback();
 
     try {
@@ -393,7 +394,7 @@ export class AuthPageComponent implements OnInit {
       this.authIntent = 'login';
       this.error = error instanceof Error ? error.message : '身份校验失败';
     } finally {
-      this.busy = false;
+      this.sessionBusy = false;
       this.flushView();
     }
   }
@@ -505,6 +506,7 @@ export class AuthPageComponent implements OnInit {
     this.allowedMethods = [];
     this.passwordSetupPending = false;
     this.captchaVisible = false;
+    this.sessionBusy = false;
   }
 
   private resetFlowState() {

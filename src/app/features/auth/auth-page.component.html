@@ -93,20 +93,20 @@
       <div class="action-row">
         @if (authStage === 'identity' && identityMode === 'phone') {
           <div class="action-cluster">
-            <button type="button" class="ghost" (click)="submitPhoneIdentity('password')" [disabled]="busy">
-              密码登录
+            <button type="button" class="ghost" (click)="submitPhoneIdentity('password')" [disabled]="busy || sessionBusy">
+              {{ sessionBusy ? '检查中...' : '密码登录' }}
             </button>
-            <button type="button" class="primary" (click)="submitPhoneIdentity('code')" [disabled]="busy">
-              验证码登录
+            <button type="button" class="primary" (click)="submitPhoneIdentity('code')" [disabled]="busy || sessionBusy">
+              {{ sessionBusy ? '检查中...' : '验证码登录' }}
             </button>
           </div>
         } @else {
           @if (showRecoverAction) {
-            <button type="button" class="ghost-link" (click)="beginRecovery()" [disabled]="busy">
+            <button type="button" class="ghost-link" (click)="beginRecovery()" [disabled]="busy || sessionBusy">
               忘记密码
             </button>
           }
-          <button type="button" class="primary" (click)="submit()" [disabled]="busy">
+          <button type="button" class="primary" (click)="submit()" [disabled]="busy || sessionBusy">
             {{ primaryActionLabel }}
           </button>
         }
