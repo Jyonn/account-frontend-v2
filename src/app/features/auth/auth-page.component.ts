@@ -8,6 +8,7 @@ import {
   AuthV2Method,
   AuthV2Purpose
 } from '../../core/models/account.models';
+import { AppRegistryService } from '../../core/services/app-registry.service';
 import { ApiService } from '../../core/services/api.service';
 import { SessionService } from '../../core/services/session.service';
 import { RecaptchaPanelComponent } from '../../shared/recaptcha-panel/recaptcha-panel.component';
@@ -24,6 +25,7 @@ type PhoneCredentialMode = 'password' | 'code';
 })
 export class AuthPageComponent implements OnInit {
   private readonly api = inject(ApiService);
+  private readonly appRegistry = inject(AppRegistryService);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   protected readonly session = inject(SessionService);
@@ -545,9 +547,19 @@ export class AuthPageComponent implements OnInit {
   }
 
   private async finishLogin(payload: AuthPayload) {
-    this.clearFlowState();
+    this.busy = true;
     this.session.acceptLogin(payload);
-    await this.router.navigateByUrl('/apps');
+
+    try {
+      await this.appRegistry.preload(true);
+    } catch {
+      // Let the app center render its own error state if prefetch fails.
+    } finally {
+      this.clearFlowState();
+      await this.router.navigateByUrl('/apps');
+      this.busy = false;
+      this.flushView();
+    }
   }
 
   private flushView() {

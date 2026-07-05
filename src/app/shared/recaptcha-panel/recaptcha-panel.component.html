@@ -1,6 +1,6 @@
 <section class="overlay" [class.visible]="visible" (click)="cancel()">
-  <div class="overlay-surface" (click)="$event.stopPropagation()">
-    <div class="captcha-shell">
+  <div class="overlay-surface">
+    <div class="captcha-shell" (click)="$event.stopPropagation()">
       <div class="captcha-slot" #captchaSlot></div>
       <div class="captcha-info" aria-live="polite">
         @if (state === 'error') {

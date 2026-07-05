@@ -2,6 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthPayload, UserProfile } from '../models/account.models';
 import { ApiService } from './api.service';
+import { AppRegistryService } from './app-registry.service';
 
 const PRIMARY_TOKEN_KEY = 'user-token-v2';
 const FALLBACK_TOKEN_KEY = 'user-token';
@@ -9,6 +10,7 @@ const FALLBACK_TOKEN_KEY = 'user-token';
 @Injectable({ providedIn: 'root' })
 export class SessionService {
   private readonly api = inject(ApiService);
+  private readonly appRegistry = inject(AppRegistryService);
   private readonly router = inject(Router);
 
   readonly token = signal(this.readToken());
@@ -76,6 +78,7 @@ export class SessionService {
     localStorage.removeItem(PRIMARY_TOKEN_KEY);
     this.token.set('');
     this.user.set(null);
+    this.appRegistry.clear();
   }
 
   private readToken() {

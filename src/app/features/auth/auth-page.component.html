@@ -12,6 +12,7 @@
         <div class="stage-toolbar">
           @if (authStage === 'identity') {
             <button type="button" class="ghost-link utility-switch" (click)="switchIdentityEntry()">
+              <span class="utility-switch__icon" aria-hidden="true">⇄</span>
               {{ identitySwitchLabel }}
             </button>
           } @else {

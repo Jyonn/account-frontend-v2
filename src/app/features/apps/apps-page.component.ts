@@ -2,6 +2,7 @@ import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AccountApp } from '../../core/models/account.models';
 import { ApiService } from '../../core/services/api.service';
+import { AppRegistryService } from '../../core/services/app-registry.service';
 import { SessionService } from '../../core/services/session.service';
 import { MarkdownPipe } from '../../shared/markdown.pipe';
 
@@ -12,9 +13,8 @@ import { MarkdownPipe } from '../../shared/markdown.pipe';
   styleUrl: './apps-page.component.scss'
 })
 export class AppsPageComponent implements OnInit {
-  private static readonly APP_LIST_FETCH_COUNT = 100;
-
   private readonly api = inject(ApiService);
+  private readonly appRegistry = inject(AppRegistryService);
   private readonly router = inject(Router);
   protected readonly session = inject(SessionService);
 
@@ -114,10 +114,10 @@ export class AppsPageComponent implements OnInit {
     this.error.set('');
 
     try {
-      const [allApps, devApps] = await Promise.all([
-        this.api.getAppList({ relation: 'none', frequent: false, count: AppsPageComponent.APP_LIST_FETCH_COUNT }),
-        this.api.getAppList({ relation: 'owner', count: AppsPageComponent.APP_LIST_FETCH_COUNT })
-      ]);
+      const cached = this.appRegistry.consume();
+      const { allApps, devApps } = cached
+        ? cached
+        : await this.appRegistry.preload(true);
 
       this.allApps.set(allApps);
       this.devApps.set(devApps);

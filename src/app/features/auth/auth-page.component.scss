@@ -150,11 +150,20 @@ h1 {
 }
 
 .utility-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   color: var(--text-faint);
 }
 
 .utility-switch:hover:not(:disabled) {
   color: var(--text);
+}
+
+.utility-switch__icon {
+  font-size: 0.95rem;
+  line-height: 1;
+  opacity: 0.86;
 }
 
 .back-action:hover {
