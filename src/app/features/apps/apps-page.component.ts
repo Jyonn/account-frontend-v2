@@ -40,6 +40,10 @@ export class AppsPageComponent implements OnInit, OnDestroy {
   protected readonly activeScopeTitle = computed(() => (this.appScope() === 'developed' ? '我在开发' : '我在用'));
   protected readonly activeScopeKicker = computed(() => (this.appScope() === 'developed' ? 'BUILDING' : 'IN USE'));
   protected readonly detailDrawerOpen = computed(() => this.detailPhase() !== 'registry');
+  protected readonly developedAppCards = computed(() => [
+    { kind: 'create' as const },
+    ...this.devApps().map((app) => ({ kind: 'app' as const, app }))
+  ]);
   protected readonly selectedAppPreview = computed(() => {
     const selectedAppId = this.selectedAppId();
     if (!selectedAppId) {
@@ -100,6 +104,10 @@ export class AppsPageComponent implements OnInit, OnDestroy {
     } finally {
       this.detailLoading.set(false);
     }
+  }
+
+  protected async createApp() {
+    await this.router.navigateByUrl('/apps/new/manage');
   }
 
   protected closeDetailDrawer() {

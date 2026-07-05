@@ -26,6 +26,11 @@ export const routes: Routes = [
         title: '齐天簿 | 应用中心'
       },
       {
+        path: 'apps/new/manage',
+        component: ManagePageComponent,
+        title: '齐天簿 | 新建应用'
+      },
+      {
         path: 'apps/:appId/manage',
         component: ManagePageComponent,
         title: '齐天簿 | 应用管理'

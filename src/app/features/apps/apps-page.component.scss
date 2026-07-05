@@ -238,6 +238,10 @@ h2 {
   transform: translateY(-1px);
 }
 
+.create-row {
+  border-style: dashed;
+}
+
 .logo,
 .hero-logo {
   display: grid;
@@ -254,6 +258,12 @@ h2 {
 .logo {
   width: 2.3rem;
   height: 2.3rem;
+}
+
+.create-logo {
+  font-size: 1.25rem;
+  color: var(--text-dim);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .hero-logo {

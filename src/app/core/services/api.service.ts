@@ -127,6 +127,18 @@ export class ApiService {
     })) satisfies ChoiceItem[];
   }
 
+  async createApp(payload: {
+    name: string;
+    desc: string;
+    redirect_uri: string;
+    test_redirect_uri: string;
+    scopes: string[];
+    premises: string[];
+  }) {
+    const app = await this.request<AccountApp>('POST', '/app/', { body: payload });
+    return this.normalizeApp(app);
+  }
+
   async updateAppInfo(
     appId: string,
     payload: {
@@ -137,6 +149,7 @@ export class ApiService {
       test_redirect_uri: string;
       scopes: string[];
       premises: string[];
+      max_user_num: number;
     }
   ) {
     const app = await this.request<AccountApp>('PUT', `/app/${appId}`, { body: payload });

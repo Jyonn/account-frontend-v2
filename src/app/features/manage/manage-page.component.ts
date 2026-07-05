@@ -36,11 +36,24 @@ export class ManagePageComponent implements OnInit {
   };
   protected readonly appId = computed(() => this.app()?.app_id || '');
   protected readonly appUserCount = computed(() => this.app()?.user_num || 0);
+  protected readonly isCreateMode = computed(() => this.route.snapshot.routeConfig?.path === 'apps/new/manage');
+  protected readonly pageTitle = computed(() => this.isCreateMode() ? '新建应用' : (this.app()?.app_name || '管理应用'));
+  protected readonly primaryActionLabel = computed(() => {
+    if (this.saving()) {
+      return this.isCreateMode() ? '创建中...' : '保存中...';
+    }
+    return this.isCreateMode() ? '创建应用' : '保存应用设置';
+  });
 
   async ngOnInit() {
     await this.session.bootstrap();
     if (!this.session.isLoggedIn()) {
       await this.router.navigateByUrl('/login');
+      return;
+    }
+
+    if (this.isCreateMode()) {
+      await this.loadCreateForm();
       return;
     }
 
@@ -55,11 +68,6 @@ export class ManagePageComponent implements OnInit {
   }
 
   protected async save() {
-    const app = this.app();
-    if (!app) {
-      return;
-    }
-
     const validationMessage = this.validate();
     if (validationMessage) {
       this.error.set(validationMessage);
@@ -71,14 +79,30 @@ export class ManagePageComponent implements OnInit {
     this.message.set('');
 
     try {
-      const updated = await this.api.updateAppInfo(app.app_id, {
+      const payload = {
         name: this.draft.app_name.trim(),
         desc: this.draft.app_desc.trim(),
-        info: this.draft.app_info.trim(),
         redirect_uri: this.draft.redirect_uri.trim(),
         test_redirect_uri: this.draft.test_redirect_uri.trim(),
         scopes: this.scopeOptions().filter((item) => item.selected).map((item) => item.id),
         premises: this.premiseOptions().filter((item) => item.selected).map((item) => item.id)
+      };
+
+      if (this.isCreateMode()) {
+        const created = await this.api.createApp(payload);
+        await this.router.navigate(['/apps', created.app_id, 'manage']);
+        return;
+      }
+
+      const app = this.app();
+      if (!app) {
+        return;
+      }
+
+      const updated = await this.api.updateAppInfo(app.app_id, {
+        ...payload,
+        info: this.draft.app_info.trim(),
+        max_user_num: 0
       });
 
       this.app.set({
@@ -223,6 +247,34 @@ export class ManagePageComponent implements OnInit {
     }
   }
 
+  private async loadCreateForm() {
+    this.loading.set(true);
+    this.error.set('');
+
+    try {
+      const [scopes, premises] = await Promise.all([
+        this.api.getAppScope(),
+        this.api.getAppPremise()
+      ]);
+
+      this.scopeOptions.set(scopes);
+      this.premiseOptions.set(premises);
+      this.app.set(null);
+      this.appSecret.set('');
+      this.draft = {
+        app_name: '',
+        app_desc: '',
+        redirect_uri: window.location.origin,
+        test_redirect_uri: window.location.origin,
+        app_info: ''
+      };
+    } catch (error) {
+      this.error.set(error instanceof Error ? error.message : '创建表单加载失败');
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
   private validate() {
     if (!this.draft.app_name.trim()) {
       return '应用名不能为空';
@@ -233,7 +285,7 @@ export class ManagePageComponent implements OnInit {
     if (!this.draft.redirect_uri.trim()) {
       return '回调 URI 不能为空';
     }
-    if (!this.draft.app_info.trim()) {
+    if (!this.isCreateMode() && !this.draft.app_info.trim()) {
       return '应用介绍不能为空';
     }
     return '';

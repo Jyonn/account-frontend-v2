@@ -35,23 +35,54 @@
               <div class="empty-state">正在读取应用目录...</div>
             } @else {
               <div class="app-list">
-                @for (app of displayedApps(); track app.app_id) {
-                  <button
-                    type="button"
-                    class="app-row"
-                    [class.selected]="selectedAppId() === app.app_id && detailDrawerOpen()"
-                    (click)="inspect(app.app_id)"
-                  >
-                    <div class="app-card-head">
-                      <div class="logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
-                        @if (!app.logo) {
-                          <span>{{ app.app_name.slice(0, 1) }}</span>
-                        }
+                @if (appScope() === 'developed' && showScopeToggle()) {
+                  @for (card of developedAppCards(); track card.kind === 'create' ? 'create-app' : card.app.app_id) {
+                    @if (card.kind === 'create') {
+                      <button type="button" class="app-row create-row" (click)="createApp()">
+                        <div class="app-card-head">
+                          <div class="logo create-logo" aria-hidden="true">+</div>
+                          <div class="name">新增应用</div>
+                        </div>
+                        <div class="desc">创建新的 OAuth 应用并进入管理页继续完善配置。</div>
+                      </button>
+                    } @else {
+                      <button
+                        type="button"
+                        class="app-row"
+                        [class.selected]="selectedAppId() === card.app.app_id && detailDrawerOpen()"
+                        (click)="inspect(card.app.app_id)"
+                      >
+                        <div class="app-card-head">
+                          <div class="logo" [style.background-image]="card.app.logo ? 'url(' + card.app.logo + ')' : ''">
+                            @if (!card.app.logo) {
+                              <span>{{ card.app.app_name.slice(0, 1) }}</span>
+                            }
+                          </div>
+                          <div class="name">{{ card.app.app_name }}</div>
+                        </div>
+                        <div class="desc">{{ card.app.app_desc || '暂无简介' }}</div>
+                      </button>
+                    }
+                  }
+                } @else {
+                  @for (app of displayedApps(); track app.app_id) {
+                    <button
+                      type="button"
+                      class="app-row"
+                      [class.selected]="selectedAppId() === app.app_id && detailDrawerOpen()"
+                      (click)="inspect(app.app_id)"
+                    >
+                      <div class="app-card-head">
+                        <div class="logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
+                          @if (!app.logo) {
+                            <span>{{ app.app_name.slice(0, 1) }}</span>
+                          }
+                        </div>
+                        <div class="name">{{ app.app_name }}</div>
                       </div>
-                      <div class="name">{{ app.app_name }}</div>
-                    </div>
-                    <div class="desc">{{ app.app_desc || '暂无简介' }}</div>
-                  </button>
+                      <div class="desc">{{ app.app_desc || '暂无简介' }}</div>
+                    </button>
+                  }
                 }
               </div>
             }

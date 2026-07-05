@@ -3,10 +3,10 @@
     <div class="pane-head">
       <div>
         <div class="eyebrow">应用管理</div>
-        <h2>{{ app()?.app_name || '管理应用' }}</h2>
+        <h2>{{ pageTitle() }}</h2>
       </div>
       <button type="button" class="primary" (click)="save()" [disabled]="saving() || loading()">
-        {{ saving() ? '保存中...' : '保存应用设置' }}
+        {{ primaryActionLabel() }}
       </button>
     </div>
 
@@ -19,6 +19,60 @@
 
     @if (loading()) {
       <div class="empty-state">正在读取应用资料...</div>
+    } @else if (isCreateMode()) {
+      <section class="hero">
+        <div class="logo">
+          <span>+</span>
+        </div>
+        <div class="hero-copy">
+          <div class="hero-name">创建新的应用</div>
+          <div class="hero-meta">先填写基础信息，创建后再继续完善图标、介绍与授权参数。</div>
+        </div>
+      </section>
+
+      <section class="form-grid">
+        <label class="field">
+          <span>应用名</span>
+          <input [(ngModel)]="draft.app_name" />
+        </label>
+        <label class="field">
+          <span>应用标语</span>
+          <input [(ngModel)]="draft.app_desc" />
+        </label>
+        <label class="field">
+          <span>回调 URI</span>
+          <input [(ngModel)]="draft.redirect_uri" />
+        </label>
+        <label class="field">
+          <span>测试 URI</span>
+          <input [(ngModel)]="draft.test_redirect_uri" />
+        </label>
+      </section>
+
+      <section class="choice-grid">
+        <div class="choice-pane">
+          <div class="eyebrow">授权范围</div>
+          <div class="choice-list">
+            @for (item of scopeOptions(); track item.id) {
+              <button type="button" class="choice-item" [class.selected]="item.selected" (click)="toggleScope(item.id)">
+                <span>{{ item.key }}</span>
+                <small>{{ item.detail || item.id }}</small>
+              </button>
+            }
+          </div>
+        </div>
+        <div class="choice-pane">
+          <div class="eyebrow">前置条件</div>
+          <div class="choice-list">
+            @for (item of premiseOptions(); track item.id) {
+              <button type="button" class="choice-item" [class.selected]="item.selected" (click)="togglePremise(item.id)">
+                <span>{{ item.key }}</span>
+                <small>{{ item.detail || item.id }}</small>
+              </button>
+            }
+          </div>
+        </div>
+      </section>
     } @else if (app(); as managedApp) {
       <section class="hero">
         <div class="logo" [style.background-image]="logoUrl ? 'url(' + logoUrl + ')' : ''">
