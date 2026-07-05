@@ -181,7 +181,7 @@ export class AuthPageComponent implements OnInit {
 
   protected get drawerTitle() {
     if (this.authStage === 'identity') {
-      return '身份输入';
+      return this.identityMode === 'phone' ? '身份输入' : '齐天号';
     }
 
     if (this.authStage === 'credential') {
