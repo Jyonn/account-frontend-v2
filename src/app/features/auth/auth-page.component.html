@@ -75,6 +75,9 @@
         </div>
       } @else {
         <div class="verify-shell">
+          <div class="verify-note">
+            已给 {{ maskedPhoneNumber }} 发送验证码，请查收。
+          </div>
           <div class="verify-grid" (paste)="onCodePaste($event)">
             @for (digit of verificationDigits; track $index) {
               <input
@@ -87,12 +90,6 @@
                 (keydown)="onCodeDigitKeydown($index, $event)"
               />
             }
-          </div>
-          <div class="verify-resend">
-            <span class="verify-resend__icon" aria-hidden="true">⏱</span>
-            <button type="button" class="ghost-link verify-resend__action" (click)="resendVerificationCode()" [disabled]="!canResendVerificationCode">
-              {{ resendActionLabel }}
-            </button>
           </div>
         </div>
       }
@@ -107,15 +104,26 @@
               {{ sessionBusy ? '检查中...' : '验证码登录' }}
             </button>
           </div>
-        } @else {
-          @if (showRecoverAction) {
-            <button type="button" class="ghost-link" (click)="beginRecovery()" [disabled]="busy || sessionBusy">
-              忘记密码
+        } @else if (authStage === 'verification') {
+          <div class="action-cluster">
+            <button type="button" class="ghost" (click)="resendVerificationCode()" [disabled]="!canResendVerificationCode">
+              {{ resendActionLabel }}
             </button>
-          }
-          <button type="button" class="primary" (click)="submit()" [disabled]="busy || sessionBusy">
-            {{ primaryActionLabel }}
-          </button>
+            <button type="button" class="primary" (click)="submit()" [disabled]="busy || sessionBusy">
+              {{ primaryActionLabel }}
+            </button>
+          </div>
+        } @else {
+          <div class="action-cluster">
+            @if (showRecoverAction) {
+              <button type="button" class="ghost-link action-text-button" (click)="beginRecovery()" [disabled]="busy || sessionBusy">
+                忘记密码
+              </button>
+            }
+            <button type="button" class="primary" (click)="submit()" [disabled]="busy || sessionBusy">
+              {{ primaryActionLabel }}
+            </button>
+          </div>
         }
       </div>
     </div>

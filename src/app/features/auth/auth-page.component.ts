@@ -381,6 +381,15 @@ export class AuthPageComponent implements OnInit, OnDestroy {
     return this.verificationDigits.join('');
   }
 
+  protected get maskedPhoneNumber() {
+    const phone = this.phoneNumber.trim();
+    if (phone.length < 7) {
+      return this.wholePhoneNumber;
+    }
+
+    return `${this.regionCode.trim()} ${phone.slice(0, 3)}****${phone.slice(-4)}`;
+  }
+
   protected get resendCountdownLabel() {
     const minutes = Math.floor(this.resendCooldown / 60)
       .toString()
@@ -399,10 +408,10 @@ export class AuthPageComponent implements OnInit, OnDestroy {
 
   protected get resendActionLabel() {
     if (this.resendCooldown > 0) {
-      return this.resendCountdownLabel;
+      return `重新发送验证码（${this.resendCountdownLabel}）`;
     }
 
-    return this.needsCaptchaForNextResend ? '重新验证后发送' : '重新发送验证码';
+    return this.needsCaptchaForNextResend ? '重新发送验证码（需验证）' : '重新发送验证码';
   }
 
   protected onCodeDigitInput(index: number, value: string) {
