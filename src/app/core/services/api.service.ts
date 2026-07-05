@@ -9,7 +9,6 @@ import {
   AuthV2CodeSendPayload,
   AuthV2CodeVerifyNextPayload,
   AuthV2IdentityType,
-  IDCardVerifyPayload,
   AuthV2Intent,
   AuthV2SessionPayload,
   CaptchaFlowResult,
@@ -166,10 +165,6 @@ export class ApiService {
         back: back ? 1 : 0
       }
     });
-  }
-
-  async autoVerify() {
-    return this.request<IDCardVerifyPayload>('GET', '/user/verify');
   }
 
   async confirmVerify(payload: ConfirmVerifyPayload) {

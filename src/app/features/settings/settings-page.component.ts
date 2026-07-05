@@ -9,9 +9,6 @@ interface VerifyDraft {
   male: boolean;
   idcard: string;
   birthday: string;
-  validStart: string;
-  validEnd: string;
-  token: string;
 }
 
 const MAX_IDCARD_IMAGE_SIZE = 10 * 1024 * 1024;
@@ -53,7 +50,6 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
 
   private frontPreviewUrl = '';
   private backPreviewUrl = '';
-  private autoVerifySnapshot: VerifyDraft | null = null;
 
   async ngOnInit() {
     await this.session.bootstrap();
@@ -192,47 +188,21 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     this.manualVerification.set(true);
     this.message.set('');
     this.error.set('');
-    this.autoVerifySnapshot = null;
     this.verifyDraft = {
       name: this.verifyDraft.name || '',
       male: this.verifyDraft.male,
       idcard: this.verifyDraft.idcard || '',
-      birthday: this.verifyDraft.birthday || this.session.user()?.birthday || '',
-      validStart: this.verifyDraft.validStart || '',
-      validEnd: this.verifyDraft.validEnd || '',
-      token: ''
+      birthday: this.verifyDraft.birthday || this.session.user()?.birthday || ''
     };
   }
 
-  protected async autoVerify() {
+  protected openVerificationForm() {
     if (!this.canStartVerification) {
       this.error.set('请先上传身份证正反面');
       return;
     }
 
-    this.verificationBusy.set(true);
-    this.message.set('');
-    this.error.set('');
-
-    try {
-      const payload = await this.api.autoVerify();
-      this.manualVerification.set(false);
-      this.verifyDraft = {
-        name: payload.name || '',
-        male: payload.male ?? true,
-        idcard: payload.idcard || '',
-        birthday: payload.birthday || '',
-        validStart: payload.valid_start || '',
-        validEnd: payload.valid_end || '',
-        token: payload.token || ''
-      };
-      this.autoVerifySnapshot = { ...this.verifyDraft };
-      this.message.set('证件信息已识别，请确认后提交');
-    } catch (error) {
-      this.error.set(error instanceof Error ? error.message : '自动识别失败');
-    } finally {
-      this.verificationBusy.set(false);
-    }
+    this.startManualVerification();
   }
 
   protected async submitVerification() {
@@ -256,7 +226,6 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
       this.session.user.set(user);
       this.manualVerification.set(false);
       this.verifyDraft = this.emptyVerifyDraft();
-      this.autoVerifySnapshot = null;
       this.message.set(user.verify_status === 3 ? '实名认证已完成' : '认证资料已提交，等待人工审核');
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : '认证提交失败');
@@ -327,14 +296,12 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
       return '资料已经提交，等待人工审核。';
     }
     if (status === 1) {
-      return '系统正在处理认证资料，请稍后刷新查看结果。';
+      return '资料已进入审核流程，请稍后刷新查看结果。';
     }
     if (this.showVerifyForm) {
-      return this.manualVerification()
-        ? '请核对并填写真实身份信息，提交后将进入人工审核。'
-        : '自动识别结果已经载入，请确认无误后提交。';
+      return '请核对并填写真实身份信息，提交后将进入人工审核。';
     }
-    return '先上传身份证正反面，再进行自动识别或人工审核提交。';
+    return '先上传身份证正反面，再填写资料并提交人工审核。';
   }
 
   protected get canStartVerification() {
@@ -342,18 +309,18 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
   }
 
   protected get canSubmitVerification() {
-    return (this.session.user()?.verify_status ?? 0) === 0 && (this.manualVerification() || !!this.verifyDraft.token);
+    return (this.session.user()?.verify_status ?? 0) === 0 && this.manualVerification();
   }
 
   protected get showVerifyForm() {
-    return this.manualVerification() || !!this.verifyDraft.token;
+    return this.manualVerification();
   }
 
   protected get verifyActionLabel() {
     if (this.verificationBusy()) {
       return '提交中...';
     }
-    return this.manualVerification() ? '提交人工审核' : '确认认证';
+    return '提交人工审核';
   }
 
   protected get devActionLabel() {
@@ -375,24 +342,11 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
   }
 
   private buildVerifyPayload() {
-    const useAutoToken =
-      !this.manualVerification() &&
-      !!this.verifyDraft.token &&
-      !!this.autoVerifySnapshot &&
-      this.isSameVerifyDraft(this.verifyDraft, this.autoVerifySnapshot);
-
-    if (useAutoToken) {
-      return {
-        token: this.verifyDraft.token
-      };
-    }
-
     return {
       name: this.verifyDraft.name.trim(),
       birthday: this.verifyDraft.birthday,
       idcard: this.verifyDraft.idcard.trim(),
-      male: this.verifyDraft.male,
-      auto: false
+      male: this.verifyDraft.male
     };
   }
 
@@ -414,10 +368,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
       name: '',
       male: true,
       idcard: '',
-      birthday: '',
-      validStart: '',
-      validEnd: '',
-      token: ''
+      birthday: ''
     };
   }
 
@@ -445,15 +396,6 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
       URL.revokeObjectURL(this.backPreviewUrl);
       this.backPreviewUrl = '';
     }
-  }
-
-  private isSameVerifyDraft(left: VerifyDraft, right: VerifyDraft) {
-    return (
-      left.name === right.name &&
-      left.male === right.male &&
-      left.idcard === right.idcard &&
-      left.birthday === right.birthday
-    );
   }
 
   private syncDraft() {

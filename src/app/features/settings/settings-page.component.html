@@ -125,11 +125,8 @@
           </div>
 
           <div class="action-row">
-            <button type="button" class="ghost" (click)="startManualVerification()" [disabled]="verificationBusy()">
-              人工填写
-            </button>
-            <button type="button" class="primary" (click)="autoVerify()" [disabled]="!canStartVerification || verificationBusy()">
-              {{ verificationBusy() && !showVerifyForm ? '识别中...' : '自动识别证件' }}
+            <button type="button" class="primary" (click)="openVerificationForm()" [disabled]="!canStartVerification || verificationBusy()">
+              填写认证资料
             </button>
           </div>
 
@@ -159,24 +156,9 @@
                   <span>生日</span>
                   <input type="date" [(ngModel)]="verifyDraft.birthday" />
                 </label>
-                @if (verifyDraft.validStart || verifyDraft.validEnd) {
-                  <label class="field">
-                    <span>有效期起</span>
-                    <input [value]="verifyDraft.validStart" readonly />
-                  </label>
-                  <label class="field">
-                    <span>有效期止</span>
-                    <input [value]="verifyDraft.validEnd" readonly />
-                  </label>
-                }
               </div>
 
               <div class="action-row">
-                @if (!manualVerification()) {
-                  <button type="button" class="ghost" (click)="startManualVerification()" [disabled]="verificationBusy()">
-                    转人工审核
-                  </button>
-                }
                 <button type="button" class="primary" (click)="submitVerification()" [disabled]="verificationBusy()">
                   {{ verifyActionLabel }}
                 </button>
