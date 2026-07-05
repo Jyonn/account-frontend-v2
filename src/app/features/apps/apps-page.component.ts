@@ -1,4 +1,5 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AccountApp } from '../../core/models/account.models';
 import { ApiService } from '../../core/services/api.service';
@@ -12,11 +13,14 @@ import { MarkdownPipe } from '../../shared/markdown.pipe';
   templateUrl: './apps-page.component.html',
   styleUrl: './apps-page.component.scss'
 })
-export class AppsPageComponent implements OnInit {
+export class AppsPageComponent implements OnInit, OnDestroy {
   private readonly api = inject(ApiService);
   private readonly appRegistry = inject(AppRegistryService);
   private readonly router = inject(Router);
+  private readonly document = inject(DOCUMENT);
   protected readonly session = inject(SessionService);
+  private detailPhaseTimer: number | null = null;
+  private spherePulseTimer: number | null = null;
 
   protected readonly loading = signal(true);
   protected readonly detailLoading = signal(false);
@@ -27,14 +31,28 @@ export class AppsPageComponent implements OnInit {
   protected readonly appScope = signal<'mine' | 'developed'>('mine');
   protected readonly selectedAppId = signal('');
   protected readonly selectedApp = signal<AccountApp | null>(null);
-  protected readonly detailDrawerOpen = signal(false);
+  protected readonly detailPhase = signal<'registry' | 'opening' | 'detail' | 'closing'>('registry');
   protected readonly showScopeToggle = computed(() => !!this.session.user()?.is_dev);
-  protected readonly canManageSelectedApp = computed(() => !!this.selectedApp()?.relation?.belong);
+  protected readonly canManageSelectedApp = computed(() => !!this.selectedAppPreview()?.relation?.belong);
   protected readonly displayedApps = computed(() =>
     this.appScope() === 'developed' && this.showScopeToggle() ? this.devApps() : this.allApps()
   );
   protected readonly activeScopeTitle = computed(() => (this.appScope() === 'developed' ? '我在开发' : '我在用'));
   protected readonly activeScopeKicker = computed(() => (this.appScope() === 'developed' ? 'BUILDING' : 'IN USE'));
+  protected readonly detailDrawerOpen = computed(() => this.detailPhase() !== 'registry');
+  protected readonly selectedAppPreview = computed(() => {
+    const selectedAppId = this.selectedAppId();
+    if (!selectedAppId) {
+      return null;
+    }
+
+    const selectedApp = this.selectedApp();
+    if (selectedApp?.app_id === selectedAppId) {
+      return selectedApp;
+    }
+
+    return [...this.devApps(), ...this.allApps()].find((item) => item.app_id === selectedAppId) ?? null;
+  });
 
   async ngOnInit() {
     await this.session.bootstrap();
@@ -44,6 +62,11 @@ export class AppsPageComponent implements OnInit {
     }
 
     await this.loadApps();
+  }
+
+  ngOnDestroy() {
+    this.clearTimers();
+    this.document.body.classList.remove('apps-detail-pulse');
   }
 
   protected setAppScope(scope: 'mine' | 'developed') {
@@ -65,7 +88,9 @@ export class AppsPageComponent implements OnInit {
   protected async inspect(appId: string) {
     this.error.set('');
     this.selectedAppId.set(appId);
-    this.detailDrawerOpen.set(true);
+    this.startSpherePulse();
+    this.setDetailPhase('opening');
+    this.scheduleDetailPhase('detail');
     this.detailLoading.set(true);
 
     try {
@@ -78,10 +103,17 @@ export class AppsPageComponent implements OnInit {
   }
 
   protected closeDetailDrawer() {
-    this.detailDrawerOpen.set(false);
-    this.selectedAppId.set('');
-    this.selectedApp.set(null);
-    this.detailLoading.set(false);
+    if (this.detailPhase() === 'registry' || this.detailPhase() === 'closing') {
+      return;
+    }
+
+    this.startSpherePulse();
+    this.setDetailPhase('closing');
+    this.scheduleDetailPhase('registry', () => {
+      this.selectedAppId.set('');
+      this.selectedApp.set(null);
+      this.detailLoading.set(false);
+    });
   }
 
   protected async enter(app: AccountApp) {
@@ -129,7 +161,7 @@ export class AppsPageComponent implements OnInit {
       const currentSelectedAppId = this.selectedAppId();
       if (!currentSelectedAppId) {
         this.selectedApp.set(null);
-        this.detailDrawerOpen.set(false);
+        this.setDetailPhase('registry');
         return;
       }
 
@@ -149,5 +181,48 @@ export class AppsPageComponent implements OnInit {
   private attachAuthCode(redirectUri: string, code: string) {
     const separator = redirectUri.includes('?') ? '&' : '?';
     return `${redirectUri}${separator}code=${encodeURIComponent(code)}`;
+  }
+
+  private setDetailPhase(phase: 'registry' | 'opening' | 'detail' | 'closing') {
+    this.detailPhase.set(phase);
+  }
+
+  private scheduleDetailPhase(phase: 'registry' | 'detail', callback?: () => void) {
+    if (this.detailPhaseTimer !== null) {
+      window.clearTimeout(this.detailPhaseTimer);
+    }
+
+    this.detailPhaseTimer = window.setTimeout(() => {
+      callback?.();
+      this.setDetailPhase(phase);
+      this.detailPhaseTimer = null;
+    }, 220);
+  }
+
+  private startSpherePulse() {
+    this.document.body.classList.remove('apps-detail-pulse');
+    void this.document.body.offsetWidth;
+    this.document.body.classList.add('apps-detail-pulse');
+
+    if (this.spherePulseTimer !== null) {
+      window.clearTimeout(this.spherePulseTimer);
+    }
+
+    this.spherePulseTimer = window.setTimeout(() => {
+      this.document.body.classList.remove('apps-detail-pulse');
+      this.spherePulseTimer = null;
+    }, 420);
+  }
+
+  private clearTimers() {
+    if (this.detailPhaseTimer !== null) {
+      window.clearTimeout(this.detailPhaseTimer);
+      this.detailPhaseTimer = null;
+    }
+
+    if (this.spherePulseTimer !== null) {
+      window.clearTimeout(this.spherePulseTimer);
+      this.spherePulseTimer = null;
+    }
   }
 }

@@ -319,6 +319,20 @@
   transform: translateX(-50%) scale(1.22);
 }
 
+:host-context(body.apps-detail-pulse) .sphere-gyro {
+  transform: translateX(-50%) scale(1.14);
+}
+
+:host-context(body.apps-detail-pulse) .sphere-glow {
+  opacity: 0.94;
+  transform: translateX(-50%) scale(1.1);
+}
+
+:host-context(body.apps-detail-pulse) .sphere-shadow {
+  opacity: 0.4;
+  transform: translateX(-50%) scale(1.08);
+}
+
 @keyframes nav-item-in {
   from {
     opacity: 0;
