@@ -55,15 +55,6 @@
   text-align: center;
 }
 
-.loading-ring {
-  width: 1.55rem;
-  height: 1.55rem;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-top-color: rgba(255, 255, 255, 0.92);
-  border-radius: 50%;
-  animation: recaptcha-spin 820ms linear infinite;
-}
-
 .retry-action {
   padding: 0;
   border: 0;
@@ -89,15 +80,5 @@
 @media (max-width: 720px) {
   .captcha-slot {
     min-width: min(304px, 100vw - 3.2rem);
-  }
-}
-
-@keyframes recaptcha-spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
   }
 }

@@ -2,9 +2,6 @@
   <div class="overlay-surface" (click)="$event.stopPropagation()">
     <div class="captcha-shell">
       <div class="captcha-slot" #captchaSlot></div>
-      @if (state === 'loading') {
-        <span class="loading-ring" aria-hidden="true"></span>
-      }
       <div class="captcha-info" aria-live="polite">
         @if (state === 'error') {
           <span class="info-copy">{{ errorMessage || '人机验证组件加载失败。' }}</span>

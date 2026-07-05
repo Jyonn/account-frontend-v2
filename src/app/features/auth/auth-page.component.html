@@ -5,15 +5,21 @@
     <p>未注册用户将自动注册。</p>
   </header>
 
-  @if (showBackAction) {
+  @if (showUtilitySection) {
     <section class="drawer-section drawer-section--utility">
       <div class="section-label section-label--empty"></div>
       <div class="section-content section-content--utility">
         <div class="stage-toolbar">
-          <button type="button" class="back-action" (click)="handleBackAction()">
-            <span class="back-glyph">‹</span>
-            <span>{{ authStage === 'verification' ? '返回上一步' : '返回身份选择' }}</span>
-          </button>
+          @if (authStage === 'identity') {
+            <button type="button" class="ghost-link utility-switch" (click)="switchIdentityEntry()">
+              {{ identitySwitchLabel }}
+            </button>
+          } @else {
+            <button type="button" class="back-action" (click)="handleBackAction()">
+              <span class="back-glyph">‹</span>
+              <span>{{ authStage === 'verification' ? '返回上一步' : '返回身份选择' }}</span>
+            </button>
+          }
         </div>
       </div>
     </section>
@@ -45,7 +51,7 @@
             </div>
           } @else {
             <label class="field single-line">
-              <span>齐天号</span>
+              <span>身份输入</span>
               <input [(ngModel)]="qitianId" autocomplete="username" placeholder="输入齐天号" />
             </label>
           }

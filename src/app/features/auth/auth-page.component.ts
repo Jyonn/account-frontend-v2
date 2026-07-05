@@ -73,11 +73,6 @@ export class AuthPageComponent implements OnInit {
   }
 
   protected handleSectionLink() {
-    if (this.authStage === 'identity') {
-      this.switchIdentityMode(this.identityMode === 'phone' ? 'qitian' : 'phone');
-      return;
-    }
-
     if (this.authStage === 'credential' && this.identityMode === 'phone') {
       this.togglePhoneCredentialMode();
     }
@@ -183,7 +178,7 @@ export class AuthPageComponent implements OnInit {
 
   protected get drawerTitle() {
     if (this.authStage === 'identity') {
-      return this.identityMode === 'phone' ? '手机号' : '齐天号';
+      return '身份输入';
     }
 
     if (this.authStage === 'credential') {
@@ -221,10 +216,6 @@ export class AuthPageComponent implements OnInit {
   }
 
   protected get drawerMeta() {
-    if (this.authStage === 'identity') {
-      return this.identityMode === 'phone' ? '齐天号登录' : '手机号登录';
-    }
-
     if (this.canToggleCredentialMode) {
       return this.phoneCredentialMode === 'password' ? '验证码登录' : '密码登录';
     }
@@ -253,11 +244,23 @@ export class AuthPageComponent implements OnInit {
   }
 
   protected get showMethodSwitch() {
-    return this.authStage === 'identity' || this.canToggleCredentialMode;
+    return this.canToggleCredentialMode;
   }
 
   protected get showBackAction() {
     return this.authStage === 'credential' || this.authStage === 'verification';
+  }
+
+  protected get showUtilitySection() {
+    return this.authStage === 'identity' || this.showBackAction;
+  }
+
+  protected get identitySwitchLabel() {
+    return this.identityMode === 'phone' ? '用齐天号登录' : '用手机号登录或注册';
+  }
+
+  protected switchIdentityEntry() {
+    this.switchIdentityMode(this.identityMode === 'phone' ? 'qitian' : 'phone');
   }
 
   protected get showRecoverAction() {

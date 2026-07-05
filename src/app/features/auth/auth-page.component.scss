@@ -149,6 +149,14 @@ h1 {
   transition: color 180ms ease, transform 180ms ease;
 }
 
+.utility-switch {
+  color: var(--text-faint);
+}
+
+.utility-switch:hover:not(:disabled) {
+  color: var(--text);
+}
+
 .back-action:hover {
   color: var(--text);
   transform: translateX(-1px);
