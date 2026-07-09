@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   AuthPayload,
   AuthV2CodeVerifyNextPayload,
@@ -26,6 +26,7 @@ type PhoneCredentialMode = 'password' | 'code';
 export class AuthPageComponent implements OnInit, OnDestroy {
   private readonly api = inject(ApiService);
   private readonly appRegistry = inject(AppRegistryService);
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly cdr = inject(ChangeDetectorRef);
   protected readonly session = inject(SessionService);
@@ -55,10 +56,12 @@ export class AuthPageComponent implements OnInit, OnDestroy {
   private pendingCaptchaAction: 'advance' | 'resend_code' = 'advance';
   private resendAttemptsSinceCaptcha = 0;
   private resendTimerId: number | null = null;
+  private returnTo = '/apps';
 
   ngOnInit() {
+    this.returnTo = this.route.snapshot.queryParamMap.get('returnTo') || '/apps';
     if (this.session.isLoggedIn()) {
-      void this.router.navigateByUrl('/apps');
+      void this.router.navigateByUrl(this.returnTo);
     }
   }
 
@@ -653,7 +656,7 @@ export class AuthPageComponent implements OnInit, OnDestroy {
       // Let the app center render its own error state if prefetch fails.
     } finally {
       this.clearFlowState();
-      await this.router.navigateByUrl('/apps');
+      await this.router.navigateByUrl(this.returnTo);
       this.busy = false;
       this.flushView();
     }

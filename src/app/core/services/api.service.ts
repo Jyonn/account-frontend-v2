@@ -3,6 +3,8 @@ import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import {
   AccountApp,
+  CliDeviceGrantPayload,
+  CliDeviceGrantStartPayload,
   ConfirmVerifyPayload,
   AuthPayload,
   AuthV2CaptchaPayload,
@@ -82,6 +84,29 @@ export class ApiService {
   async getPhoneStatus(phone: string) {
     return this.request<PhoneStatusPayload>('GET', '/user/phone-status', {
       params: { phone }
+    });
+  }
+
+  async getCliDeviceGrant(userCode: string) {
+    return this.request<CliDeviceGrantPayload>('GET', '/auth/cli/device', {
+      params: { user_code: userCode }
+    });
+  }
+
+  async confirmCliDeviceGrant(userCode: string, decision: 'approve' | 'deny') {
+    return this.request<CliDeviceGrantPayload>('POST', '/auth/cli/device/confirm', {
+      body: {
+        user_code: userCode,
+        decision
+      }
+    });
+  }
+
+  async startCliDeviceGrant(clientName = 'qt-cli') {
+    return this.request<CliDeviceGrantStartPayload>('POST', '/auth/cli/device/start', {
+      body: {
+        client_name: clientName
+      }
     });
   }
 

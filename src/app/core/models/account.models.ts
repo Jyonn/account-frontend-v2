@@ -88,6 +88,22 @@ export interface AuthV2CodeVerifyNextPayload {
   next_step: 'password';
 }
 
+export interface CliDeviceGrantPayload {
+  user_code: string;
+  client_name: string;
+  status: 'pending' | 'approved' | 'denied' | 'consumed';
+  expires_in: number;
+}
+
+export interface CliDeviceGrantStartPayload {
+  device_code: string;
+  user_code: string;
+  verification_uri: string;
+  verification_uri_complete: string;
+  expires_in: number;
+  interval: number;
+}
+
 export interface OAuthPayload {
   auth_code: string;
   redirect_uri: string;

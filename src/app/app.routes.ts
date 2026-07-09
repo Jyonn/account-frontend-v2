@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { AuthPageComponent } from './features/auth/auth-page.component';
 import { AppsPageComponent } from './features/apps/apps-page.component';
+import { CliAuthPageComponent } from './features/cli/cli-auth-page.component';
 import { ManagePageComponent } from './features/manage/manage-page.component';
 import { SettingsPageComponent } from './features/settings/settings-page.component';
 import { ShellLayoutComponent } from './layout/shell-layout.component';
@@ -19,6 +20,11 @@ export const routes: Routes = [
         path: 'login',
         component: AuthPageComponent,
         title: '齐天簿 | 登录'
+      },
+      {
+        path: 'cli',
+        component: CliAuthPageComponent,
+        title: '齐天簿 | CLI 授权'
       },
       {
         path: 'apps',
