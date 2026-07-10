@@ -20,6 +20,13 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
+
+  p {
+    margin: 0.72rem 0 0;
+    max-width: 34rem;
+    color: var(--text-dim);
+    line-height: 1.68;
+  }
 }
 
 .page-kicker,
@@ -76,6 +83,10 @@ h1 {
   color: var(--text-dim);
 }
 
+.request-copy.subtle {
+  color: var(--text-faint);
+}
+
 .field input {
   min-width: 0;
   padding: 0.92rem 0.95rem;
@@ -86,9 +97,21 @@ h1 {
   outline: none;
 }
 
-.field input:focus {
+.field input:focus,
+.field textarea:focus {
   border-color: var(--line-strong);
   background: rgba(255, 255, 255, 0.032);
+}
+
+.field textarea {
+  min-width: 0;
+  padding: 0.92rem 0.95rem;
+  border: 1px solid var(--line);
+  border-radius: 0.72rem;
+  background: rgba(255, 255, 255, 0.015);
+  color: var(--text);
+  outline: none;
+  resize: vertical;
 }
 
 .action-row {
@@ -118,10 +141,19 @@ h1 {
   gap: 0.25rem;
 }
 
+.link-pane {
+  display: grid;
+  gap: 0.8rem;
+}
+
 .request-title {
   font-size: 1.3rem;
   letter-spacing: -0.04em;
   color: var(--text);
+}
+
+.link-action {
+  text-decoration: none;
 }
 
 .feedback {

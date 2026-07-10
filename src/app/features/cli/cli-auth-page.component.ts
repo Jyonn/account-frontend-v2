@@ -25,6 +25,13 @@ export class CliAuthPageComponent implements OnInit {
   protected readonly currentCode = signal('');
   protected readonly normalizedCode = computed(() => this.normalizeUserCode(this.currentCode()));
   protected readonly canLookup = computed(() => this.normalizedCode().replace('-', '').length === 8);
+  protected readonly isOauthGrant = computed(() => this.deviceGrant()?.request_type === 'oauth');
+  protected readonly pageTitle = computed(() => (this.isOauthGrant() ? '命令行应用授权' : '命令行登录确认'));
+  protected readonly pageDescription = computed(() =>
+    this.isOauthGrant()
+      ? '确认来自终端的应用授权请求，并在网页中查看最终跳转链接。'
+      : '确认来自终端的登录请求，让 CLI 继承你当前的齐天簿会话。'
+  );
   protected readonly returnTo = computed(() => {
     const code = this.normalizedCode();
     return code ? `/cli?code=${encodeURIComponent(code)}` : '/cli';
@@ -74,11 +81,24 @@ export class CliAuthPageComponent implements OnInit {
 
     try {
       this.deviceGrant.set(await this.api.confirmCliDeviceGrant(grant.user_code, decision));
-      this.message.set(decision === 'approve' ? '已批准本次 CLI 登录请求。' : '已拒绝本次 CLI 登录请求。');
+      if (decision === 'approve') {
+        this.message.set(this.isOauthGrant() ? '已生成 CLI OAuth 跳转链接。' : '已批准本次 CLI 登录请求。');
+      } else {
+        this.message.set('已拒绝本次 CLI 请求。');
+      }
     } catch (error) {
       this.error.set(error instanceof Error ? error.message : '更新 CLI 授权状态失败');
     } finally {
       this.confirming.set(false);
+    }
+  }
+
+  protected async copyLink(link: string) {
+    try {
+      await navigator.clipboard.writeText(link);
+      this.message.set('跳转链接已复制。');
+    } catch {
+      this.message.set('复制失败，请手动复制链接。');
     }
   }
 

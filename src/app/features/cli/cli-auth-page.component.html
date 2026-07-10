@@ -2,7 +2,8 @@
   <header class="page-header">
     <div>
       <div class="page-kicker">CLI Authorization</div>
-      <h1>命令行登录确认</h1>
+      <h1>{{ pageTitle() }}</h1>
+      <p>{{ pageDescription() }}</p>
     </div>
   </header>
 
@@ -43,13 +44,22 @@
       </div>
       <div class="section-content">
         <div class="request-head">
-          <div class="request-title">{{ grant.client_name }}</div>
+          <div class="request-title">{{ grant.app_name || grant.client_name }}</div>
           <div class="request-meta">设备码 {{ grant.user_code }}，剩余 {{ grant.expires_in }} 秒</div>
         </div>
 
-        <div class="request-copy">
-          此操作会让命令行工具继承你当前齐天簿登录态。请确认这个终端由你本人发起。
-        </div>
+        @if (grant.request_type === 'oauth') {
+          <div class="request-copy">
+            此操作会为 CLI 发起一次应用授权。网页端不会直接跳转，而是会展示最终链接供终端或你本人继续处理。
+          </div>
+          @if (grant.app_desc) {
+            <div class="request-copy subtle">{{ grant.app_desc }}</div>
+          }
+        } @else {
+          <div class="request-copy">
+            此操作会让命令行工具继承你当前齐天簿登录态。请确认这个终端由你本人发起。
+          </div>
+        }
 
         <div class="status-line">
           当前状态：<strong>{{ grant.status }}</strong>
@@ -59,8 +69,21 @@
           <div class="action-row">
             <button type="button" class="ghost" (click)="confirm('deny')" [disabled]="confirming()">拒绝</button>
             <button type="button" class="primary" (click)="confirm('approve')" [disabled]="confirming()">
-              {{ confirming() ? '提交中...' : '批准登录' }}
+              {{ confirming() ? '提交中...' : (grant.request_type === 'oauth' ? '批准并生成链接' : '批准登录') }}
             </button>
+          </div>
+        }
+
+        @if (grant.request_type === 'oauth' && grant.redirect_link) {
+          <div class="link-pane">
+            <div class="field">
+              <span>跳转链接</span>
+              <textarea readonly rows="4">{{ grant.redirect_link }}</textarea>
+            </div>
+            <div class="action-row">
+              <button type="button" class="ghost" (click)="copyLink(grant.redirect_link)">复制链接</button>
+              <a class="primary link-action" [href]="grant.redirect_link" target="_blank" rel="noreferrer">打开链接</a>
+            </div>
           </div>
         }
       </div>

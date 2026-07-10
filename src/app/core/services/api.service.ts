@@ -102,10 +102,16 @@ export class ApiService {
     });
   }
 
-  async startCliDeviceGrant(clientName = 'qt-cli') {
+  async startCliDeviceGrant(
+    clientName = 'qt-cli',
+    requestType: 'login' | 'oauth' = 'login',
+    appId?: string | null
+  ) {
     return this.request<CliDeviceGrantStartPayload>('POST', '/auth/cli/device/start', {
       body: {
-        client_name: clientName
+        client_name: clientName,
+        request_type: requestType,
+        app_id: appId ?? null
       }
     });
   }

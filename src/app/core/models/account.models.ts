@@ -91,13 +91,21 @@ export interface AuthV2CodeVerifyNextPayload {
 export interface CliDeviceGrantPayload {
   user_code: string;
   client_name: string;
+  request_type: 'login' | 'oauth';
+  app_id?: string | null;
+  app_name?: string | null;
+  app_desc?: string | null;
   status: 'pending' | 'approved' | 'denied' | 'consumed';
   expires_in: number;
+  redirect_uri?: string | null;
+  redirect_link?: string | null;
 }
 
 export interface CliDeviceGrantStartPayload {
   device_code: string;
   user_code: string;
+  request_type: 'login' | 'oauth';
+  app_id?: string | null;
   verification_uri: string;
   verification_uri_complete: string;
   expires_in: number;
