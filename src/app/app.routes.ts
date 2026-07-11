@@ -3,6 +3,7 @@ import { AuthPageComponent } from './features/auth/auth-page.component';
 import { AppsPageComponent } from './features/apps/apps-page.component';
 import { CliAuthPageComponent } from './features/cli/cli-auth-page.component';
 import { ManagePageComponent } from './features/manage/manage-page.component';
+import { OauthPageComponent } from './features/oauth/oauth-page.component';
 import { SettingsPageComponent } from './features/settings/settings-page.component';
 import { ShellLayoutComponent } from './layout/shell-layout.component';
 
@@ -25,6 +26,11 @@ export const routes: Routes = [
         path: 'cli',
         component: CliAuthPageComponent,
         title: '齐天簿 | CLI 授权'
+      },
+      {
+        path: 'oauth',
+        component: OauthPageComponent,
+        title: '齐天簿 | 应用授权'
       },
       {
         path: 'apps',

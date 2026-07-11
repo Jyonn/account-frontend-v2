@@ -1,0 +1,116 @@
+<section class="drawer-page oauth-page">
+  <header class="page-header">
+    <div>
+      <div class="page-kicker">OAuth Authorization</div>
+      <h1>应用授权</h1>
+      <p>确认是否将当前齐天簿身份授权给这个应用。</p>
+    </div>
+  </header>
+
+  <div class="panel-scroll">
+    @if (loading()) {
+      <div class="empty-state">正在读取应用信息...</div>
+    } @else if (error()) {
+      <div class="feedback error">{{ error() }}</div>
+    } @else if (app(); as app) {
+      <section class="oauth-section">
+        <div class="section-label">
+          <div class="section-kicker">Application</div>
+          <div class="section-title">授权对象</div>
+        </div>
+        <div class="section-content">
+          <div class="app-hero">
+            <div class="hero-logo" [style.background-image]="app.logo ? 'url(' + app.logo + ')' : ''">
+              @if (!app.logo) {
+                <span>{{ app.app_name.slice(0, 1) }}</span>
+              }
+            </div>
+            <div class="hero-copy">
+              <h2>{{ app.app_name }}</h2>
+              <p>{{ app.app_desc || '暂无简介' }}</p>
+            </div>
+          </div>
+          <div class="meta-grid">
+            <div class="meta-line">
+              <span>应用 ID</span>
+              <strong>{{ app.app_id }}</strong>
+            </div>
+            <div class="meta-line">
+              <span>创建时间</span>
+              <strong>{{ formatTime(app.create_time) }}</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      @if (app.scopes?.length) {
+        <section class="oauth-section">
+          <div class="section-label">
+            <div class="section-kicker">Scopes</div>
+            <div class="section-title">权限请求</div>
+          </div>
+          <div class="section-content">
+            <div class="token-list">
+              @for (scope of app.scopes; track scope.id) {
+                <div class="token-item">
+                  <strong>{{ scope.key }}</strong>
+                  @if (scope.detail) {
+                    <span>{{ scope.detail }}</span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+      }
+
+      @if (app.premises?.length) {
+        <section class="oauth-section">
+          <div class="section-label">
+            <div class="section-kicker">Premises</div>
+            <div class="section-title">使用前提</div>
+          </div>
+          <div class="section-content">
+            <div class="token-list">
+              @for (premise of app.premises; track premise.id) {
+                <div class="token-item">
+                  <strong>{{ premise.key }}</strong>
+                  @if (premise.detail) {
+                    <span>{{ premise.detail }}</span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+      }
+
+      <section class="oauth-section">
+        <div class="section-label">
+          <div class="section-kicker">Description</div>
+          <div class="section-title">应用介绍</div>
+        </div>
+        <div class="section-content">
+          <div class="markdown-pane">
+            <div class="markdown-content" [innerHTML]="(app.app_info || app.app_desc) | markdown"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="oauth-section">
+        <div class="section-label">
+          <div class="section-kicker">Action</div>
+          <div class="section-title">确认授权</div>
+        </div>
+        <div class="section-content">
+          <div class="action-row">
+            <button type="button" class="ghost" (click)="backToApps()">返回应用中心</button>
+            <button type="button" class="primary" (click)="authorize()" [disabled]="authorizing()">
+              {{ authorizing() ? '授权中...' : '允许并继续' }}
+            </button>
+          </div>
+        </div>
+      </section>
+    }
+  </div>
+</section>

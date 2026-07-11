@@ -58,8 +58,9 @@ export class AuthPageComponent implements OnInit, OnDestroy {
   private resendTimerId: number | null = null;
   private returnTo = '/apps';
 
-  ngOnInit() {
+  async ngOnInit() {
     this.returnTo = this.route.snapshot.queryParamMap.get('returnTo') || '/apps';
+    await this.session.bootstrap();
     if (this.session.isLoggedIn()) {
       void this.router.navigateByUrl(this.returnTo);
     }
